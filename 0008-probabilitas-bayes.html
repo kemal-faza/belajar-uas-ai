@@ -432,54 +432,55 @@ p(H<sub>3</sub> | E<sub>1</sub> E<sub>2</sub> E<sub>3</sub>) = 0,07875 / 0,14355
 <!-- ====================================================================== -->
 <h2>6. Quiz</h2>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">1. Dalam Teorema Bayes, apa yang dimaksud dengan p(H<sub>i</sub> | E)?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas awal hipotesis sebelum ada bukti</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas hipotesis setelah melihat bukti (posterior)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas bukti muncul tanpa hipotesis</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas bahwa bukti salah</button>
+  <button class="opt" onclick="checkQuiz(this)">Probabilitas awal hipotesis sebelum ada bukti</button>
+  <button class="opt" onclick="checkQuiz(this)">Probabilitas hipotesis setelah melihat bukti (posterior)</button>
+  <button class="opt" onclick="checkQuiz(this)">Probabilitas bukti muncul tanpa hipotesis</button>
+  <button class="opt" onclick="checkQuiz(this)">Probabilitas bahwa bukti salah</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">2. Apa syarat mutlak yang harus dipenuhi oleh hipotesis dalam Probabilitas Bayes?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">Hipotesis harus independen secara statistik</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Hipotesis harus mutually exclusive (saling lepas)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Hipotesis harus memiliki probabilitas yang sama</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Tidak ada syarat khusus</button>
+  <button class="opt" onclick="checkQuiz(this)">Hipotesis harus independen secara statistik</button>
+  <button class="opt" onclick="checkQuiz(this)">Hipotesis harus mutually exclusive (saling lepas)</button>
+  <button class="opt" onclick="checkQuiz(this)">Hipotesis harus memiliki probabilitas yang sama</button>
+  <button class="opt" onclick="checkQuiz(this)">Tidak ada syarat khusus</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">3. Dalam iterasi Bayes studi kasus, setelah E3 dan E1 dimasukkan, hipotesis mana yang paling mungkin?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">H1 (19%)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">H2 (52%)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">H3 (29%)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Tidak bisa ditentukan</button>
+  <button class="opt" onclick="checkQuiz(this)">H1 (19%)</button>
+  <button class="opt" onclick="checkQuiz(this)">H2 (52%)</button>
+  <button class="opt" onclick="checkQuiz(this)">H3 (29%)</button>
+  <button class="opt" onclick="checkQuiz(this)">Tidak bisa ditentukan</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">4. Mengapa H2 tereliminasi (menjadi 0%) pada iterasi ke-3?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">Karena H2 memiliki prior terendah</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Karena p(E2|H2) = 0, bukti E2 tidak mungkin muncul jika H2 benar</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Karena E2 bertentangan dengan E1</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Karena H3 memiliki CF lebih tinggi</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena H2 memiliki prior terendah</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena p(E2|H2) = 0, bukti E2 tidak mungkin muncul jika H2 benar</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena E2 bertentangan dengan E1</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena H3 memiliki CF lebih tinggi</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">5. Manakah pernyataan yang BENAR tentang perbedaan CF dan Bayes?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF lebih cocok untuk klasifikasi data historis besar</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Bayes mensyaratkan mutually exclusive, CF tidak</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF menggunakan probabilitas; Bayes menggunakan heuristik</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">Bayes lebih ringan komputasi daripada CF</button>
+  <button class="opt" onclick="checkQuiz(this)">CF lebih cocok untuk klasifikasi data historis besar</button>
+  <button class="opt" onclick="checkQuiz(this)">Bayes mensyaratkan mutually exclusive, CF tidak</button>
+  <button class="opt" onclick="checkQuiz(this)">CF menggunakan probabilitas; Bayes menggunakan heuristik</button>
+  <button class="opt" onclick="checkQuiz(this)">Bayes lebih ringan komputasi daripada CF</button>
   <div class="feedback"></div>
 </div>
 
 <script>
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
   const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
   const options = box.querySelectorAll('.opt');
   const feedback = box.querySelector('.feedback');
   

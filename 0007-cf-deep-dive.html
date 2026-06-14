@@ -446,64 +446,61 @@ CF_combine = 0,48 + 0,56 x (1 &minus; 0,48)<br>
 <!-- ====================================================================== -->
 <h2>8. Quiz</h2>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">1. Dalam rumus CF = MB - MD, apa yang terjadi jika MD > MB?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF menjadi positif</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF menjadi negatif (ketidakpercayaan lebih kuat)</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF tetap 0</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">CF tidak terdefinisi</button>
+  <button class="opt" onclick="checkQuiz(this)">CF menjadi positif</button>
+  <button class="opt" onclick="checkQuiz(this)">CF menjadi negatif (ketidakpercayaan lebih kuat)</button>
+  <button class="opt" onclick="checkQuiz(this)">CF tetap 0</button>
+  <button class="opt" onclick="checkQuiz(this)">CF tidak terdefinisi</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="0">
   <div class="q">2. IF demam AND batuk THEN influenza (CF Rule = 0,7). CF(demam)=0,5, CF(batuk)=0,9. Berapa CF(influenza)?</div>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,35</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,63</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,50</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,45</button>
+  <button class="opt" onclick="checkQuiz(this)">0,35</button>
+  <button class="opt" onclick="checkQuiz(this)">0,63</button>
+  <button class="opt" onclick="checkQuiz(this)">0,50</button>
+  <button class="opt" onclick="checkQuiz(this)">0,45</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="1">
   <div class="q">3. Dua rule: R1 dengan CF1=0,7 dan R2 dengan CF2=0,5, keduanya positif. Berapa CF_combine?</div>
-  <button class="opt" onclick="checkQuiz(this, 1)">1,20</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">0,85</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">0,35</button>
-  <button class="opt" onclick="checkQuiz(this, 1)">0,60</button>
+  <button class="opt" onclick="checkQuiz(this)">1,20</button>
+  <button class="opt" onclick="checkQuiz(this)">0,85</button>
+  <button class="opt" onclick="checkQuiz(this)">0,35</button>
+  <button class="opt" onclick="checkQuiz(this)">0,60</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="2">
   <div class="q">4. Dalam FORECAST, jika CF_R3=0,48 dan CF_R4=0,56, keduanya memprediksi kering, berapa CF gabungan?</div>
-  <button class="opt" onclick="checkQuiz(this, 2)">1,04</button>
-  <button class="opt" onclick="checkQuiz(this, 2)">0,52</button>
-  <button class="opt" onclick="checkQuiz(this, 2)">0,77</button>
-  <button class="opt" onclick="checkQuiz(this, 2)">0,48</button>
+  <button class="opt" onclick="checkQuiz(this)">1,04</button>
+  <button class="opt" onclick="checkQuiz(this)">0,52</button>
+  <button class="opt" onclick="checkQuiz(this)">0,77</button>
+  <button class="opt" onclick="checkQuiz(this)">0,48</button>
   <div class="feedback"></div>
 </div>
 
-<div class="quiz-box">
+<div class="quiz-box" data-correct="0">
   <div class="q">5. MB = 0,8 dan MD = 0,3. Berapa CF?</div>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,5</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">1,1</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">0,24</button>
-  <button class="opt" onclick="checkQuiz(this, 0)">-0,5</button>
+  <button class="opt" onclick="checkQuiz(this)">0,5</button>
+  <button class="opt" onclick="checkQuiz(this)">1,1</button>
+  <button class="opt" onclick="checkQuiz(this)">0,24</button>
+  <button class="opt" onclick="checkQuiz(this)">-0,5</button>
   <div class="feedback"></div>
 </div>
 
 <script>
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
   const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
   const options = box.querySelectorAll('.opt');
   const feedback = box.querySelector('.feedback');
   
-  // Reset
   options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
-  
-  // Mark correct answer (1-indexed correctIdx)
   options[correctIdx].classList.add('correct');
   
-  // Mark user's answer if wrong
   if (!btn.classList.contains('correct')) {
     btn.classList.add('wrong');
     feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
