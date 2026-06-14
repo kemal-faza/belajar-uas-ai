@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2: First-Order Logic (FOL) | Reasoning KBA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #fafaf9;
+    color: #1c1917;
+    line-height: 1.7;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  @media (max-width: 640px) { body { padding: 1rem 1rem 4rem; } }
+
+  .sidenote {
+    float: right; clear: right; margin-right: -35%; width: 30%;
+    font-size: 0.8rem; line-height: 1.5; color: #57534e;
+    background: #f5f5f4; padding: 0.75rem; border-radius: 6px;
+    margin-top: 0.25rem; margin-bottom: 1rem;
+  }
+  @media (max-width: 900px) { .sidenote { float: none; width: 100%; margin: 1rem 0; } }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  .subtitle { color: #78716c; font-size: 1rem; margin-bottom: 2rem; }
+  h2 {
+    font-size: 1.35rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem; border-bottom: 2px solid #e7e5e4;
+  }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p, li { margin-bottom: 0.75rem; }
+  ul, ol { padding-left: 1.5rem; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    background: #f0efed; padding: 0.1em 0.35em; border-radius: 3px;
+  }
+  pre {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+    background: #1c1917; color: #fafaf9; padding: 1rem; border-radius: 8px;
+    overflow-x: auto; margin: 1rem 0; line-height: 1.5;
+  }
+
+  .formula {
+    text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;
+    padding: 0.75rem; background: #f5f5f4; border-radius: 8px; margin: 1rem 0;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;
+  }
+  th, td { border: 1px solid #e7e5e4; padding: 0.5rem 0.75rem; text-align: center; }
+  th { background: #f5f5f4; font-weight: 600; }
+
+  .comparison td:first-child { font-weight: 600; text-align: left; }
+
+  .quiz-box {
+    background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px;
+    padding: 1.5rem; margin: 2rem 0;
+  }
+  .quiz-box h3 { margin-top: 0; color: #166534; }
+  .quiz-question { font-weight: 500; margin-bottom: 0.75rem; }
+  .quiz-option {
+    display: block; margin: 0.35rem 0; padding: 0.5rem 0.75rem;
+    background: white; border: 1px solid #d1d5db; border-radius: 6px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .quiz-option:hover { border-color: #86efac; background: #f0fdf4; }
+  .quiz-option.selected { border-color: #22c55e; background: #dcfce7; font-weight: 500; }
+  .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 6px; display: none; }
+  .quiz-feedback.correct { display: block; background: #dcfce7; border: 1px solid #86efac; }
+  .quiz-feedback.wrong { display: block; background: #fee2e2; border: 1px solid #fca5a5; }
+
+  .key-takeaway {
+    background: #fffbeb; border-left: 4px solid #f59e0b;
+    padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0;
+  }
+  .key-takeaway strong { color: #b45309; }
+
+  .next-steps {
+    background: #eff6ff; border-left: 4px solid #3b82f6;
+    padding: 1rem 1.25rem; margin: 2rem 0; border-radius: 0 6px 6px 0;
+  }
+
+  .btn-check {
+    background: #1c1917; color: white; border: none;
+    padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 500;
+    cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem;
+  }
+  .btn-check:hover { background: #292524; }
+</style>
+</head>
+<body>
+
+<h1>First-Order Logic (FOL)</h1>
+<p class="subtitle">Lesson 2 &mdash; Predicate Logic &amp; Quantifiers untuk UAS</p>
+
+<div class="key-takeaway">
+<strong>Prerequisites:</strong> Kamu sudah paham Propositional Logic (syntax, semantics, inference rules, Horn Form, Resolusi) dari Lesson 1.
+</div>
+
+<h2>1. Kenapa FOL? — Keterbatasan Propositional Logic</h2>
+
+<p>Propositional Logic punya kelemahan besar: <strong>tidak bisa merepresentasikan objek, relasi, dan kuantitas</strong>.</p>
+
+<p><strong>Contoh:</strong></p>
+<p>Di Wumpus World, kita ingin bilang: <em>"Semua kotak yang berbau Stench pasti memiliki Wumpus di kotak sebelahnya."</em></p>
+
+<p>Di PL, kita harus menulis satu rule untuk SETIAP kotak:</p>
+<pre>
+Stench₁,₁ ⇒ W₁,₂ ∨ W₂,₁
+Stench₁,₂ ⇒ W₁,₁ ∨ W₁,₃ ∨ W₂,₂
+Stench₂,₁ ⇒ W₁,₁ ∨ W₂,₂ ∨ W₃,₁
+...
+</pre>
+
+<p>Bayangkan untuk grid 4×4 = 16 kotak, kita butuh 16 rules! Untuk grid 100×100 = 10.000 rules! <strong>Tidak praktis.</strong></p>
+
+<p>Dengan FOL, cukup SATU rule:</p>
+<pre>
+∀x,y Stench(x,y) ⇒ (Wumpus(x+1,y) ∨ Wumpus(x-1,y) ∨ Wumpus(x,y+1) ∨ Wumpus(x,y-1))
+</pre>
+
+<p><strong>Ini kenapa FOL disebut <em>first-order</em> — kita bisa "berbicara tentang" objek-objek dan relasinya, bukan cuma proposisi utuh.</strong></p>
+
+<div class="sidenote">
+<strong>PL vs FOL:</strong> Di PL, "W₁,₃" adalah proposisi (True/False). Di FOL, "Wumpus(1,3)" adalah predikat yang menerima argumen — kita bisa query, substitusi, dan kuantifikasi.
+</div>
+
+<h2>2. Syntax FOL</h2>
+
+<h3>Komponen Dasar</h3>
+
+<table class="comparison">
+  <tr><th>Kategori</th><th>Definisi</th><th>Contoh</th></tr>
+  <tr>
+    <td><strong>Constant</strong></td>
+    <td>Objek spesifik di dunia</td>
+    <td><code>1, 2, 3, gold, wumpus</code></td>
+  </tr>
+  <tr>
+    <td><strong>Variable</strong></td>
+    <td>Objek yang belum dispesifikkan</td>
+    <td><code>x, y, z, a, b</code></td>
+  </tr>
+  <tr>
+    <td><strong>Predicate</strong></td>
+    <td>Relasi / properti dari objek</td>
+    <td><code>Stench(x,y), Pit(x), Adjacent(a,b)</code></td>
+  </tr>
+  <tr>
+    <td><strong>Function</strong></td>
+    <td>Memetakan objek ke objek lain</td>
+    <td><code>adjacent_to(x), next_cell(x,y)</code></td>
+  </tr>
+  <tr>
+    <td><strong>Quantifier</strong></td>
+    <td>Kuantitas objek yang memenuhi</td>
+    <td><code>∀ (forall), ∃ (exists)</code></td>
+  </tr>
+  <tr>
+    <td><strong>Connective</strong></td>
+    <td>Sama seperti di PL</td>
+    <td><code>¬, ∧, ∨, ⇒, ⇔</code></td>
+  </tr>
+  <tr>
+    <td><strong>Equality</strong></td>
+    <td>Kesamaan dua term</td>
+    <td><code>=(x, y)</code> atau <code>x = y</code></td>
+  </tr>
+</table>
+
+<h3>Term vs Sentence</h3>
+
+<p><strong>Term</strong> = ekspresi yang merepresentasikan <em>objek</em>:</p>
+<ul>
+  <li>Constant: <code>wumpus</code></li>
+  <li>Variable: <code>x</code></li>
+  <li>Function: <code>father(john)</code>, <code>plus(2,3)</code></li>
+</ul>
+
+<p><strong>Sentence (Kalimat)</strong> = ekspresi yang bernilai True/False:</p>
+<ul>
+  <li>Atomic sentence: <code>Pit(3,1)</code>, <code>Stench(1,2)</code>, <code>Adjacent(2,1, 2,2)</code></li>
+  <li>Complex sentence: <code>Stench(1,2) ⇒ Wumpus(1,3)</code></li>
+  <li>Quantified sentence: <code>∀x Pit(x) ⇒ Breeze(adjacent(x))</code></li>
+</ul>
+
+<h2>3. Quantifiers (Kuantifier)</h2>
+
+<h3>A. Universal Quantification (∀)</h3>
+
+<div class="formula">∀⟨variable⟩ ⟨sentence⟩</div>
+
+<p>Baca: "Untuk <strong>semua</strong> nilai variable, sentence bernilai True."</p>
+
+<p><strong>Contoh:</strong></p>
+<pre>
+∀x Pit(x) ⇒ Breeze(adjacent(x))
+"Semua kotak yang punya Pit pasti ada Breeze di kotak sebelahnya."
+
+∀x,y Adjacent(x,y) ⇒ Adjacent(y,x)
+"Jika x bertetangga dengan y, maka y juga bertetangga dengan x." (simetris)
+</pre>
+
+<div class="key-takeaway">
+<strong>⚠️ Hati-hati dengan ⇒ dan ∧ di bawah ∀:</strong><br>
+<code>∀x Pit(x) ⇒ Breeze(x)</code> — benar, artinya "semua Pit menghasilkan Breeze"<br>
+<code>∀x Pit(x) ∧ Breeze(x)</code> — artinya "semua objek adalah Pit DAN ber-Breeze" ❌ (<strong>salah total</strong> untuk domain yang punya objek non-Pit)<br><br>
+<strong>Rule of thumb:</strong> ∀ biasanya pakai ⇒.
+</div>
+
+<h3>B. Existential Quantification (∃)</h3>
+
+<div class="formula">∃⟨variable⟩ ⟨sentence⟩</div>
+
+<p>Baca: "Ada <strong>setidaknya satu</strong> nilai variable yang membuat sentence True."</p>
+
+<p><strong>Contoh:</strong></p>
+<pre>
+∃x Pit(x) ∧ Breeze(x)
+"Ada sebuah kotak yang punya Pit dan ber-Breeze."
+
+∃x Gold(x) ∧ Glitter(x)
+"Ada sebuah kotak berisi emas yang mengkilau."
+</pre>
+
+<div class="key-takeaway">
+<strong>⚠️ Hati-hati dengan ⇒ dan ∧ di bawah ∃:</strong><br>
+<code>∃x Pit(x) ∧ Breeze(x)</code> — benar, artinya "ada Pit yang ber-Breeze"<br>
+<code>∃x Pit(x) ⇒ Breeze(x)</code> — <strong>berbahaya!</strong> Ini akan True jika ada satu saja objek yang BUKAN Pit (karena implication P⇒Q True saat P=False). Hampir selalu salah digunakan.<br><br>
+<strong>Rule of thumb:</strong> ∃ biasanya pakai ∧.
+</div>
+
+<h3>C. Nested Quantifiers</h3>
+
+<table>
+  <tr><th>Ekspresi</th><th>Makna</th></tr>
+  <tr><td><code>∀x ∀y Loves(x,y)</code></td><td>Semua orang mencintai semua orang</td></tr>
+  <tr><td><code>∀x ∃y Loves(x,y)</code></td><td>Setiap orang mencintai seseorang</td></tr>
+  <tr><td><code>∃x ∀y Loves(x,y)</code></td><td>Ada seseorang yang dicintai semua orang</td></tr>
+  <tr><td><code>∃x ∃y Loves(x,y)</code></td><td>Ada seseorang yang mencintai seseorang</td></tr>
+</table>
+
+<p><strong>Urutan quantifier PENTING!</strong> <code>∀x ∃y</code> ≠ <code>∃y ∀x</code>.</p>
+
+<h2>4. Semantics FOL</h2>
+
+<p>Semantics FOL mendefinisikan makna kalimat dalam suatu <strong>domain</strong> (himpunan objek).</p>
+
+<ul>
+  <li><strong>Domain</strong>: himpunan objek yang ada di dunia (misal: semua kotak di grid 4×4)</li>
+  <li><strong>Interpretation</strong>: mapping dari:
+    <ul>
+      <li>Constant → objek spesifik di domain</li>
+      <li>Predicate → himpunan objek/relasi</li>
+      <li>Function → fungsi dari objek ke objek</li>
+    </ul>
+  </li>
+  <li><strong>Model</strong>: sebuah interpretation + domain yang membuat semua kalimat di KB True</li>
+</ul>
+
+<p><strong>Entailment di FOL:</strong> Sama seperti PL — KB ⊨ α jika α True di <em>semua</em> model dimana KB True. Tapi model di FOL bisa <strong>tak terhingga</strong> (domain infinite), jadi lebih kompleks.</p>
+
+<h2>5. Inference di FOL</h2>
+
+<h3>A. Substitution (Substitusi)</h3>
+
+<p>Mengganti variable dengan term:</p>
+<div class="formula">SUBST({x/3, y/1}, Stench(x,y)) = Stench(3,1)</div>
+
+<h3>B. Universal Instantiation</h3>
+<p>Dari ∀x kita bisa turunkan untuk constant tertentu:</p>
+<pre>
+∀x Stench(x) ⇒ Wumpus(adjacent(x))
+→ Stench(1,2) ⇒ Wumpus(adjacent(1,2))
+</pre>
+
+<h3>C. Existential Instantiation</h3>
+<p>Dari ∃x kita bisa ganti dengan constant baru (Skolem constant):</p>
+<pre>
+∃x Pit(x) ∧ Breeze(x)
+→ Pit(S₁) ∧ Breeze(S₁)   // S₁ adalah constant baru yang belum dipakai
+</pre>
+
+<h3>D. Unification (Unifikasi)</h3>
+
+<p>Mencari substitusi yang membuat dua kalimat <strong>identik</strong>. Ini inti dari inferensi FOL.</p>
+
+<table>
+  <tr><th>Kalimat 1</th><th>Kalimat 2</th><th>Unifier (θ)</th></tr>
+  <tr><td><code>Stench(x,1)</code></td><td><code>Stench(2,y)</code></td><td><code>{x/2, y/1}</code></td></tr>
+  <tr><td><code>Pit(x)</code></td><td><code>Pit(3)</code></td><td><code>{x/3}</code></td></tr>
+  <tr><td><code>Knows(x, y)</code></td><td><code>Knows(John, z)</code></td><td><code>{x/John, y/z}</code></td></tr>
+  <tr><td><code>Knows(x, x)</code></td><td><code>Knows(John, Mary)</code></td><td>FAIL (x tidak bisa = John dan Mary)</td></tr>
+</table>
+
+<h3>E. Generalized Modus Ponens (GMP)</h3>
+
+<p>Ini adalah <strong>Modus Ponens versi FOL</strong> — untuk Horn clauses dengan quantifier:</p>
+
+<div class="formula">
+(∀x P(x) ⇒ Q(x)), P(A)<br>
+───────────────<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Q(A)
+</div>
+
+<p>Bentuk umum:</p>
+<div class="formula">
+(∀x₁...xₙ p₁ ∧ ... ∧ pₖ ⇒ q), p₁' ∧ ... ∧ pₖ' <br>dimana SUBST(θ, pᵢ) = SUBST(θ, pᵢ') untuk semua i<br>
+────────────────────────────────────────<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SUBST(θ, q)
+</div>
+
+<p><strong>Contoh Wumpus:</strong></p>
+<pre>
+Rule: ∀x,y Stench(x,y) ⇒ Wumpus(adjacent(x,y))
+Fakta: Stench(1,2)
+Unifikasi: {x/1, y/2}
+Hasil: Wumpus(adjacent(1,2))
+</pre>
+
+<h2>6. Wumpus World dalam FOL</h2>
+
+<p>Sekarang kita representasikan Wumpus World dengan FOL — <strong>jauh lebih ringkas</strong> daripada PL.</p>
+
+<h3>Predicates yang kita butuhkan:</h3>
+<pre>
+Wumpus(x,y)       — Ada Wumpus di [x,y]
+Pit(x,y)          — Ada Pit di [x,y]
+Breeze(x,y)       — Ada Breeze di [x,y]
+Stench(x,y)       — Ada Stench di [x,y]
+Glitter(x,y)      — Ada kilauan emas di [x,y]
+Gold(x,y)         — Ada emas di [x,y]
+
+Adjacent(x,y, a,b) — [x,y] bertetangga dengan [a,b]
+Safe(x,y)         — [x,y] aman untuk dikunjungi
+</pre>
+
+<h3>Pengetahuan Dunia (Domain Knowledge):</h3>
+
+<pre>
+// Aturan Breeze: Breeze ada jika dan hanya jika ada Pit di kotak tetangga
+∀x,y Breeze(x,y) ⇔ ∃a,b Adjacent(x,y, a,b) ∧ Pit(a,b)
+
+// Aturan Stench: Stench ada jika dan hanya jika ada Wumpus di kotak tetangga
+∀x,y Stench(x,y) ⇔ ∃a,b Adjacent(x,y, a,b) ∧ Wumpus(a,b)
+
+// Aturan Glitter: Glitter ada jika ada Emas
+∀x,y Glitter(x,y) ⇔ Gold(x,y)
+
+// Aturan Aman: kotak aman jika tidak ada Pit dan tidak ada Wumpus
+∀x,y Safe(x,y) ⇔ ¬Pit(x,y) ∧ ¬Wumpus(x,y)
+
+// Adjacency: definisi tetangga
+∀x,y,a,b Adjacent(x,y, a,b) ⇔
+  (a = x+1 ∧ b = y) ∨ (a = x-1 ∧ b = y) ∨
+  (a = x ∧ b = y+1) ∨ (a = x ∧ b = y-1)
+</pre>
+
+<h3>Fakta dari Percept:</h3>
+
+<pre>
+// Agen bergerak dari [1,1] ke [2,1]
+¬Breeze(1,1)         // tidak ada Breeze di start
+¬Stench(1,1)         // tidak ada Stench di start
+
+Breeze(2,1)          // ada Breeze di [2,1]
+¬Stench(2,1)         // tidak ada Stench di [2,1]
+</pre>
+
+<h3>Inferensi FOL dengan Forward Chaining:</h3>
+
+<pre>
+// Dari Breeze(2,1) + rule Breeze:
+∃a,b Adjacent(2,1, a,b) ∧ Pit(a,b)
+
+// Adjacent [2,1] dengan: [1,1], [2,2], [3,1]
+Pit(1,1) ∨ Pit(2,2) ∨ Pit(3,1)
+
+// Dari fakta ¬Pit(1,1) (start aman):
+Pit(2,2) ∨ Pit(3,1)
+
+// Dari ¬Breeze(1,1) — tidak ada Breeze di [1,1]:
+// Berarti tidak ada Pit di tetangga [1,1] yaitu [1,2] dan [2,1]
+// Sudah diketahui [2,1] tidak ada Pit (aman)
+// Jadi Pit tidak mungkin di [2,2]? Tunggu...
+</pre>
+
+<p>Sebenernya dari <code>¬Breeze(1,1)</code>, karena satu-satunya tetangga [1,1] yang belum kita ketahui adalah [1,2] dan [2,1], dan [2,1] aman... kita tahu tidak ada Pit di [2,2]? Tidak juga. <strong>Adjacent(1,1, 2,2) itu False</strong> karena [1,1] dan [2,2] diagonal, bukan tetangga.</p>
+
+<p>Jadi dari <code>¬Breeze(1,1)</code> kita simpulkan: <code>¬Pit(1,2) ∧ ¬Pit(2,1)</code></p>
+<p>Dan dari <code>Breeze(2,1)</code>: pit di [1,1] (sudah aman), [2,2], atau [3,1]</p>
+<p>Maka: <strong>Pit di [2,2] atau [3,1]</strong> — sama persis dengan hasil di PL!</p>
+
+<h2>7. Summary: PL vs FOL</h2>
+
+<table class="comparison">
+  <tr><th>Aspek</th><th>Propositional Logic</th><th>First-Order Logic</th></tr>
+  <tr><td>Unit dasar</td><td>Proposisi (P, Q)</td><td>Objek + Predikat</td></tr>
+  <tr><td>Ekspresivitas</td><td>Fakta sederhana</td><td>Fakta + relasi + kuantitas</td></tr>
+  <tr><td>Quantifier</td><td>Tidak ada</td><td>∀ (forall), ∃ (exists)</td></tr>
+  <tr><td>Aturan Wumpus</td><td>1 rule per kotak (16×)</td><td>1 rule universal</td></tr>
+  <tr><td>Inferensi</td><td>Tabel, Resolusi, Horn</td><td>Unifikasi + GMP + Forward/Backward Chaining</td></tr>
+  <tr><td>Decidability</td><td>Decidable (finite)</td><td>Semi-decidable (bisa infinite loop)</td></tr>
+</table>
+
+<h2>8. Quiz</h2>
+
+<div class="quiz-box" id="quiz1">
+  <h3>Quiz 1: Universal Quantifier</h3>
+  <p class="quiz-question">Mana yang benar untuk menyatakan "Semua kotak yang mengandung Pit pasti tidak aman"?</p>
+  <div class="quiz-option" onclick="selectOption(this)">∀x Pit(x) ∧ ¬Safe(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x Pit(x) ⇒ ¬Safe(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x ¬Safe(x) ⇒ Pit(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∃x Pit(x) ⇒ ¬Safe(x)</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box" id="quiz2">
+  <h3>Quiz 2: Existential Quantifier</h3>
+  <p class="quiz-question">Mana yang benar untuk "Ada kotak yang punya emas dan mengkilau"?</p>
+  <div class="quiz-option" onclick="selectOption(this)">∃x Gold(x) ⇒ Glitter(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x Gold(x) ∧ Glitter(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∃x Gold(x) ∧ Glitter(x)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x Gold(x) ⇒ Glitter(x)</div>
+  <button class="btn-check" onclick="checkQuiz(this, 2)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box" id="quiz3">
+  <h3>Quiz 3: Unification</h3>
+  <p class="quiz-question">Apa unifier untuk <code>Stench(x, 2)</code> dan <code>Stench(3, y)</code>?</p>
+  <div class="quiz-option" onclick="selectOption(this)">FAIL — tidak bisa disatukan</div>
+  <div class="quiz-option" onclick="selectOption(this)">{x/3, y/2}</div>
+  <div class="quiz-option" onclick="selectOption(this)">{x/3}</div>
+  <div class="quiz-option" onclick="selectOption(this)">{x/2, y/3}</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box" id="quiz4">
+  <h3>Quiz 4: Nested Quantifiers</h3>
+  <p class="quiz-question">Apa beda <code>∀x ∃y Adjacent(x, y)</code> dan <code>∃y ∀x Adjacent(x, y)</code>?</p>
+  <div class="quiz-option" onclick="selectOption(this)">Tidak ada beda, urutan quantifier tidak penting</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x∃y: setiap kotak punya tetangga. ∃y∀x: ada satu kotak yang menjadi tetangga semua kotak</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x∃y: ada satu kotak yg jadi tetangga semua. ∃y∀x: setiap kotak punya tetangga</div>
+  <div class="quiz-option" onclick="selectOption(this)">Keduanya sama-sama salah secara syntax</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="next-steps">
+<strong>Selanjutnya:</strong> Lesson 3 akan membahas <strong>Kasus Wumpus World Lengkap</strong> — dari representasi pengetahuan sampai inferensi, persiapan studi kasus di UAS.
+</div>
+
+<p style="margin-top:2rem; font-size:0.85rem; color:#78716c;">
+<strong>Referensi:</strong> Russel &amp; Norvig (2010) AIMA Ch.8, Suyanto (2007).
+</p>
+
+<script>
+function selectOption(el) {
+  const parent = el.closest('.quiz-box');
+  parent.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function checkQuiz(btn, correctIdx) {
+  const parent = btn.closest('.quiz-box');
+  const selected = parent.querySelector('.quiz-option.selected');
+  const feedback = parent.querySelector('.quiz-feedback');
+
+  if (!selected) {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Pilih jawaban dulu!';
+    return;
+  }
+
+  const options = parent.querySelectorAll('.quiz-option');
+  let idx = -1;
+  options.forEach((opt, i) => { if (opt === selected) idx = i; });
+
+  if (idx === correctIdx) {
+    feedback.className = 'quiz-feedback correct';
+    feedback.textContent = 'Benar!';
+    selected.style.borderColor = '#22c55e';
+  } else {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Belum tepat. Cek lagi aturan quantifier di atas.';
+    selected.style.borderColor = '#ef4444';
+  }
+}
+</script>
+
+</body>
+</html>

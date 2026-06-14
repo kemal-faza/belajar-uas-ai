@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3: Kasus Wumpus World Lengkap | Reasoning KBA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #fafaf9;
+    color: #1c1917;
+    line-height: 1.7;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  @media (max-width: 640px) { body { padding: 1rem 1rem 4rem; } }
+
+  .sidenote {
+    float: right; clear: right; margin-right: -35%; width: 30%;
+    font-size: 0.8rem; line-height: 1.5; color: #57534e;
+    background: #f5f5f4; padding: 0.75rem; border-radius: 6px;
+    margin-top: 0.25rem; margin-bottom: 1rem;
+  }
+  @media (max-width: 900px) { .sidenote { float: none; width: 100%; margin: 1rem 0; } }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  .subtitle { color: #78716c; font-size: 1rem; margin-bottom: 2rem; }
+  h2 {
+    font-size: 1.35rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem; border-bottom: 2px solid #e7e5e4;
+  }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  h4 { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.25rem; }
+  p, li { margin-bottom: 0.75rem; }
+  ul, ol { padding-left: 1.5rem; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    background: #f0efed; padding: 0.1em 0.35em; border-radius: 3px;
+  }
+  pre {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+    background: #1c1917; color: #fafaf9; padding: 1rem; border-radius: 8px;
+    overflow-x: auto; margin: 1rem 0; line-height: 1.5;
+  }
+
+  .formula {
+    text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 1rem;
+    padding: 0.75rem; background: #f5f5f4; border-radius: 8px; margin: 1rem 0;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem;
+  }
+  th, td { border: 1px solid #e7e5e4; padding: 0.4rem 0.6rem; text-align: center; }
+  th { background: #f5f5f4; font-weight: 600; }
+
+  .grid-ww {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    max-width: 360px;
+    margin: 1rem auto;
+  }
+  .grid-ww .cell {
+    aspect-ratio: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 2px solid #57534e; border-radius: 8px;
+    font-size: 0.75rem; font-weight: 500; padding: 4px;
+    background: white; text-align: center;
+  }
+  .grid-ww .cell .coord { font-size: 0.6rem; color: #a8a29e; }
+  .grid-ww .cell .content { font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
+  .cell.safe { background: #dcfce7; border-color: #86efac; }
+  .cell.pit { background: #fee2e2; border-color: #fca5a5; }
+  .cell.wumpus { background: #fef3c7; border-color: #fcd34d; }
+  .cell.gold { background: #fef9c3; border-color: #facc15; }
+  .cell.agent { border-color: #3b82f6; border-width: 3px; }
+  .cell.unknown { background: #f5f5f4; color: #a8a29e; }
+
+  .step-card {
+    background: white; border: 1px solid #e7e5e4; border-radius: 10px;
+    padding: 1.25rem; margin: 1.25rem 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .step-card h4 { margin-top: 0; color: #1c1917; }
+  .step-card .percept { color: #57534e; font-size: 0.85rem; margin: 0.25rem 0; }
+  .step-card .deduction { color: #166534; font-weight: 500; margin: 0.25rem 0; }
+
+  .quiz-box {
+    background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px;
+    padding: 1.5rem; margin: 2rem 0;
+  }
+  .quiz-box h3 { margin-top: 0; color: #166534; }
+  .quiz-question { font-weight: 500; margin-bottom: 0.75rem; }
+  .quiz-option {
+    display: block; margin: 0.35rem 0; padding: 0.5rem 0.75rem;
+    background: white; border: 1px solid #d1d5db; border-radius: 6px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .quiz-option:hover { border-color: #86efac; background: #f0fdf4; }
+  .quiz-option.selected { border-color: #22c55e; background: #dcfce7; font-weight: 500; }
+  .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 6px; display: none; }
+  .quiz-feedback.correct { display: block; background: #dcfce7; border: 1px solid #86efac; }
+  .quiz-feedback.wrong { display: block; background: #fee2e2; border: 1px solid #fca5a5; }
+
+  .key-takeaway {
+    background: #fffbeb; border-left: 4px solid #f59e0b;
+    padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0;
+  }
+  .key-takeaway strong { color: #b45309; }
+
+  .exam-tip {
+    background: #eff6ff; border-left: 4px solid #3b82f6;
+    padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0;
+  }
+  .exam-tip strong { color: #1e40af; }
+
+  .reference-card {
+    background: #faf5ff; border-left: 4px solid #a855f7;
+    padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0;
+  }
+
+  .btn-check {
+    background: #1c1917; color: white; border: none;
+    padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 500;
+    cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem;
+  }
+  .btn-check:hover { background: #292524; }
+</style>
+</head>
+<body>
+
+<h1>Wumpus World: Studi Kasus Lengkap</h1>
+<p class="subtitle">Lesson 3 &mdash; Dari Representasi sampai Inferensi, plus Prediksi Soal UAS</p>
+
+<div class="key-takeaway">
+<strong>Prerequisites:</strong> PL (Lesson 1) + FOL (Lesson 2). Sekarang kita gabungkan semua untuk studi kasus utuh.
+</div>
+
+<h2>1. Pengaturan Awal Dunia</h2>
+
+<p>Grid 4x4 Wumpus World dengan konfigurasi berikut:</p>
+
+<div class="grid-ww">
+  <!-- Row y=4 (paling atas) -->
+  <div class="cell pit"><span class="coord">[1,4]</span><br><span class="content">P</span></div>
+  <div class="cell safe"><span class="coord">[2,4]</span><br><span class="content">OK</span></div>
+  <div class="cell unknown"><span class="coord">[3,4]</span><br><span class="content">?</span></div>
+  <div class="cell unknown"><span class="coord">[4,4]</span><br><span class="content">?</span></div>
+  <!-- Row y=3 -->
+  <div class="cell wumpus"><span class="coord">[1,3]</span><br><span class="content">W</span></div>
+  <div class="cell gold"><span class="coord">[2,3]</span><br><span class="content">G</span></div>
+  <div class="cell unknown"><span class="coord">[3,3]</span><br><span class="content">?</span></div>
+  <div class="cell unknown"><span class="coord">[4,3]</span><br><span class="content">?</span></div>
+  <!-- Row y=2 -->
+  <div class="cell safe"><span class="coord">[1,2]</span><br><span class="content">OK</span></div>
+  <div class="cell safe"><span class="coord">[2,2]</span><br><span class="content">OK</span></div>
+  <div class="cell unknown"><span class="coord">[3,2]</span><br><span class="content">?</span></div>
+  <div class="cell unknown"><span class="coord">[4,2]</span><br><span class="content">?</span></div>
+  <!-- Row y=1 (paling bawah = start) -->
+  <div class="cell agent safe">A<br><span class="coord">[1,1]</span><br><span class="content">Start</span></div>
+  <div class="cell safe"><span class="coord">[2,1]</span><br><span class="content">OK</span></div>
+  <div class="cell pit"><span class="coord">[3,1]</span><br><span class="content">P</span></div>
+  <div class="cell unknown"><span class="coord">[4,1]</span><br><span class="content">?</span></div>
+</div>
+<p style="text-align:center; font-size:0.8rem; color:#78716c;">Start [1,1] di kiri bawah. x = kolom (kanan), y = baris (atas).</p>
+
+<p>Konfigurasi sebenarnya (belum diketahui agen):</p>
+<ul>
+  <li><strong>Wumpus</strong> di [1,3]</li>
+  <li><strong>Pit</strong> di [1,4] dan [3,1]</li>
+  <li><strong>Emas</strong> di [2,3]</li>
+  <li>Sisanya aman</li>
+</ul>
+
+<p>Tugas agen: mulai dari [1,1], ambil emas di [2,3], lalu kembali ke [1,1] dan Climb.</p>
+
+<h2>2. Perjalanan Lengkap Agen (8 Langkah)</h2>
+
+<div class="step-card">
+  <h4>Langkah 1: Agen di [1,1]</h4>
+  <p class="percept">Percept: [None, None, None, None, None]</p>
+  <p>Tidak ada Stench, Breeze, Glitter, Bump, Scream.</p>
+  <p class="deduction">Deduksi: [1,1] aman. Tidak ada Pit di [1,2] atau [2,1]. Tidak ada Wumpus di [1,2] atau [2,1].</p>
+  <p>Pilihan gerak: [1,2] atau [2,1]. Agen memilih [2,1] (kanan).</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 2: Agen di [2,1]</h4>
+  <p class="percept">Percept: [None, Breeze, None, None, None]</p>
+  <p>Ada Breeze! Berarti ada Pit di tetangga.</p>
+  <p class="deduction">Deduksi: Pit di [1,1] (aman), [2,2], atau [3,1]. Karena [1,1] aman → <strong>Pit di [2,2] ∨ [3,1]</strong>.</p>
+  <p>[1,1] sudah aman. Agen kembali ke [1,1] untuk coba jalur lain.</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 3: Kembali ke [1,1], lalu ke [1,2]</h4>
+  <p class="percept">Percept di [1,2]: [Stench, None, None, None, None]</p>
+  <p>Ada Stench! Berarti Wumpus di tetangga [1,2]: [1,1], [2,2], atau [1,3].</p>
+  <p class="deduction">[1,1] aman, [2,2] aman (langkah 2: kalau Wumpus di [2,2], harusnya ada Stench di [2,1], tapi tidak ada).</p>
+  <p class="deduction">Maka <strong>Wumpus PASTI di [1,3]</strong>.</p>
+  </p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 4: Kembali ke [1,1], lalu ke [2,1], lalu ke [2,2]</h4>
+  <p class="percept">Percept: [None, None, None, None, None]</p>
+  <p>[2,2] aman. Tidak ada bahaya.</p>
+  <p class="deduction">Konfirmasi: tidak ada Stench → Wumpus tidak di [1,3]? <strong>Tunggu!</strong> [2,2] tidak bertetangga dengan [1,3] (diagonal). Jadi [2,2] aman dari Wumpus.</p>
+  <p>Dari langkah 2: Pit di [2,2] ∨ [3,1]. [2,2] aman → <strong>PASTI Pit di [3,1]</strong>.</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 5: Agen di [2,3]</h4>
+  <p class="percept">Percept: [Stench, Breeze, Glitter, None, None]</p>
+  <p>Glitter! ADA EMAS! Langsung Grab.</p>
+  <p>Stench: Wumpus di tetangga — sudah diketahui Wumpus di [1,3].</p>
+  <p>Breeze: Pit di tetangga [2,3] — [1,3] (Wumpus, bukan Pit), [2,4], atau [3,3].</p>
+  <p class="deduction">Karena [1,3] bukan Pit → <strong>Pit di [2,4] ∨ [3,3]</strong>.</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 6: Kembali ke [2,2]</h4>
+  <p>Agen sudah ambil emas. Sekarang harus kembali ke [1,1] dan Climb.</p>
+  <p>Rute terpendek: [2,3] → [2,2] → [2,1] → [1,1].</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 7: Kembali ke [2,1]</h4>
+  <p>Semua kotak di jalur ini sudah diketahui aman.</p>
+</div>
+
+<div class="step-card">
+  <h4>Langkah 8: Kembali ke [1,1] → Climb</h4>
+  <p>Agen kembali ke start dan memanjat keluar.</p>
+  <p class="deduction"><strong>Score: +1000 (emas) - 8 (langkah) = +992</strong></p>
+</div>
+
+<h2>3. Representasi Pengetahuan (PL)</h2>
+
+<p>Ini yang paling sering diuji di UAS — bagaimana menyusun KB dari percept.</p>
+
+<h3>Symbols (Proposisi)</h3>
+<pre>
+Wᵢ,ⱼ  = Wumpus di [i,j]
+Pᵢ,ⱼ  = Pit di [i,j]
+Bᵢ,ⱼ  = Breeze di [i,j]
+Sᵢ,ⱼ  = Stench di [i,j]
+Gᵢ,ⱼ  = Gold/Glitter di [i,j]
+OKᵢ,ⱼ = Kotak [i,j] aman
+</pre>
+
+<h3>Knowledge Base (semakin bertambah tiap langkah)</h3>
+
+<pre>
+// === LANGKAH 1: Percept [1,1] ===
+¬B₁,₁ ∧ ¬S₁,₁      (tidak ada Breeze/Stench)
+B₁,₁ ⇔ P₁,₂ ∨ P₂,₁  (aturan Breeze universal)
+S₁,₁ ⇔ W₁,₂ ∨ W₂,₁  (aturan Stench universal)
+¬P₁,₁               (aturan game)
+¬W₁,₁               (aturan game)
+
+Deduksi dari ¬B₁,₁: ¬P₁,₂ ∧ ¬P₂,₁   (tidak ada Pit di tetangga)
+Deduksi dari ¬S₁,₁: ¬W₁,₂ ∧ ¬W₂,₁   (tidak ada Wumpus di tetangga)
+OK₁,₁, OK₁,₂, OK₂,₁
+
+// === LANGKAH 2: Percept [2,1] = Breeze ===
+B₂,₁
+B₂,₁ ⇔ P₁,₁ ∨ P₂,₂ ∨ P₃,₁
+
+Deduksi: P₁,₁ ∨ P₂,₂ ∨ P₃,₁
+Resolve dgn ¬P₁,₁: P₂,₂ ∨ P₃,₁       (Pit di [2,2] atau [3,1])
+</pre>
+
+<h3>Knowledge Base (lanjutan)</h3>
+
+<pre>
+// === LANGKAH 3: Percept [1,2] = Stench ===
+S₁,₂
+S₁,₂ ⇔ W₁,₁ ∨ W₂,₂ ∨ W₁,₃
+
+Deduksi: W₁,₁ ∨ W₂,₂ ∨ W₁,₃
+Resolve dgn ¬W₁,₁: W₂,₂ ∨ W₁,₃
+Resolve dgn ¬W₂,₂ (dari langkah 2, tidak ada Stench di [2,1] berarti tidak ada Wumpus di [2,2]):
+            ∴ W₁,₃                  (Wumpus PASTI di [1,3]!)
+
+// === LANGKAH 4: Percept [2,2] = None ===
+¬B₂,₂ ∧ ¬S₂,₂       (tidak ada apa-apa)
+Dari ¬B₂,₂: ¬P₁,₂ ∧ ¬P₂,₁ ∧ ¬P₂,₃ ∧ ¬P₃,₂
+Karena P₂,₂ ∨ P₃,₁ dan ¬P₂,₂ (terbukti aman):
+            ∴ P₃,₁                  (Pit PASTI di [3,1]!)
+
+// === LANGKAH 5: Percept [2,3] = Stench, Breeze, Glitter ===
+S₂,₃ ∧ B₂,₃ ∧ G₂,₃
+G₂,₃ → Gold di [2,3] → GRAB!
+B₂,₃ ⇔ P₁,₃ ∨ P₂,₂ ∨ P₂,₄ ∨ P₃,₃
+S₂,₃ ⇔ W₁,₃ ∨ W₂,₂ ∨ W₂,₄ ∨ W₃,₃
+
+Dari B₂,₃: P₁,₃ ∨ P₂,₂ ∨ P₂,₄ ∨ P₃,₃
+P₁,₃ = False (wumpus, bukan pit)
+P₂,₂ = False (sudah aman)
+∴ P₂,₄ ∨ P₃,₃                       (Pit di [2,4] atau [3,3])
+</pre>
+
+<h2>4. Representasi FOL (ringkas)</h2>
+
+<pre>
+// Predicates
+Wumpus(x,y), Pit(x,y), Breeze(x,y), Stench(x,y), Gold(x,y), Adjacent(x,y,a,b)
+
+// Domain Knowledge (hanya 4 aturan!)
+∀x,y Breeze(x,y) ⇔ ∃a,b Adjacent(x,y,a,b) ∧ Pit(a,b)
+∀x,y Stench(x,y) ⇔ ∃a,b Adjacent(x,y,a,b) ∧ Wumpus(a,b)
+∀x,y Gold(x,y) ⇔ Glitter(x,y)
+∀x,y Safe(x,y) ⇔ ¬Pit(x,y) ∧ ¬Wumpus(x,y)
+
+// Fakta percept
+¬Breeze(1,1), ¬Stench(1,1)
+Breeze(2,1)
+Stench(1,2)
+¬Breeze(2,2), ¬Stench(2,2)
+Breeze(2,3), Stench(2,3), Glitter(2,3)
+
+// Inferensi dengan Forward Chaining + Unifikasi
+// Dari Breeze(2,1) + aturan Breeze → ∃a,b Adjacent(2,1,a,b) ∧ Pit(a,b)
+// Unifikasi Adjacent(2,1,1,1), Adjacent(2,1,2,2), Adjacent(2,1,3,1)
+// + ¬Pit(1,1) → Pit(2,2) ∨ Pit(3,1)
+</pre>
+
+<h2>5. Tabel Perbandingan: PL vs FOL untuk Wumpus</h2>
+
+<table>
+  <tr><th>Aspek</th><th>PL (Propositional Logic)</th><th>FOL (First-Order Logic)</th></tr>
+  <tr><td>Jumlah aturan</td><td>16 aturan (∀ kotak)</td><td>4 aturan universal</td></tr>
+  <tr><td>Simbol</td><td>B₁,₂, P₂,₂, W₁,₃ (proposisi)</td><td>Breeze(1,2), Pit(2,2), Wumpus(1,3) (predikat)</td></tr>
+  <tr><td>Inferensi</td><td>Resolusi, tabel kebenaran</td><td>Unifikasi + GMP</td></tr>
+  <tr><td>Kelebihan</td><td>Sederhana, cocok untuk grid kecil</td><td>Ekspresif, ringkas, scalable</td></tr>
+  <tr><td>Kekurangan</td><td>Boros (banyak rules), tidak ekspresif</td><td>Semi-decidable, lebih kompleks</td></tr>
+</table>
+
+<h2>6. Tipe Soal UAS + Strategi Jawab</h2>
+
+<div class="exam-tip">
+<strong>📝 Tipe 1: Deduksi Posisi Wumpus/Pit</strong><br>
+Diberikan grid dan percept di beberapa kotak. Tentukan di mana Wumpus/Pit berada.<br>
+<strong>Strategi:</strong> Gambar grid, tulis percept tiap kotak. Cari kotak yang punya Stench (→ Wumpus di tetangga) atau Breeze (→ Pit di tetangga). Eliminasi pakai resolusi.
+</div>
+
+<div class="exam-tip">
+<strong>📝 Tipe 2: Menyusun Knowledge Base</strong><br>
+Diberikan skenario pergerakan agen. Tulis KB dalam PL atau FOL.<br>
+<strong>Strategi:</strong> Tentukan simbol proposisi/predikat dulu. Lalu tulis: (a) aturan dunia, (b) fakta percept, (c) hasil deduksi.
+</div>
+
+<div class="exam-tip">
+<strong>📝 Tipe 3: Inference Rules</strong><br>
+Tunjukkan langkah inferensi dari KB sampai kesimpulan.<br>
+<strong>Strategi:</strong> Tulis KB, lalu terapkan inference rules satu per satu (Modus Ponens, And Elim, Unit Resolution, dsb). Tiap langkas sebut rule yang dipakai.
+</div>
+
+<div class="exam-tip">
+<strong>📝 Tipe 4: PL vs FOL</strong><br>
+Jelaskan perbedaan, kelebihan, kekurangan.<br>
+<strong>Strategi:</strong> Fokus ke ekspresivitas (FOL punya quantifier, predikat), jumlah aturan, dan kompleksitas inferensi.
+</div>
+
+<h2>7. Cheat Sheet UAS</h2>
+
+<div class="reference-card">
+<strong>5 Inference Rules WAJIB Hafal:</strong><br>
+1. Modus Ponens: α⇒β, α ⊢ β<br>
+2. And Elimination: α∧β ⊢ α<br>
+3. And Introduction: α, β ⊢ α∧β<br>
+4. Unit Resolution: α∨β, ¬β ⊢ α<br>
+5. Resolution: α∨β, ¬β∨γ ⊢ α∨γ
+</div>
+
+<div class="reference-card">
+<strong>Langkah-Langkah Menyelesaikan Kasus Wumpus World (UAS):</strong><br><br>
+<strong>Step 1 — Setup Grid &amp; Symbols</strong><br>
+Gambar grid 4x4. Tentukan simbol proposisi:<br>
+Wᵢ,ⱼ = Wumpus, Pᵢ,ⱼ = Pit, Bᵢ,ⱼ = Breeze, Sᵢ,ⱼ = Stench, OKᵢ,ⱼ = Aman<br><br>
+
+<strong>Step 2 — Tulis Percept Tiap Langkah Agen</strong><br>
+Buat tabel: Langkah → Posisi → Percept → Tetangga<br>
+Contoh: Langkah 1 di [1,1] → [None,None,None,None,None]<br><br>
+
+<strong>Step 3 — Tulis Aturan Dunia (Domain Knowledge)</strong><br>
+Bᵢ,ⱼ ⇔ P di salah satu tetangga [i,j]<br>
+Sᵢ,ⱼ ⇔ W di salah satu tetangga [i,j]<br>
+Gᵢ,ⱼ ⇔ Emas di [i,j]<br><br>
+
+<strong>Step 4 — Aplikasikan Modus Ponens</strong><br>
+Jika ada Bᵢ,ⱼ = True → P di tetangga (disjunction)<br>
+Jika ada Sᵢ,ⱼ = True → W di tetangga (disjunction)<br>
+Jika ¬Bᵢ,ⱼ → ¬P di semua tetangga (konjungsi)<br>
+Jika ¬Sᵢ,ⱼ → ¬W di semua tetangga (konjungsi)<br><br>
+
+<strong>Step 5 — Eliminasi dengan Resolution</strong><br>
+Dari disjunction hasil Step 4, resolve dengan fakta yang sudah diketahui:<br>
+- Kotak yang sudah aman → coret dari disjunction<br>
+- Kotak yang sudah punya Wumpus → tidak mungkin Pit (dan sebaliknya)<br>
+- Sisa yang tidak bisa dieliminasi = lokasi yang mungkin<br><br>
+
+<strong>Step 6 — Jika Masih Ada Pilihan (∨), Cari Bukti Tambahan</strong><br>
+Cari percept lain yang bisa mengeliminasi pilihan yang tersisa.<br>
+Contoh: P₂,₂ ∨ P₃,₁. Jika nanti ¬B₂,₂ → ¬P₂,₂ → P₃,₁ (PASTI).<br><br>
+
+<strong>Step 7 — Tentukan Rute Aman</strong><br>
+Setelah tahu lokasi P dan W, tentukan jalur terpendek yang aman menuju emas → kembali ke start → Climb.
+</div>
+
+<div class="reference-card">
+<strong>Rules of Thumb Quantifier FOL:</strong><br>
+∀ biasanya pakai ⇒ (implikasi)<br>
+∃ biasanya pakai ∧ (konjungsi)
+</div>
+
+<div class="reference-card">
+<strong>Wumpus World Key Deductions:</strong><br>
+Stench → Wumpus di salah satu tetangga<br>
+Breeze → Pit di salah satu tetangga<br>
+Glitter → Emas di kotak ini → GRAB!<br>
+¬Stench → tidak ada Wumpus di tetangga (semua aman)<br>
+¬Breeze → tidak ada Pit di tetangga (semua aman)
+</div>
+
+<h2>8. Quiz Simulasi UAS</h2>
+
+<div class="quiz-box">
+  <h3>Soal 1: Deduksi</h3>
+  <p class="quiz-question">Agen di [2,3] mendapat percept [Stench, Breeze, None, None, None]. Tetangga [2,3] adalah [1,3], [2,2], [2,4], [3,3]. Jika [2,2] sudah diketahui aman, apa yang bisa disimpulkan?</p>
+  <div class="quiz-option" onclick="selectOption(this)">Wumpus di [2,4], Pit di [3,3]</div>
+  <div class="quiz-option" onclick="selectOption(this)">Wumpus di [1,3] atau [2,4] atau [3,3]; Pit di [1,3] atau [2,4] atau [3,3]</div>
+  <div class="quiz-option" onclick="selectOption(this)">Tidak bisa disimpulkan apa-apa</div>
+  <div class="quiz-option" onclick="selectOption(this)">Wumpus PASTI di [1,3]</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <h3>Soal 2: Representasi FOL</h3>
+  <p class="quiz-question">Mana representasi FOL yang benar untuk "Ada Breeze di kotak yang bertetangga dengan Pit"?</p>
+  <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Breeze(a,b)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∃x,y Pit(x,y) ∧ Breeze(x,y)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x,y Breeze(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Pit(a,b)</div>
+  <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ Breeze(adjacent(x,y))</div>
+  <button class="btn-check" onclick="checkQuiz(this, 0)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <h3>Soal 3: Inference Rules</h3>
+  <p class="quiz-question">Diketahui KB: {B₂,₁, B₂,₁ ⇒ P₁,₁ ∨ P₂,₂ ∨ P₃,₁, ¬P₁,₁}. Apa inference rule yang dipakai untuk mendapatkan P₂,₂ ∨ P₃,₁?</p>
+  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu And Elimination</div>
+  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Resolution</div>
+  <div class="quiz-option" onclick="selectOption(this)">Resolution lalu And Elimination</div>
+  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Unit Resolution</div>
+  <button class="btn-check" onclick="checkQuiz(this, 3)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="exam-tip">
+<strong>💡 Kunci jawaban:</strong><br>
+Soal 1: Wumpus di [1,3] atau [2,4] atau [3,3]; Pit di [1,3] atau [2,4] atau [3,3] — karena Stench dan Breeze datang bersamaan, kita belum bisa bedakan dari percept saja.<br>
+Soal 2: Opsi ∀x,y Pit(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Breeze(a,b) — "semua Pit pasti bikin Breeze di tetangganya."<br>
+Soal 3: Modus Ponens (dari B₂,₁ dan B₂,₁⇒...) lalu Unit Resolution (resolve hasilnya dengan ¬P₁,₁).
+</div>
+
+<div class="next-steps">
+<strong>Kesimpulan:</strong> Kamu sudah menyelesaikan semua materi dari PDF "1. Reasoning - KBA-a.pdf".
+</div>
+
+<p style="margin-top:2rem; font-size:0.85rem; color:#78716c;">
+<strong>Referensi:</strong> Suyanto (2007), Russel &amp; Norvig (2010), Manurung &amp; Krisnadhi (2007) UI.
+</p>
+
+<script>
+function selectOption(el) {
+  const parent = el.closest('.quiz-box');
+  parent.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function checkQuiz(btn, correctIdx) {
+  const parent = btn.closest('.quiz-box');
+  const selected = parent.querySelector('.quiz-option.selected');
+  const feedback = parent.querySelector('.quiz-feedback');
+
+  if (!selected) {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Pilih jawaban dulu!';
+    return;
+  }
+
+  const options = parent.querySelectorAll('.quiz-option');
+  let idx = -1;
+  options.forEach((opt, i) => { if (opt === selected) idx = i; });
+
+  if (idx === correctIdx) {
+    feedback.className = 'quiz-feedback correct';
+    feedback.textContent = 'Benar!';
+    selected.style.borderColor = '#22c55e';
+  } else {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Belum tepat.';
+    selected.style.borderColor = '#ef4444';
+  }
+}
+</script>
+
+</body>
+</html>

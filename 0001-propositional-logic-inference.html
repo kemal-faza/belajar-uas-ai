@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1: Propositional Logic &amp; Inferensi | Reasoning KBA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #fafaf9;
+    color: #1c1917;
+    line-height: 1.7;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  @media (max-width: 640px) { body { padding: 1rem 1rem 4rem; } }
+
+  /* Tufte-inspired sidebar */
+  .sidenote {
+    float: right;
+    clear: right;
+    margin-right: -35%;
+    width: 30%;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #57534e;
+    background: #f5f5f4;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 900px) {
+    .sidenote { float: none; width: 100%; margin: 1rem 0; }
+  }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  .subtitle { color: #78716c; font-size: 1rem; margin-bottom: 2rem; }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid #e7e5e4;
+  }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p, li { margin-bottom: 0.75rem; }
+  ul, ol { padding-left: 1.5rem; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: #f0efed;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    line-height: 1.5;
+  }
+
+  .formula {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    padding: 0.75rem;
+    background: #f5f5f4;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    border: 1px solid #e7e5e4;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+  }
+  th { background: #f5f5f4; font-weight: 600; }
+
+  .quiz-box {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  .quiz-box h3 { margin-top: 0; color: #166534; }
+  .quiz-question { font-weight: 500; margin-bottom: 0.75rem; }
+  .quiz-option {
+    display: block;
+    margin: 0.35rem 0;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-option:hover { border-color: #86efac; background: #f0fdf4; }
+  .quiz-option.selected { border-color: #22c55e; background: #dcfce7; font-weight: 500; }
+  .quiz-feedback {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    display: none;
+  }
+  .quiz-feedback.correct { display: block; background: #dcfce7; border: 1px solid #86efac; }
+  .quiz-feedback.wrong { display: block; background: #fee2e2; border: 1px solid #fca5a5; }
+
+  .key-takeaway {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .key-takeaway strong { color: #b45309; }
+
+  .next-steps {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 1rem 1.25rem;
+    margin: 2rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: #e7e5e4;
+    color: #57534e;
+  }
+  .tag.important { background: #fef3c7; color: #b45309; }
+
+  .btn-check {
+    background: #1c1917;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  .btn-check:hover { background: #292524; }
+</style>
+</head>
+<body>
+
+<h1>Propositional Logic &amp; Inferensi</h1>
+<p class="subtitle">Lesson 1 dari materi Reasoning KBA &mdash; Fondasi logika untuk UAS</p>
+
+<div class="key-takeaway">
+<strong>Prerequisites:</strong> Kamu sudah paham Wumpus World, Knowledge Representation (5 jenis, 4 teknik implementasi), dan definisi dasar logika (syntax vs semantics, propositional vs predicate logic).
+</div>
+
+<h2>1. Recap: Logika Itu Apa?</h2>
+<p>Logika adalah <strong>bahasa formal</strong> untuk merepresentasikan kalimat (sentence) yang memungkinkan kita menarik kalimat baru melalui <strong>inferensi</strong>.</p>
+
+<p>Ada 2 komponen utama:</p>
+<ul>
+  <li><strong>Syntax</strong> — aturan yang mendefinisikan kalimat yang sah secara struktur</li>
+  <li><strong>Semantics</strong> — aturan yang mendefinisikan <em>makna</em> kalimat atau kebenarannya di dunia nyata</li>
+</ul>
+
+<p>Contoh syntax PL (Propositional Logic):</p>
+<ul>
+  <li><code>P ∧ Q</code> ✅ valid (dua proposisi dihubungkan ∧)</li>
+  <li><code>∧ P Q</code> ❌ tidak valid (operator di posisi salah)</li>
+</ul>
+
+<h2>2. Propositional Logic &mdash; Syntax</h2>
+
+<p>Propositional Logic bekerja dengan <strong>proposisi</strong> — pernyataan yang bernilai True atau False.</p>
+
+<h3>Atomic Sentences (Proposisi Dasar)</h3>
+<ul>
+  <li>Simbol proposisi: <code>P, Q, R, W₁,₂, P₃,₁, ...</code></li>
+  <li>Nilai kebenaran: <code>True, False</code></li>
+  <li>Contoh: <code>W₁,₃</code> = "Wumpus ada di [1,3]"</li>
+</ul>
+
+<h3>Logical Connectives (Penghubung Logika)</h3>
+
+<table>
+  <tr>
+    <th>Simbol</th>
+    <th>Nama</th>
+    <th>Baca</th>
+    <th>Contoh</th>
+  </tr>
+  <tr>
+    <td><code>¬</code></td>
+    <td>Negation</td>
+    <td>"not" / "tidak"</td>
+    <td><code>¬W₁,₃</code> = Wumpus tidak di [1,3]</td>
+  </tr>
+  <tr>
+    <td><code>∧</code></td>
+    <td>Conjunction</td>
+    <td>"and" / "dan"</td>
+    <td><code>W₁,₃ ∧ P₃,₁</code> = Wumpus di [1,3] dan Pit di [3,1]</td>
+  </tr>
+  <tr>
+    <td><code>∨</code></td>
+    <td>Disjunction</td>
+    <td>"or" / "atau"</td>
+    <td><code>P₂,₂ ∨ P₃,₁</code> = Pit di [2,2] atau [3,1]</td>
+  </tr>
+  <tr>
+    <td><code>⇒</code></td>
+    <td>Implication</td>
+    <td>"implies" / "jika-maka"</td>
+    <td><code>B₂,₁ ⇒ (P₁,₁ ∨ P₂,₂ ∨ P₃,₁)</code></td>
+  </tr>
+  <tr>
+    <td><code>⇔</code></td>
+    <td>Biconditional</td>
+    <td>"iff" / "jika dan hanya jika"</td>
+    <td><code>B₂,₁ ⇔ (P₁,₁ ∨ P₂,₂ ∨ P₃,₁)</code></td>
+  </tr>
+</table>
+
+<div class="sidenote">
+<strong>Ingat:</strong> Di Wumpus World, Breeze artinya ada Pit di kotak tetangga. Makanya <code>B₂,₁ ⇔ (P₁,₁ ∨ P₂,₂ ∨ P₃,₁)</code> &mdash; Breeze di [2,1] benar <em>jika dan hanya jika</em> ada Pit di salah satu tetangganya.
+</div>
+
+<h2>3. Propositional Logic &mdash; Semantics</h2>
+
+<p>Semantics mendefinisikan kapan suatu kalimat bernilai <strong>True</strong>. Ini ditentukan oleh <strong>truth values</strong> dari atomic propositions dan aturan logical connectives.</p>
+
+<h3>Truth Table (Tabel Kebenaran)</h3>
+
+<table>
+  <tr>
+    <th>P</th><th>Q</th><th>¬P</th><th>P ∧ Q</th><th>P ∨ Q</th><th>P ⇒ Q</th><th>P ⇔ Q</th>
+  </tr>
+  <tr><td>F</td><td>F</td><td>T</td><td>F</td><td>F</td><td>T</td><td>T</td></tr>
+  <tr><td>F</td><td>T</td><td>T</td><td>F</td><td>T</td><td>T</td><td>F</td></tr>
+  <tr><td>T</td><td>F</td><td>F</td><td>F</td><td>T</td><td>F</td><td>F</td></tr>
+  <tr><td>T</td><td>T</td><td>F</td><td>T</td><td>T</td><td>T</td><td>T</td></tr>
+</table>
+
+<div class="key-takeaway">
+<strong>Perhatian khusus untuk UAS:</strong> Implication <code>P ⇒ Q</code> hanya False saat <strong>P True dan Q False</strong>. Sisanya True! Ini sering muncul di soal.
+</div>
+
+<h2>4. Model dan Entailment</h2>
+
+<ul>
+  <li><strong>Model</strong> = sebuah "dunia" di mana setiap proposisi punya nilai (True/False). Contoh: model untuk <code>W₁,₃</code> dan <code>P₃,₁</code> punya 4 kemungkinan kombinasi.</li>
+  <li><strong>Entailment (⊨)</strong> — <code>KB ⊨ α</code> artinya: di <em>semua</em> model dimana Knowledge Base (KB) True, α juga True. Ini adalah fondasi inferensi!</li>
+</ul>
+
+<div class="formula">
+KB ⊨ α &harr; (KB ⇒ α) valid <br>
+<span style="font-size: 0.85rem; color: #78716c;">"Jika KB benar, maka α pasti benar"</span>
+</div>
+
+<h2>5. Inferensi pada PL</h2>
+
+<p>Ada <strong>3 pendekatan</strong> inferensi:</p>
+
+<h3>A. Enumeration (Tabel Kebenaran)</h3>
+<p>Cara paling sederhana: cek semua kemungkinan model. Cocok untuk 2-3 proposisi, tapi <strong>tidak feasible</strong> untuk banyak proposisi (2<sup>n</sup> model).</p>
+
+<h3>B. Inference Rules</h3>
+<p>Aturan-aturan yang memungkinkan kita menarik kesimpulan tanpa enumerasi semua model.</p>
+
+<table>
+  <tr>
+    <th>Rule</th>
+    <th>Bentuk</th>
+    <th>Contoh</th>
+  </tr>
+  <tr>
+    <td><strong>Modus Ponens</strong></td>
+    <td><code>α ⇒ β, α &vdash; β</code></td>
+    <td>"Jika ada Breeze maka ada Pit, ada Breeze → simpulkan: ada Pit"</td>
+  </tr>
+  <tr>
+    <td><strong>And Elimination</strong></td>
+    <td><code>α ∧ β &vdash; α</code></td>
+    <td><code>W₁,₃ ∧ P₃,₁ → W₁,₃</code></td>
+  </tr>
+  <tr>
+    <td><strong>And Introduction</strong></td>
+    <td><code>α, β &vdash; α ∧ β</code></td>
+    <td>Dari dua fakta terpisah, gabung jadi satu</td>
+  </tr>
+  <tr>
+    <td><strong>Or Introduction</strong></td>
+    <td><code>α &vdash; α ∨ β</code></td>
+    <td>Dari <code>P₂,₂</code> bisa simpulkan <code>P₂,₂ ∨ P₃,₁</code></td>
+  </tr>
+  <tr>
+    <td><strong>Unit Resolution</strong></td>
+    <td><code>α ∨ β, ¬β &vdash; α</code></td>
+    <td>"Pit di [2,2] atau [3,1], bukan [2,2] → Pit di [3,1]"</td>
+  </tr>
+  <tr>
+    <td><strong>Resolution</strong></td>
+    <td><code>α ∨ β, ¬β ∨ γ &vdash; α ∨ γ</code></td>
+    <td>Bentuk umum dari Unit Resolution</td>
+  </tr>
+</table>
+
+<h3>C. Horn Form &amp; Modus Ponens</h3>
+<p><strong>Horn clause</strong> = clause yang punya <strong>paling banyak satu literal positif</strong>. Contoh:</p>
+<ul>
+  <li><code>¬B₂,₁ ∨ P₁,₁ ∨ P₂,₂ ∨ P₃,₁</code> — bentuk setara dengan <code>B₂,₁ ⇒ (P₁,₁ ∨ P₂,₂ ∨ P₃,₁)</code></li>
+  <li>Bisa ditulis sebagai: <code>(P₁,₁ ∧ P₂,₂ ⇒ P₃,₁)</code></li>
+</ul>
+
+<p>Inferensi dengan Horn Form efisien pakai <strong>Forward Chaining</strong> atau <strong>Backward Chaining</strong> — linear time!</p>
+
+<h3>D. Resolusi pada CNF</h3>
+<p>Langkah-langkah:</p>
+<ol>
+  <li>Ubah semua kalimat ke <strong>Conjunctive Normal Form (CNF)</strong> — kumpulan clause yang di-<code>∧</code></li>
+  <li>Setiap clause adalah disjunction (<code>∨</code>) dari literal</li>
+  <li>Terapkan <strong>resolution rule</strong>: <code>(ℓ₁ ∨ ... ∨ ℓᵢ ∨ ... ∨ ℓₙ), (m₁ ∨ ... ∨ ¬ℓᵢ ∨ ... ∨ mₖ) &vdash; (ℓ₁ ∨ ... ∨ ℓₙ ∨ m₁ ∨ ... ∨ mₖ)</code></li>
+  <li>Ulang sampai dapat <code>False</code> (kontradiksi) — bukti bahwa KB ⊨ α</li>
+</ol>
+
+<div class="sidenote">
+<strong>CNF vs Horn:</strong> Resolusi butuh waktu eksponensial di worst case. Horn Form bisa linear. Tapi tidak semua kalimat bisa diubah ke Horn Form.
+</div>
+
+<h2>6. Studi Kasus: Wumpus World</h2>
+
+<p>Misalkan agen di [1,1] tidak mendeteksi apa-apa. Lalu bergerak ke [2,1] dan mendeteksi <strong>Breeze</strong>.</p>
+
+<p><strong>Knowledge Base:</strong></p>
+<pre>
+R₁ : ¬B₁,₁                    (tidak ada Breeze di [1,1])
+R₂ : B₁,₁ ⇔ (P₁,₂ ∨ P₂,₁)    (Breeze di [1,1] → Pit di tetangga)
+R₃ : ¬P₁,₁                    (tidak ada Pit di start — aturan game)
+R₄ : B₂,₁                     (ada Breeze di [2,1])
+R₅ : B₂,₁ ⇔ (P₁,₁ ∨ P₂,₂ ∨ P₃,₁)
+</pre>
+
+<p><strong>Inferensi dengan Resolution:</strong></p>
+<pre>
+Dari R₅ dan B₂,₁:  P₁,₁ ∨ P₂,₂ ∨ P₃,₁        (Breeze → ada Pit di tetangga)
+Dari R₃:            ¬P₁,₁                      (tidak ada Pit di start)
+Resolve:            P₂,₂ ∨ P₃,₁                (Pit di [2,2] atau [3,1])
+</pre>
+
+<p>Ini persis seperti reasoning yang kamu lihat di gambar slides sebelumnya!</p>
+
+<h2>7. Quiz: Cek Pemahamanmu</h2>
+
+<div class="quiz-box" id="quiz1">
+  <h3>Quiz 1: Implication</h3>
+  <p class="quiz-question">Kapan <code>P ⇒ Q</code> bernilai False?</p>
+  <div class="quiz-option" onclick="selectOption(this)">Saat P = False, Q = True</div>
+  <div class="quiz-option" onclick="selectOption(this)">Saat P = True, Q = False</div>
+  <div class="quiz-option" onclick="selectOption(this)">Saat P = True, Q = True</div>
+  <div class="quiz-option" onclick="selectOption(this)">Saat P = False, Q = False</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box" id="quiz2">
+  <h3>Quiz 2: Entailment</h3>
+  <p class="quiz-question">Jika KB = {W₁,₃ ⇒ P₂,₂}, apakah KB ⊨ ¬W₁,₃?</p>
+  <div class="quiz-option" onclick="selectOption(this)">Ya, karena W₁,₃ ⇒ P₂,₂ berarti W₁,₃ pasti False</div>
+  <div class="quiz-option" onclick="selectOption(this)">Tidak, karena W₁,₃ bisa True selama P₂,₂ juga True</div>
+  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<div class="quiz-box" id="quiz3">
+  <h3>Quiz 3: Inference Rules</h3>
+  <p class="quiz-question">Dari fakta <code>(P₂,₂ ∨ P₃,₁)</code> dan <code>¬P₂,₂</code>, apa yang bisa kamu simpulkan?</p>
+  <div class="quiz-option" onclick="selectOption(this)">P₂,₂</div>
+  <div class="quiz-option" onclick="selectOption(this)">P₃,₁ ∧ ¬P₂,₂</div>
+  <div class="quiz-option" onclick="selectOption(this)">P₃,₁</div>
+  <div class="quiz-option" onclick="selectOption(this)">Tidak bisa menyimpulkan apa-apa</div>
+  <button class="btn-check" onclick="checkQuiz(this, 2)">Cek Jawaban</button>
+  <div class="quiz-feedback"></div>
+</div>
+
+<h2>8. Ringkasan</h2>
+
+<ul>
+  <li><strong>Syntax PL</strong>: atomic sentences (P, Q, R) + 5 connectives (¬, ∧, ∨, ⇒, ⇔)</li>
+  <li><strong>Semantics PL</strong>: ditentukan oleh truth values + truth tables</li>
+  <li><strong>Entailment (⊨)</strong>: KB ⊨ α jika α True di semua model dimana KB True</li>
+  <li><strong>Inferensi</strong>: tabel kebenaran (eksponensial), inference rules (Modus Ponens, And Elim, Resolution), Horn Form (linear)</li>
+</ul>
+
+<div class="next-steps">
+<strong>Selanjutnya:</strong> Lesson 2 akan membahas <strong>First-Order Logic (FOL)</strong> dan bagaimana Wumpus World direpresentasikan dengan FOL. Tapi sebelum lanjut, pastikan kamu sudah nyaman dengan materi di sini.
+</div>
+
+<p style="margin-top:2rem; font-size:0.85rem; color:#78716c;">
+<strong>Referensi:</strong> Suyanto (2007), Russel &amp; Norvig (2010), materi kuliah IKI30230 UI.
+</p>
+
+<script>
+function selectOption(el) {
+  const parent = el.closest('.quiz-box');
+  parent.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function checkQuiz(btn, correctIdx) {
+  const parent = btn.closest('.quiz-box');
+  const selected = parent.querySelector('.quiz-option.selected');
+  const feedback = parent.querySelector('.quiz-feedback');
+
+  if (!selected) {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Pilih salah satu jawaban dulu!';
+    return;
+  }
+
+  const options = parent.querySelectorAll('.quiz-option');
+  let idx = -1;
+  options.forEach((opt, i) => { if (opt === selected) idx = i; });
+
+  if (idx === correctIdx) {
+    feedback.className = 'quiz-feedback correct';
+    feedback.textContent = 'Benar! +1 buat pemahamanmu.';
+    selected.style.borderColor = '#22c55e';
+  } else {
+    feedback.className = 'quiz-feedback wrong';
+    feedback.textContent = 'Belum tepat. Coba lihat lagi tabel kebenaran atau inference rules di atas.';
+    selected.style.borderColor = '#ef4444';
+  }
+}
+</script>
+
+</body>
+</html>
