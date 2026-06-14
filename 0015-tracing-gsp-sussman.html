@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 15: Tracing GSP, Sussman Anomaly &amp; Kelemahan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #4f46e5; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #4f46e5; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #e0e7ff;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #4f46e5;
+    background: #eef2ff;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1e1b4b;
+    color: #e0e7ff;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85em;
+  }
+  th {
+    background: #4f46e5;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #eef2ff; }
+  td.center { text-align: center; font-weight: 600; }
+  td.predicate { font-family: 'Source Code Pro', monospace; font-weight: 600; color: #4338ca; }
+  td.action { font-family: 'Source Code Pro', monospace; color: #16a34a; font-weight: 600; }
+  td.suboptimal { color: #dc2626; font-weight: 600; }
+  td.optimal { color: #16a34a; font-weight: 600; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Step Header --- */
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .step-num {
+    background: #4f46e5;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #4f46e5;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #eef2ff;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #c7d2fe;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #e0e7ff; border-color: #4f46e5; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 15: Tracing GSP &amp; Sussman Anomaly</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Studi kasus lengkap: Kasus Normal (4 langkah optimal) + Sussman Anomaly (10 vs 6 langkah) + kelemahan GSP</p>
+
+<!-- ====================================================================== -->
+<h2>1. Kasus 1: Konfigurasi Awal</h2>
+
+<p>Mari kita telusuri algoritma GSP pada kasus lengkap dari PDF. Ini adalah kasus "normal" di mana GSP bisa menghasilkan rencana optimal.</p>
+
+<h3>1.1 Initial State (Keadaan Awal)</h3>
+<div class="example-box">
+<strong>Initial State Kasus 1</strong>
+<p>Balok B di atas A. Balok C di meja. Balok D di meja. Lengan kosong.</p>
+<div class="formula" style="text-align:left; padding:0.6rem 1rem;">
+ONTABLE(A) &and; ONTABLE(C) &and; ONTABLE(D) &and; ON(B,A) &and; ARMEMPTY
+</div>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">
+(Implisit: CLEAR(B), CLEAR(C), CLEAR(D) karena tidak ada balok di atasnya.)
+</p>
+</div>
+
+<h3>1.2 Goal State (Keadaan Akhir)</h3>
+<div class="example-box">
+<strong>Goal State Kasus 1</strong>
+<p>Balok C ditumpuk di atas A. Balok B ditumpuk di atas D. (A dan D tetap di meja, lengan kosong.)</p>
+<div class="formula" style="text-align:left; padding:0.6rem 1rem;">
+ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; ON(C,A) &and; ARMEMPTY
+</div>
+</div>
+
+<div class="plot">
+  <svg viewBox="0 0 700 280" width="100%" style="max-width:700px;">
+    <!-- Initial State (left side) -->
+    <text x="175" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#4f46e5">INITIAL STATE</text>
+    <line x1="20" y1="220" x2="330" y2="220" stroke="#52525b" stroke-width="2"/>
+    <line x1="20" y1="224" x2="330" y2="224" stroke="#52525b" stroke-width="4"/>
+    <text x="175" y="250" text-anchor="middle" font-size="13" fill="#52525b" font-style="italic">Meja</text>
+
+    <!-- B on A -->
+    <rect x="60" y="170" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="85" y="202" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">A</text>
+    <rect x="60" y="120" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="85" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">B</text>
+
+    <!-- C on table -->
+    <rect x="160" y="170" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="185" y="202" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">C</text>
+
+    <!-- D on table -->
+    <rect x="260" y="170" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="285" y="202" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">D</text>
+
+    <!-- Arrow -->
+    <text x="350" y="180" text-anchor="middle" font-size="32" fill="#4f46e5" font-weight="700">&rarr;</text>
+
+    <!-- Goal State (right side) -->
+    <text x="525" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#16a34a">GOAL STATE</text>
+    <line x1="370" y1="220" x2="680" y2="220" stroke="#52525b" stroke-width="2"/>
+    <line x1="370" y1="224" x2="680" y2="224" stroke="#52525b" stroke-width="4"/>
+    <text x="525" y="250" text-anchor="middle" font-size="13" fill="#52525b" font-style="italic">Meja</text>
+
+    <!-- A on table (C on A above) -->
+    <rect x="410" y="170" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="435" y="202" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">A</text>
+    <rect x="410" y="120" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="435" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">C</text>
+
+    <!-- D on table (B on D above) -->
+    <rect x="560" y="170" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="585" y="202" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">D</text>
+    <rect x="560" y="120" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="585" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">B</text>
+  </svg>
+  <div class="plot-caption">Gambar 1. Konfigurasi Kasus 1: dari "B|A, C, D" menjadi "C|A, B|D" (A dan D di meja).</div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Tracing Step-by-Step GSP</h2>
+
+<p>Berikut tracing lengkap 8 langkah (4 eksekusi aksi final). Perhatikan evolusi Stack dan Current-state di setiap langkah.</p>
+
+<h3>Langkah 1: Inisialisasi Stack</h3>
+<div class="info-box">
+<strong>Stack Awal</strong>
+<p>Stack diisi dengan Goal State, dipecah per sub-goal. Compound goal di bawah, sub-goal individual di atas.</p>
+<div class="formula" style="text-align:left; font-size:0.85em;">
+[Atas]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON(C,A)<br>
+[Tengah]&nbsp;&nbsp;&nbsp;&nbsp;ON(B,D)<br>
+[Bawah]&nbsp;&nbsp;&nbsp;&nbsp;ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; ON(C,A) &and; ARMEMPTY
+</div>
+</div>
+
+<h3>Langkah 2: Evaluasi ON(C,A)</h3>
+<p>Top of stack: <code>ON(C,A)</code> (sub-goal). Belum terpenuhi. Cari operator dengan Add list mengandung <code>ON(C,A)</code>: <strong>STACK(C,A)</strong>.</p>
+<p>Push STACK(C,A), lalu push prekondisinya: <code>CLEAR(A) &and; HOLDING(C)</code>.</p>
+<div class="info-box">
+<strong>Stack setelah Langkah 2</strong>
+<div class="formula" style="text-align:left; font-size:0.85em;">
+STACK(C,A)<br>
+CLEAR(A)<br>
+HOLDING(C)<br>
+[... compound goal &amp; ON(B,D) &amp; ON(C,A) di bawah ...]
+</div>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">Evaluasi <code>CLEAR(A)</code>: FALSE (karena B di atas A). Butuh <strong>UNSTACK(B,A)</strong>. Push prekondisinya: <code>ON(B,A) &and; CLEAR(B) &and; ARMEMPTY</code>. Ketiganya TRUE di Current-state.</p>
+</div>
+
+<h3>Langkah 3: Eksekusi Aksi 1 &mdash; UNSTACK(B,A)</h3>
+<table>
+  <tr><th>Stack</th><th>Current-State</th><th>Aksi</th></tr>
+  <tr>
+    <td class="predicate">UNSTACK(B,A) &larr; TOP</td>
+    <td class="predicate">ONTABLE(A) &and; ONTABLE(C) &and; ONTABLE(D) &and; <strong>HOLDING(B)</strong></td>
+    <td class="action">UNSTACK(B,A) &rarr; PLAN</td>
+  </tr>
+</table>
+<p>Update Current-state: Hapus <code>ON(B,A) &and; ARMEMPTY</code> dari state, tambah <code>HOLDING(B) &and; CLEAR(A)</code>. Lengan sekarang pegang B.</p>
+<p><strong>Rencana Solusi = [ UNSTACK(B,A) ]</strong></p>
+
+<h3>Langkah 4: Evaluasi HOLDING(C)</h3>
+<p>Top of stack sekarang <code>HOLDING(C)</code>. Butuh operator: <strong>PICKUP(C)</strong>. Prekondisi: <code>ONTABLE(C) &and; CLEAR(C) &and; ARMEMPTY</code>.</p>
+<p><code>ONTABLE(C) &and; CLEAR(C)</code> TRUE. Tapi <code>ARMEMPTY</code> FALSE (lengan pegang B)!</p>
+<p>Solusi: harus STACK(B,D) dulu (karena goal <code>ON(B,D)</code> ada di bawah stack). Pre: <code>CLEAR(D) &and; HOLDING(B)</code>. TRUE.</p>
+
+<h3>Langkah 5: Eksekusi Aksi 2 &mdash; STACK(B,D)</h3>
+<table>
+  <tr><th>Stack</th><th>Current-State</th><th>Aksi</th></tr>
+  <tr>
+    <td class="predicate">STACK(B,D) &larr; TOP</td>
+    <td class="predicate">ONTABLE(A) &and; ONTABLE(C) &and; ONTABLE(D) &and; <strong>ON(B,D)</strong> &and; <strong>ARMEMPTY</strong></td>
+    <td class="action">STACK(B,D) &rarr; PLAN</td>
+  </tr>
+</table>
+<p>Update Current-state: Hapus <code>HOLDING(B) &and; CLEAR(D)</code>, tambah <code>ON(B,D) &and; ARMEMPTY</code>. Lengan kosong kembali.</p>
+<p><strong>Rencana Solusi = [ UNSTACK(B,A), STACK(B,D) ]</strong></p>
+
+<h3>Langkah 6: Eksekusi Aksi 3 &mdash; PICKUP(C)</h3>
+<p>Sekarang <code>ONTABLE(C) &and; CLEAR(C) &and; ARMEMPTY</code> semua TRUE. Bisa eksekusi PICKUP(C).</p>
+<table>
+  <tr><th>Stack</th><th>Current-State</th><th>Aksi</th></tr>
+  <tr>
+    <td class="predicate">PICKUP(C) &larr; TOP</td>
+    <td class="predicate">ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; <strong>HOLDING(C)</strong></td>
+    <td class="action">PICKUP(C) &rarr; PLAN</td>
+  </tr>
+</table>
+<p><strong>Rencana Solusi = [ UNSTACK(B,A), STACK(B,D), PICKUP(C) ]</strong></p>
+
+<h3>Langkah 7: Eksekusi Aksi 4 (Final) &mdash; STACK(C,A)</h3>
+<p>Prekondisi <code>CLEAR(A) &and; HOLDING(C)</code> TRUE. Eksekusi STACK(C,A).</p>
+<table>
+  <tr><th>Stack</th><th>Current-State</th><th>Aksi</th></tr>
+  <tr>
+    <td class="predicate">STACK(C,A) &larr; TOP</td>
+    <td class="predicate">ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; <strong>ON(C,A)</strong> &and; <strong>ARMEMPTY</strong></td>
+    <td class="action">STACK(C,A) &rarr; PLAN</td>
+  </tr>
+</table>
+<p><strong>Rencana Solusi = [ UNSTACK(B,A), STACK(B,D), PICKUP(C), STACK(C,A) ]</strong></p>
+
+<h3>Langkah 8: Verifikasi Sukses</h3>
+<div class="def-box">
+<strong>Hasil Akhir Kasus 1</strong>
+<p>Current-state: <code>ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; ON(C,A) &and; ARMEMPTY</code></p>
+<p>Goal-state: <code>ONTABLE(A) &and; ONTABLE(D) &and; ON(B,D) &and; ON(C,A) &and; ARMEMPTY</code></p>
+<p style="color:#16a34a; font-weight:700; margin-top:0.5rem; margin-bottom:0;">&check; SAMA! Perencanaan SUKSES dengan 4 langkah aksi.</p>
+</div>
+
+<div class="plot">
+  <svg viewBox="0 0 700 80" width="100%" style="max-width:700px;">
+    <text x="20" y="30" font-size="14" font-weight="700" fill="#4f46e5">RENCANA AKSI FINAL:</text>
+    <rect x="20" y="42" width="140" height="28" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2" rx="4"/>
+    <text x="90" y="61" text-anchor="middle" font-size="13" font-weight="600" fill="#1e1b4b">UNSTACK(B,A)</text>
+    <text x="170" y="61" text-anchor="middle" font-size="18" fill="#52525b">&rarr;</text>
+    <rect x="185" y="42" width="130" height="28" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2" rx="4"/>
+    <text x="250" y="61" text-anchor="middle" font-size="13" font-weight="600" fill="#1e1b4b">STACK(B,D)</text>
+    <text x="325" y="61" text-anchor="middle" font-size="18" fill="#52525b">&rarr;</text>
+    <rect x="340" y="42" width="115" height="28" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2" rx="4"/>
+    <text x="397" y="61" text-anchor="middle" font-size="13" font-weight="600" fill="#1e1b4b">PICKUP(C)</text>
+    <text x="465" y="61" text-anchor="middle" font-size="18" fill="#52525b">&rarr;</text>
+    <rect x="480" y="42" width="130" height="28" fill="#16a34a" stroke="#15803d" stroke-width="2" rx="4"/>
+    <text x="545" y="61" text-anchor="middle" font-size="13" font-weight="700" fill="white">STACK(C,A)</text>
+  </svg>
+  <div class="plot-caption">Gambar 2. 4 langkah optimal Kasus 1. Aksi terakhir ditandai hijau (penyelesaian goal akhir).</div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Kasus 2: Sussman Anomaly</h2>
+
+<div class="def-box">
+<strong>Sussman Anomaly</strong>
+<p>Kasus klasik dalam AI Planning yang mendemonstrasikan keterbatasan GSP untuk masalah dengan <strong>interaksi sub-goal yang saling merusak</strong>. Dari satu konfigurasi awal, GSP bisa menghasilkan 2 rencana dengan panjang sangat berbeda tergantung urutan evaluasi sub-goal.</p>
+</div>
+
+<h3>3.1 Konfigurasi</h3>
+<div class="info-box">
+<strong>Initial State &amp; Goal State</strong>
+<div class="formula" style="text-align:left; padding:0.5rem 1rem;">
+<strong>Initial:</strong> ONTABLE(A) &and; ONTABLE(B) &and; ON(C,A) &and; ARMEMPTY
+</div>
+<div class="formula" style="text-align:left; padding:0.5rem 1rem;">
+<strong>Goal:</strong> ONTABLE(C) &and; ON(B,C) &and; ON(A,B)
+</div>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">
+Tumpukan 3 tingkat: A di atas B, B di atas C, C di meja. Lengan kosong.
+</p>
+</div>
+
+<div class="plot">
+  <svg viewBox="0 0 700 240" width="100%" style="max-width:700px;">
+    <text x="175" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#4f46e5">INITIAL</text>
+    <line x1="20" y1="180" x2="330" y2="180" stroke="#52525b" stroke-width="2"/>
+    <line x1="20" y1="184" x2="330" y2="184" stroke="#52525b" stroke-width="4"/>
+    <text x="175" y="210" text-anchor="middle" font-size="13" fill="#52525b" font-style="italic">Meja</text>
+
+    <rect x="60" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="85" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">A</text>
+    <rect x="60" y="80" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="85" y="112" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">C</text>
+
+    <rect x="220" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="245" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">B</text>
+
+    <text x="350" y="135" text-anchor="middle" font-size="32" fill="#4f46e5" font-weight="700">&rarr;</text>
+
+    <text x="525" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#16a34a">GOAL</text>
+    <line x1="370" y1="180" x2="680" y2="180" stroke="#52525b" stroke-width="2"/>
+    <line x1="370" y1="184" x2="680" y2="184" stroke="#52525b" stroke-width="4"/>
+    <text x="525" y="210" text-anchor="middle" font-size="13" fill="#52525b" font-style="italic">Meja</text>
+
+    <rect x="460" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="485" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">C</text>
+    <rect x="460" y="80" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="485" y="112" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">B</text>
+    <rect x="460" y="30" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="485" y="62" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">A</text>
+  </svg>
+  <div class="plot-caption">Gambar 3. Sussman Anomaly: dari "C|A, B" (2 balok bertingkat + 1 di meja) menjadi menara 3 tingkat A|B|C.</div>
+</div>
+
+<h3>3.2 Skenario 1 &mdash; Evaluasi ON(A,B) Dulu (SUBOPTIMAL: 10 Langkah)</h3>
+
+<p>GSP memilih sub-goal <code>ON(A,B)</code> lebih dulu. Eksekusi:</p>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Aksi</th>
+    <th>Alasan / Efek</th>
+  </tr>
+  <tr><td class="center">1</td><td class="action">UNSTACK(C,A)</td><td>Bongkar C dari A (A harus CLEAR untuk STACK(A,B)).</td></tr>
+  <tr><td class="center">2</td><td class="action">PUTDOWN(C)</td><td>Taruh C ke meja supaya ARMEMPTY.</td></tr>
+  <tr><td class="center">3</td><td class="action">PICKUP(A)</td><td>Ambil A dari meja.</td></tr>
+  <tr><td class="center">4</td><td class="action">STACK(A,B)</td><td>Letakkan A di atas B. <span class="suboptimal">[Goal 1/3 terpenuhi.]</span></td></tr>
+  <tr><td class="center">5</td><td class="action">UNSTACK(A,B)</td><td><span class="suboptimal">A harus dipindah lagi! B belum di atas C, dan B sedang tidak clear (A di atasnya).</span></td></tr>
+  <tr><td class="center">6</td><td class="action">PUTDOWN(A)</td><td>Taruh A ke meja supaya ARMEMPTY.</td></tr>
+  <tr><td class="center">7</td><td class="action">PICKUP(B)</td><td>Ambil B dari meja.</td></tr>
+  <tr><td class="center">8</td><td class="action">STACK(B,C)</td><td>Letakkan B di atas C. <span class="suboptimal">[Goal 2/3 terpenuhi.]</span></td></tr>
+  <tr><td class="center">9</td><td class="action">PICKUP(A)</td><td>Ambil A dari meja (lagi).</td></tr>
+  <tr><td class="center">10</td><td class="action">STACK(A,B)</td><td>Letakkan A di atas B. <span class="suboptimal">[Goal 3/3 terpenuhi.]</span></td></tr>
+</table>
+
+<p style="color:#dc2626; font-weight:700;">Total: 10 langkah. A dibongkar dari B (langkah 4) lalu disusun ulang (langkah 10) &mdash; inefisiensi!</p>
+
+<h3>3.3 Skenario 2 &mdash; Evaluasi ON(B,C) Dulu (OPTIMAL: 6 Langkah)</h3>
+
+<p>GSP memilih sub-goal <code>ON(B,C)</code> lebih dulu. Eksekusi:</p>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Aksi</th>
+    <th>Alasan / Efek</th>
+  </tr>
+  <tr><td class="center">1</td><td class="action">UNSTACK(C,A)</td><td>Bongkar C dari A.</td></tr>
+  <tr><td class="center">2</td><td class="action">PUTDOWN(C)</td><td>Taruh C ke meja.</td></tr>
+  <tr><td class="center">3</td><td class="action">PICKUP(B)</td><td>Ambil B dari meja.</td></tr>
+  <tr><td class="center">4</td><td class="action">STACK(B,C)</td><td>Letakkan B di atas C. <span class="optimal">[Goal 1/3.]</span></td></tr>
+  <tr><td class="center">5</td><td class="action">PICKUP(A)</td><td>Ambil A dari meja.</td></tr>
+  <tr><td class="center">6</td><td class="action">STACK(A,B)</td><td>Letakkan A di atas B. <span class="optimal">[Goal 2/3, goal 3 ON(A,B) ikut terpenuhi.]</span></td></tr>
+</table>
+
+<p style="color:#16a34a; font-weight:700;">Total: 6 langkah. Tidak ada aksi yang dibatalkan. Optimal.</p>
+
+<div class="comp-grid">
+  <div class="col" style="border-left:3px solid #dc2626;">
+    <h4>Skenario 1: ON(A,B) dulu</h4>
+    <p style="font-size:0.9em;"><strong>10 langkah</strong> &mdash; 4 aksi sia-sia (UNSTACK(A,B) membatalkan STACK(A,B)).</p>
+  </div>
+  <div class="col" style="border-left:3px solid #16a34a;">
+    <h4>Skenario 2: ON(B,C) dulu</h4>
+    <p style="font-size:0.9em;"><strong>6 langkah</strong> &mdash; semua aksi produktif, tidak ada yang dibatalkan.</p>
+  </div>
+</div>
+
+<div class="warn-box">
+<strong>Anomaly / Anomali: 67% Langkah Sia-sia</strong>
+<p>Skenario 1 butuh <strong>10 langkah</strong>, Skenario 2 butuh <strong>6 langkah</strong>. Selisih 4 langkah (40% lebih lama) hanya karena beda urutan evaluasi sub-goal. Inilah kenapa kasus ini disebut "anomaly" &mdash; GSP tidak menjamin optimalitas.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Kelemahan Utama GSP</h2>
+
+<p>Tracing Sussman Anomaly membuktikan 2 kelemahan bawaan GSP:</p>
+
+<h3>Kelemahan 1: Tidak Menyadari Dead-End</h3>
+<div class="def-box">
+<strong>No Dead-End Awareness</strong>
+<p>GSP <strong>tidak memiliki kemampuan memproyeksikan dampak suatu aksi ke depan</strong>. Semua operator yang sudah terlanjur dibangkitkan akan tetap dieksekusi secara buta, meskipun langkah tersebut harus dibatalkan di langkah berikutnya.</p>
+<p style="font-size:0.9em; margin-bottom:0;">Bukti: di Skenario 1, STACK(A,B) (langkah 4) "benar" menurut prekondisi, tapi ternyata "salah" karena harus dibongkar lagi di langkah 5. GSP tidak tahu ini.</p>
+</div>
+
+<h3>Kelemahan 2: Aksi Saling Membatalkan</h3>
+<div class="def-box">
+<strong>Action Cancellation Inefficiency</strong>
+<p>Karena tidak ada koordinasi interaksi sub-goal secara global, GSP sering terjebak dalam siklus aksi yang tidak efisien di mana satu langkah <strong>membatalkan langkah sebelumnya</strong>:</p>
+<ul>
+  <li><code>STACK(x,y)</code> (tumpuk) dibatalkan oleh <code>UNSTACK(x,y)</code> (bongkar).</li>
+  <li><code>PICKUP(x)</code> (ambil) dibatalkan oleh <code>PUTDOWN(x)</code> (taruh kembali).</li>
+</ul>
+</div>
+
+<div class="info-box">
+<strong>Hubungkan dengan Prinsip ke-4 Planning</strong>
+<p>Di Lesson 13 kita bahas 4 prinsip Planning. Kelemahan GSP persis di prinsip ke-4: <strong>menangani interaksi sub-masalah</strong>. GSP TIDAK menangani interaksi sub-goal secara global &mdash; setiap sub-goal diselesaikan "locally" tanpa melihat konsekuensi ke sub-goal lain.</p>
+<p style="margin-bottom:0;">Solusi modern: gunakan algoritma <strong>partial-order planning</strong> atau <strong>planning graph</strong> yang bisa mengelola interaksi. Tapi untuk UAS, cukup tahu bahwa GSP lemah di sini.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Quick Comparison: Kasus 1 vs Sussman</h2>
+
+<table>
+  <tr>
+    <th>Aspek</th>
+    <th>Kasus 1 (Normal)</th>
+    <th>Sussman Anomaly</th>
+  </tr>
+  <tr>
+    <td class="predicate"># Balok</td>
+    <td>4 (A, B, C, D)</td>
+    <td>3 (A, B, C)</td>
+  </tr>
+  <tr>
+    <td class="predicate"># Sub-goal</td>
+    <td>2 aktif (ON(C,A), ON(B,D))</td>
+    <td>2 aktif (ON(A,B), ON(B,C))</td>
+  </tr>
+  <tr>
+    <td class="predicate">Interaksi Sub-goal</td>
+    <td>Tidak ada (B bisa disusun paralel)</td>
+    <td>Ada (A di atas B konflik dengan B di atas C)</td>
+  </tr>
+  <tr>
+    <td class="predicate">Rencana Optimal</td>
+    <td>4 langkah &mdash; selalu tercapai</td>
+    <td>6 langkah &mdash; hanya jika urutan tepat</td>
+  </tr>
+  <tr>
+    <td class="predicate">Rencana Suboptimal</td>
+    <td>Tidak ada kasus</td>
+    <td>10 langkah (Skenario 1)</td>
+  </tr>
+  <tr>
+    <td class="predicate">GSP Optimal?</td>
+    <td>YA</td>
+    <td>TIDAK &mdash; tergantung urutan sub-goal</td>
+  </tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>6. Quiz</h2>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">1. Dari Kasus 1, langkah pertama yang dieksekusi oleh GSP adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">PICKUP(C)</button>
+  <button class="opt" onclick="checkQuiz(this)">STACK(C,A)</button>
+  <button class="opt" onclick="checkQuiz(this)">STACK(B,D)</button>
+  <button class="opt" onclick="checkQuiz(this)">UNSTACK(B,A)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">2. Mengapa di Langkah 4 tracing Kasus 1, GSP tidak bisa langsung PICKUP(C)?</div>
+  <button class="opt" onclick="checkQuiz(this)">Karena ONTABLE(C) FALSE</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena CLEAR(C) FALSE</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena ARMEMPTY FALSE (lengan sedang pegang B), sehingga perlu STACK(B,D) dulu</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena STACK(C,A) lebih prioritas</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">3. Pada Sussman Anomaly, Skenario 1 (evaluasi ON(A,B) dulu) menghasilkan 10 langkah, sedangkan Skenario 2 (evaluasi ON(B,C) dulu) menghasilkan 6 langkah. Selisih 4 langkah ini terjadi karena...</div>
+  <button class="opt" onclick="checkQuiz(this)">Perbedaan kecepatan lengan robot</button>
+  <button class="opt" onclick="checkQuiz(this)">Skenario 1 harus membongkar A dari B (UNSTACK(A,B)) lalu menyusunnya lagi (STACK(A,B)) &mdash; inefisiensi akibat interaksi sub-goal</button>
+  <button class="opt" onclick="checkQuiz(this)">Skenario 2 menggunakan operator yang berbeda</button>
+  <button class="opt" onclick="checkQuiz(this)">Skenario 1 kehilangan satu balok</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">4. Kelemahan utama GSP yang ditunjukkan oleh Sussman Anomaly adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">GSP tidak memiliki kemampuan memproyeksikan dampak aksi ke depan (tidak menyadari dead-end), sehingga bisa terjebak pada urutan yang saling membatalkan</button>
+  <button class="opt" onclick="checkQuiz(this)">GSP tidak bisa memproses lebih dari 3 balok sekaligus</button>
+  <button class="opt" onclick="checkQuiz(this)">GSP selalu menghasilkan rencana yang tidak valid</button>
+  <button class="opt" onclick="checkQuiz(this)">GSP tidak bisa membaca operator PAD</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Contoh "aksi yang saling membatalkan" dalam GSP adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">PICKUP(A) kemudian PICKUP(A) lagi pada balok berbeda</button>
+  <button class="opt" onclick="checkQuiz(this)">UNSTACK(x,y) kemudian STACK(x,y) pada tumpukan yang sama</button>
+  <button class="opt" onclick="checkQuiz(this)">STACK(A,B) (langkah 4 Skenario 1) kemudian UNSTACK(A,B) (langkah 5) &mdash; pasang lalu bongkar</button>
+  <button class="opt" onclick="checkQuiz(this)">PUTDOWN(x) pada balok yang sama dua kali berturut-turut</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">6. Kasus 1 dari PDF memerlukan 4 langkah. Jika kita tambahkan balok E di meja sebagai distraction, apa yang terjadi pada rencana GSP?</div>
+  <button class="opt" onclick="checkQuiz(this)">GSP otomatis menambahkan E ke dalam rencana</button>
+  <button class="opt" onclick="checkQuiz(this)">GSP gagal total karena kelebihan balok</button>
+  <button class="opt" onclick="checkQuiz(this)">GSP menghasilkan 6 langkah untuk menghandle E</button>
+  <button class="opt" onclick="checkQuiz(this)">Rencana GSP tetap 4 langkah untuk goal A,B,C,D. E tidak disentuh karena tidak ada dalam Goal State &mdash; GSP hanya memproses yang relevan</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Planning" hlm. 14-31 (Kasus 1 Tracing, Sussman Anomaly, Kelemahan GSP); Sussman (1975) "A Computer Model of Skill Acquisition"; Russell &amp; Norvig (2010) AIMA ch. 10.3 (Partial-Order Planning).
+</p>
+
+</body>
+</html>

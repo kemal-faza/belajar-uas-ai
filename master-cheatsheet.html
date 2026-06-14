@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Master Cheatsheet: KBA + SP + UC + Fuzzy</title>
+<title>Master Cheatsheet: KBA + SP + UC + Fuzzy + Planning</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,6 +49,8 @@
   .card ul, .card ol { padding-left: 1.1rem; margin: 0.05rem 0; }
 
   .card.blue { border-left: 3px solid #3b82f6; }
+  td.suboptimal, .suboptimal { color: #dc2626; font-weight: 700; }
+  td.optimal, .optimal { color: #16a34a; font-weight: 700; }
   .card.green { border-left: 3px solid #16a34a; }
   .card.red { border-left: 3px solid #dc2626; }
   .card.purple { border-left: 3px solid #7c3aed; }
@@ -81,6 +83,7 @@
   tr:nth-child(even) td { background: #f5f5f4; }
 
   /* --- Rule / Code blocks --- */
+  td.predicate, .predicate { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #4338ca; }
   .code-block {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.68rem; line-height: 1.4;
@@ -921,8 +924,145 @@
   </table>
 </div>
 
+<hr class="section-divider">
+
+<h2><span class="badge" style="background:#e0e7ff; color:#4338ca; border:1px solid #4338ca;">PL</span> Bagian 11: Planning (GSP) &amp; Blocks World</h2>
+
+<div class="grid-2">
+<div class="card blue">
+  <h3>4 Prinsip Kognitif Planning</h3>
+  <ol>
+    <li><strong>Memecah</strong> masalah &rarr; sub-masalah kecil</li>
+    <li><strong>Menyelesaikan</strong> sub-masalah bertahap</li>
+    <li><strong>Menggabungkan</strong> solusi &rarr; rencana utuh</li>
+    <li><strong>Menangani interaksi</strong> (kelemahan GSP!)</li>
+  </ol>
+</div>
+
+<div class="card blue">
+  <h3>Blocks World: 3 Komponen</h3>
+  <ul>
+    <li><span class="tag tag-blue">Meja</span> permukaan datar</li>
+    <li><span class="tag tag-blue">Balok</span> kubus A, B, C, D ...</li>
+    <li><span class="tag tag-blue">Lengan Robot</span> 1 lengan, pegang 1 balok</li>
+  </ul>
+  <p style="font-size:0.65rem; color:#78716c; margin-top:0.2rem;">Tujuan: ubah Initial State &rarr; Goal State.</p>
+</div>
+</div>
+
+<div class="card blue fullw">
+  <h3>5 Predikat FOL untuk State</h3>
+  <table>
+    <tr><th>Predikat</th><th>Arti</th><th>Mnemonic</th></tr>
+    <tr><td class="predicate">ONTABLE(x)</td><td>x di atas meja</td><td><em>on the table</em></td></tr>
+    <tr><td class="predicate">CLEAR(x)</td><td>tidak ada balok di atas x</td><td><em>top is clear</em></td></tr>
+    <tr><td class="predicate">ON(x, y)</td><td>x di atas balok y</td><td><em>x on top of y</em></td></tr>
+    <tr><td class="predicate">HOLDING(x)</td><td>lengan pegang x</td><td><em>arm holding x</em></td></tr>
+    <tr><td class="predicate">ARMEMPTY</td><td>lengan kosong</td><td><em>no holding</em></td></tr>
+  </table>
+</div>
+
+<div class="card blue fullw">
+  <h3>4 Operator PAD (Prekondisi &harr; Add &harr; Delete)</h3>
+  <table>
+    <tr><th>Operator</th><th>Aksi</th><th>P</th><th>A</th><th>D</th></tr>
+    <tr>
+      <td class="predicate">STACK(x,y)</td>
+      <td>Tumpuk x ke y</td>
+      <td>CLEAR(y) &and; HOLDING(x)</td>
+      <td>ON(x,y) &and; ARMEMPTY</td>
+      <td>HOLDING(x) &and; CLEAR(y)</td>
+    </tr>
+    <tr>
+      <td class="predicate">UNSTACK(x,y)</td>
+      <td>Ambil x dari y</td>
+      <td>ON(x,y) &and; CLEAR(x) &and; ARMEMPTY</td>
+      <td>HOLDING(x) &and; CLEAR(y)</td>
+      <td>ON(x,y) &and; ARMEMPTY</td>
+    </tr>
+    <tr>
+      <td class="predicate">PICKUP(x)</td>
+      <td>Ambil x dari meja</td>
+      <td>ONTABLE(x) &and; CLEAR(x) &and; ARMEMPTY</td>
+      <td>HOLDING(x)</td>
+      <td>ONTABLE(x) &and; ARMEMPTY</td>
+    </tr>
+    <tr>
+      <td class="predicate">PUTDOWN(x)</td>
+      <td>Taruh x ke meja</td>
+      <td>HOLDING(x)</td>
+      <td>ONTABLE(x) &and; ARMEMPTY</td>
+      <td>HOLDING(x)</td>
+    </tr>
+  </table>
+</div>
+
+<div class="card green fullw">
+  <h3>GSP Algorithm: 3-Step Loop</h3>
+  <ol>
+    <li><strong>Inisialisasi</strong>: Stack = [Goal State sebagai compound goal].</li>
+    <li><strong>Pecah</strong> compound goal &rarr; sub-goal individual di atas stack.</li>
+    <li><strong>Loop sampai stack kosong</strong>:
+      <ul>
+        <li>Top == TRUE di Current-state &rarr; <strong>POP</strong></li>
+        <li>Top == sub-goal FALSE &rarr; cari operator dgn Add list sesuai, <strong>push operator + prekondisinya</strong></li>
+        <li>Top == operator &amp; semua pre TRUE &rarr; <strong>POP, simpan ke Queue, update Current-state</strong></li>
+        <li>Current-state == Goal &rarr; <strong>STOP</strong>, sukses</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<div class="card yellow fullw">
+  <h3>Hasil Tracing Kasus 1 &mdash; Quick Reference</h3>
+  <div class="grid-2">
+    <div>
+      <p><strong>Initial:</strong> ONTABLE(A), ONTABLE(C), ONTABLE(D), ON(B,A), ARMEMPTY</p>
+      <p><strong>Goal:</strong> ONTABLE(A), ONTABLE(D), ON(B,D), ON(C,A), ARMEMPTY</p>
+    </div>
+    <div>
+      <p><strong>Rencana Optimal (4 langkah):</strong></p>
+      <div class="code-block" style="font-size:0.68rem;">
+        1. UNSTACK(B,A)<br>
+        2. STACK(B,D)<br>
+        3. PICKUP(C)<br>
+        4. STACK(C,A)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card red fullw">
+  <h3>Sussman Anomaly &mdash; Tanda Kelemahan GSP</h3>
+  <div class="grid-2">
+    <div>
+      <p><strong>Initial:</strong> ONTABLE(A), ONTABLE(B), ON(C,A), ARMEMPTY</p>
+      <p><strong>Goal:</strong> ONTABLE(C), ON(B,C), ON(A,B)</p>
+    </div>
+    <div>
+      <table>
+        <tr><th>Skenario</th><th>Urutan</th><th>Langkah</th></tr>
+        <tr><td>1 (suboptimal)</td><td>ON(A,B) dulu</td><td class="suboptimal">10</td></tr>
+        <tr><td>2 (optimal)</td><td>ON(B,C) dulu</td><td class="optimal">6</td></tr>
+      </table>
+    </div>
+  </div>
+  <p style="font-size:0.7rem; margin-top:0.4rem;"><strong>Kelemahan GSP:</strong> (1) Tidak menyadari dead-end, (2) aksi saling membatalkan (STACK-UNSTACK, PICKUP-PUTDOWN).</p>
+</div>
+
+<div class="card purple fullw">
+  <h3>Cheat Matrix: Pilih Operator</h3>
+  <table>
+    <tr><th>Kondisi Awal</th><th>Tujuan</th><th>Operator</th></tr>
+    <tr><td>x di atas y, lengan kosong</td><td>x dipegang, y clear</td><td><strong>UNSTACK(x,y)</strong></td></tr>
+    <tr><td>x dipegang, y clear</td><td>x di atas y, lengan kosong</td><td><strong>STACK(x,y)</strong></td></tr>
+    <tr><td>x di meja, clear, lengan kosong</td><td>x dipegang</td><td><strong>PICKUP(x)</strong></td></tr>
+    <tr><td>x dipegang</td><td>x di meja, lengan kosong</td><td><strong>PUTDOWN(x)</strong></td></tr>
+  </table>
+</div>
+
 <p style="text-align:center; font-size:0.65rem; color:#78716c; margin-top:1rem; border-top:1px solid #e7e5e4; padding-top:0.4rem;">
-  Sumber: Zadeh (1965); Mamdani &amp; Assilian (1975); Giarratano (2007); Sutojo et al. (2018); Negnevitsky (2011); Suyanto (2007); Russel &amp; Norvig (2010); materi kuliah "Pengenalan Logika Fuzzy".
+  Sumber: Zadeh (1965); Mamdani &amp; Assilian (1975); Giarratano (2007); Sutojo et al. (2018); Negnevitsky (2011); Suyanto (2007); Russel &amp; Norvig (2010); Sussman (1975); materi kuliah "Pengenalan Logika Fuzzy", "Planning".
   &bull; File ini akan terus diupdate setiap ada materi baru.
 </p>
 

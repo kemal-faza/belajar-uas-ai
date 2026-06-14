@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 13: Planning, Blocks World &amp; Representasi State (FOL)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #4f46e5; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #4f46e5; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #e0e7ff;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #4f46e5;
+    background: #eef2ff;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1e1b4b;
+    color: #e0e7ff;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .formula .hl { color: #a5b4fc; }
+  .formula .hl2 { color: #fcd34d; }
+  .formula .hlr { color: #fca5a5; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #4f46e5;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #eef2ff; }
+  td.center { text-align: center; font-weight: 600; }
+  td.predicate { font-family: 'Source Code Pro', monospace; font-weight: 600; color: #4338ca; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #4f46e5;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #eef2ff;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #c7d2fe;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #e0e7ff; border-color: #4f46e5; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 13: Planning, Blocks World &amp; State (FOL)</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Problem-solving terstruktur di AI &mdash; representasi dunia balok dengan First-Order Logic</p>
+
+<!-- ====================================================================== -->
+<h2>1. Apa itu Planning?</h2>
+
+<div class="def-box">
+<strong>Definisi: Planning (Perencanaan)</strong>
+<p>Planning adalah metode <strong>problem-solving terstruktur</strong> dalam AI yang memecah masalah besar menjadi sub-masalah kecil, menyelesaikan tiap sub-masalah bertahap, lalu mengintegrasikan solusinya menjadi satu rencana utuh &mdash; sembari tetap mengelola <strong>interaksi antar sub-masalah</strong> agar tidak saling membatalkan.</p>
+</div>
+
+<p>Planning bekerja berdasarkan 4 prinsip kognitif utama:</p>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Prinsip</th>
+    <th>Penjelasan</th>
+  </tr>
+  <tr>
+    <td class="center">1</td>
+    <td><strong>Memecah Masalah</strong></td>
+    <td>Bagi masalah kompleks jadi sub-sub masalah kecil yang lebih sederhana.</td>
+  </tr>
+  <tr>
+    <td class="center">2</td>
+    <td><strong>Menyelesaikan Sub-Masalah</strong></td>
+    <td>Selesaikan masing-masing sub-masalah satu per satu, bertahap.</td>
+  </tr>
+  <tr>
+    <td class="center">3</td>
+    <td><strong>Menggabungkan Solusi</strong></td>
+    <td>Integrasikan solusi sub-masalah menjadi satu rencana utuh yang lengkap.</td>
+  </tr>
+  <tr>
+    <td class="center">4</td>
+    <td><strong>Menangani Interaksi</strong></td>
+    <td>Saat menggabungkan, kelola interaksi agar sub-masalah tidak saling membatalkan/menghancurkan.</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Trade-off / Catatan UAS</strong>
+<p>Prinsip ke-4 (interaksi) adalah titik lemah utama algoritma planning klasik (lihat <a href="#">Lesson 15</a>: Sussman Anomaly). Di soal UAS, jika ditanya "kelemahan GSP", jawabnya selalu terkait prinsip ke-4 ini: GSP tidak mengelola interaksi sub-goal secara global.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Blocks World (Dunia Balok)</h2>
+
+<p>Blocks World adalah <strong>domain studi kasus paling populer</strong> dalam perencanaan AI. Ini adalah tempat di mana robot memanipulasi balok di atas meja. Sederhana secara visual, tapi cukup kaya untuk menguji algoritma planning.</p>
+
+<h3>2.1 Komponen Lingkungan</h3>
+
+<table>
+  <tr>
+    <th>Komponen</th>
+    <th>Deskripsi</th>
+  </tr>
+  <tr>
+    <td class="predicate">Meja (Table)</td>
+    <td>Permukaan datar horizontal tempat meletakkan balok. Single surface.</td>
+  </tr>
+  <tr>
+    <td class="predicate">Balok (Blocks)</td>
+    <td>Sejumlah kubus identik ukuran &amp; berat, biasanya dilabeli A, B, C, D, ...</td>
+  </tr>
+  <tr>
+    <td class="predicate">Lengan Robot (Robot Arm)</td>
+    <td>Single mechanical arm yang bisa mengambil, memindahkan, dan menumpuk balok. Hanya satu lengan &mdash; tidak bisa pegang 2 balok sekaligus.</td>
+  </tr>
+</table>
+
+<h3>2.2 Permasalahan Utama</h3>
+
+<div class="info-box">
+<strong>Problem Statement Blocks World</strong>
+<p>Tentukan <strong>urutan aksi lengan robot</strong> untuk mengubah konfigurasi balok dari <strong>Initial State</strong> (keadaan awal) menjadi <strong>Goal State</strong> (keadaan akhir yang diinginkan) secara efisien.</p>
+</div>
+
+<div class="plot">
+  <svg viewBox="0 0 600 220" width="100%" style="max-width:600px;">
+    <!-- Table -->
+    <line x1="40" y1="180" x2="560" y2="180" stroke="#52525b" stroke-width="2"/>
+    <line x1="40" y1="184" x2="560" y2="184" stroke="#52525b" stroke-width="4"/>
+    <text x="300" y="210" text-anchor="middle" font-size="14" fill="#52525b" font-style="italic">Meja</text>
+
+    <!-- Tower 1: B on A -->
+    <rect x="80" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="105" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">A</text>
+    <rect x="80" y="80" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="105" y="112" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">B</text>
+
+    <!-- Block C on table -->
+    <rect x="270" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="295" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">C</text>
+
+    <!-- Block D on table -->
+    <rect x="440" y="130" width="50" height="50" fill="#a5b4fc" stroke="#4f46e5" stroke-width="2"/>
+    <text x="465" y="162" text-anchor="middle" font-size="22" font-weight="700" fill="#1e1b4b">D</text>
+
+    <!-- Title -->
+    <text x="300" y="30" text-anchor="middle" font-size="16" font-weight="600" fill="#4f46e5">Contoh Konfigurasi Blocks World</text>
+    <text x="300" y="50" text-anchor="middle" font-size="13" fill="#52525b">A di meja, B di atas A, C di meja, D di meja</text>
+  </svg>
+  <div class="plot-caption">Gambar 1. Visualisasi dunia balok. Lengan robot implicit (bisa mengambil 1 balok pada satu waktu).</div>
+</div>
+
+<p>Perhatikan: ini hanya salah satu konfigurasi. Planning akan mencari <em>urutan langkah</em> untuk mengubahnya ke Goal State (akan kita bahas di Lesson 15).</p>
+
+<!-- ====================================================================== -->
+<h2>3. Representasi State dengan FOL</h2>
+
+<p>State dunia balok direpresentasikan secara formal menggunakan <strong>First-Order Logic (FOL)</strong>. Ada <strong>5 predikat dasar</strong> yang menangkap semua kondisi yang relevan.</p>
+
+<h3>3.1 Lima Predikat Dasar</h3>
+
+<table>
+  <tr>
+    <th>Predikat</th>
+    <th>Arti (Plain Language)</th>
+    <th>Implikasi Logis</th>
+  </tr>
+  <tr>
+    <td class="predicate">ONTABLE(x)</td>
+    <td>Balok <code>x</code> berada <strong>langsung di atas meja</strong>.</td>
+    <td>Jika <code>ONTABLE(x)</code> TRUE, maka <code>x</code> TIDAK dipegang (<code>&not;HOLDING(x)</code>) dan TIDAK di atas balok lain (<code>&not;&exist;y ON(x,y)</code>).</td>
+  </tr>
+  <tr>
+    <td class="predicate">CLEAR(x)</td>
+    <td>Bagian <strong>atas balok x kosong</strong>; tidak ada balok lain di atasnya.</td>
+    <td>Jika <code>CLEAR(x)</code> TRUE, maka tidak ada y sedemikian sehingga <code>ON(y,x)</code> (tidak ada yang nempel di atas x).</td>
+  </tr>
+  <tr>
+    <td class="predicate">ON(x, y)</td>
+    <td>Balok <code>x</code> terletak <strong>langsung di atas balok y</strong>.</td>
+    <td>Jika <code>ON(x,y)</code> TRUE, maka baik x maupun y TIDAK dipegang, dan tidak ada balok lain di atas x (kecuali tidak ada ON yang kontradiktif).</td>
+  </tr>
+  <tr>
+    <td class="predicate">HOLDING(x)</td>
+    <td>Lengan robot sedang <strong>memegang/mencengkeram balok x</strong>.</td>
+    <td>Jika <code>HOLDING(x)</code> TRUE, maka lengan TIDAK empty (<code>&not;ARMEMPTY</code>) dan x TIDAK di meja atau di atas balok lain.</td>
+  </tr>
+  <tr>
+    <td class="predicate">ARMEMPTY</td>
+    <td>Lengan robot dalam keadaan <strong>kosong</strong>; tidak memegang apa-apa.</td>
+    <td>Jika <code>ARMEMPTY</code> TRUE, maka tidak ada x sedemikian sehingga <code>HOLDING(x)</code>.</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Implisit Penting</strong>
+<p>Jika ada 4 balok A, B, C, D di atas meja, maka implisitnya <strong>semua CLEAR</strong> (kecuali ada yang menumpuk). Biasanya CLEAR untuk balok yang di atas tidak ditulis eksplisit di Initial State, tapi selalu diasumsikan TRUE.</p>
+</div>
+
+<h3>3.2 Rumus FOL Formal (Untuk Referensi)</h3>
+
+<p>Untuk UAS, sering diminta menuliskan rumus FOL formal. Berikut translasi langsung dari PDF:</p>
+
+<div class="formula">
+&forall;x &nbsp; ONTABLE(x) &rarr; &not;HOLDING(x) &and; [&not;&exist;y &nbsp; ON(x,y)]
+</div>
+<div class="formula">
+&forall;x &nbsp; CLEAR(x) &rarr; &not;&exist;y &nbsp; ON(y,x)
+</div>
+<div class="formula">
+&forall;x [&exist;y &nbsp; ON(x,y)] &rarr; &not;HOLDING(x) &and; &not;HOLDING(y) &and; &not;ON(y,x) &and; [&not;&exist;z &nbsp; ON(x,z) &or; ON(y,z)]
+</div>
+<div class="formula">
+&exist;x &nbsp; HOLDING(x) &rarr; &not;ARMEMPTY &and; &not;ONTABLE(x) &and; [&not;&exist;y &nbsp; ON(x,y) &or; ON(y,x)]
+</div>
+<div class="formula">
+ARMEMPTY &rarr; &not;&exist;x &nbsp; HOLDING(x)
+</div>
+
+<p style="font-size:0.9em; color:#52525b;"><em>Baca: "&forall;x" = untuk semua x, "&exist;x" = ada x, "&rarr;" = implies, "&and;" = AND, "&or;" = OR, "&not;" = NOT.</em></p>
+
+<!-- ====================================================================== -->
+<h2>4. Contoh State Dunia Balok</h2>
+
+<p>Berikut dua contoh deskripsi state lengkap dalam FOL (langsung dari PDF):</p>
+
+<h3>Kasus [1]: Lengan Kosong, A di Meja</h3>
+
+<div class="example-box">
+<strong>Kasus 1 &mdash; Skenario Sederhana</strong>
+<p>Kondisi dunia: lengan robot kosong, balok A diletakkan di atas meja.</p>
+<div class="formula" style="text-align:left; padding:0.6rem 1rem;">
+ONTABLE(A) &and; CLEAR(A) &and; ARMEMPTY
+</div>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">
+CLEAR(A) ditulis eksplisit di sini karena hanya ada 1 balok dan ingin tegaskan "tidak ada apa-apa di atas A".
+</p>
+</div>
+
+<h3>Kasus [2]: Lengan Memegang C, B di Atas A</h3>
+
+<div class="example-box">
+<strong>Kasus 2 &mdash; Lebih Kompleks</strong>
+<p>Kondisi dunia: lengan robot memegang balok C. Di atas meja, balok B ditumpuk di atas balok A.</p>
+<div class="formula" style="text-align:left; padding:0.6rem 1rem;">
+ONTABLE(A) &and; ON(B,A) &and; CLEAR(B) &and; HOLDING(C) &and; CLEAR(C)
+</div>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">
+Perhatikan: <code>ARMEMPTY</code> TIDAK ada (karena lengan pegang C). <code>ONTABLE(C)</code> TIDAK ada (karena C dipegang). CLEAR(B) TRUE karena tidak ada di atas B. CLEAR(C) TRUE karena bagian atas C kosong.
+</p>
+</div>
+
+<div class="warn-box">
+<strong>Jebakan Umum</strong>
+<p>Mahasiswa sering <strong>mencantumkan CLEAR untuk semua balok</strong> secara otomatis. Padahal CLEAR hanya TRUE untuk balok yang bagian atasnya benar-benar kosong. Pada Kasus 2 di atas, CLEAR(A) FALSE karena B di atas A &mdash; jadi CLEAR(A) tidak dicantumkan (implisit FALSE).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Quick Cheatsheet: 5 Predikat</h2>
+
+<table>
+  <tr>
+    <th>Predikat</th>
+    <th>Mnemonic</th>
+    <th>Kapan TRUE</th>
+  </tr>
+  <tr>
+    <td class="predicate">ONTABLE(x)</td>
+    <td><em>on the table</em></td>
+    <td>x langsung di meja, tidak di atas balok lain, tidak dipegang.</td>
+  </tr>
+  <tr>
+    <td class="predicate">CLEAR(x)</td>
+    <td><em>top is clear</em></td>
+    <td>Tidak ada balok lain di atas x.</td>
+  </tr>
+  <tr>
+    <td class="predicate">ON(x, y)</td>
+    <td><em>x on top of y</em></td>
+    <td>x langsung menempel di atas y.</td>
+  </tr>
+  <tr>
+    <td class="predicate">HOLDING(x)</td>
+    <td><em>arm is holding x</em></td>
+    <td>Lengan sedang memegang x.</td>
+  </tr>
+  <tr>
+    <td class="predicate">ARMEMPTY</td>
+    <td><em>arm is empty</em></td>
+    <td>Lengan tidak memegang apa-apa.</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>Hubungan Logis Antar Predikat</strong>
+<ul>
+  <li><code>HOLDING(x)</code> &hArr; <code>&not;ARMEMPTY</code> &hArr; <code>&not;ONTABLE(x)</code> &hArr; <code>&not;&exist;y ON(x,y)</code></li>
+  <li><code>ARMEMPTY</code> &hArr; <code>&not;&exist;x HOLDING(x)</code></li>
+  <li>Sebuah balok bisa CLEAR tapi TIDAK ONTABLE (mis. B di atas A: CLEAR(B) TRUE, ONTABLE(B) FALSE).</li>
+</ul>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Quiz</h2>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">1. Planning (Perencanaan) dalam AI bekerja berdasarkan 4 prinsip kognitif. Manakah yang BUKAN termasuk ke-4 prinsip tersebut?</div>
+  <button class="opt" onclick="checkQuiz(this)">Memecah masalah besar menjadi sub-masalah kecil</button>
+  <button class="opt" onclick="checkQuiz(this)">Menyelesaikan sub-masalah satu per satu</button>
+  <button class="opt" onclick="checkQuiz(this)">Menghindari interaksi antar sub-masalah agar tidak perlu pengelolaan</button>
+  <button class="opt" onclick="checkQuiz(this)">Menggabungkan solusi sub-masalah menjadi rencana utuh</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">2. Blocks World adalah domain studi kasus planning AI. Komponen lingkungan Blocks World terdiri dari...</div>
+  <button class="opt" onclick="checkQuiz(this)">Lantai, Balok, Lengan Kiri, Lengan Kanan</button>
+  <button class="opt" onclick="checkQuiz(this)">Meja, Balok (A, B, C, ...), Lengan Robot (satu lengan)</button>
+  <button class="opt" onclick="checkQuiz(this)">Kotak, Silinder, Lengan Robot (multi-arm)</button>
+  <button class="opt" onclick="checkQuiz(this)">Papan Catur, Bidak, Jari Robot</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">3. Perhatikan konfigurasi: balok A di atas meja, balok B di atas A, lengan robot kosong. Pernyataan FOL yang PALING TEPAT untuk state ini adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(B) &and; ON(B,A) &and; CLEAR(A) &and; ARMEMPTY</button>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(A) &and; ON(A,B) &and; CLEAR(B) &and; ARMEMPTY</button>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(A) &and; ON(B,A) &and; CLEAR(B) &and; ARMEMPTY</button>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(A) &and; ON(B,A) &and; CLEAR(A) &and; HOLDING(B)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">4. Predikat yang menyatakan "lengan robot tidak sedang memegang balok apa pun" adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">ARMEMPTY</button>
+  <button class="opt" onclick="checkQuiz(this)">CLEAR(arm)</button>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(arm)</button>
+  <button class="opt" onclick="checkQuiz(this)">HOLDING(nothing)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Dalam konfigurasi "B di atas A, C dipegang lengan, D di meja, lengan tidak empty", manakah pernyataan yang BENAR?</div>
+  <button class="opt" onclick="checkQuiz(this)">ARMEMPTY TRUE dan CLEAR(A) TRUE</button>
+  <button class="opt" onclick="checkQuiz(this)">ONTABLE(C) TRUE dan ONTABLE(D) FALSE</button>
+  <button class="opt" onclick="checkQuiz(this)">HOLDING(C) TRUE dan CLEAR(A) FALSE (karena B di atas A)</button>
+  <button class="opt" onclick="checkQuiz(this)">ON(B,A) FALSE karena CLEAR(B) TRUE</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">6. Apa beda utama antara <code>ON(x, y)</code> dengan <code>ONTABLE(x)</code>?</div>
+  <button class="opt" onclick="checkQuiz(this)">Keduanya identik, hanya beda penamaan.</button>
+  <button class="opt" onclick="checkQuiz(this)">ON(x,y) artinya x di atas balok y; ONTABLE(x) artinya x di atas permukaan meja.</button>
+  <button class="opt" onclick="checkQuiz(this)">ON(x,y) untuk balok besar, ONTABLE(x) untuk balok kecil.</button>
+  <button class="opt" onclick="checkQuiz(this)">ON(x,y) FALSE jika x=y, ONTABLE(x) selalu TRUE.</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Planning" hlm. 3-9 (Definisi Planning, Blocks World, Representasi State FOL); Russell &amp; Norvig (2010) "Artificial Intelligence: A Modern Approach" ch. 10 (Classical Planning).
+</p>
+
+</body>
+</html>
