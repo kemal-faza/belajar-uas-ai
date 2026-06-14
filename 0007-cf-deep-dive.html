@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 7: Certainty Factor Deep Dive</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #d97706; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #d97706; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #fef3c7;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #d97706;
+    background: #fffbeb;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #2563eb; background: #f0f5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .formula .hl { color: #fbbf24; }
+  .formula .hl2 { color: #34d399; }
+
+  /* --- Rule Card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+    line-height: 1.8;
+  }
+  .rule-card .if { color: #fbbf24; }
+  .rule-card .then { color: #34d399; }
+  .rule-card .and { color: #f472b6; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #d97706;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #fefce8; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #d97706;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #fffbeb;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #fef3c7; border-color: #d97706; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+  .comp-grid .col.cf-col { border-top: 3px solid #d97706; }
+  .comp-grid .col.bayes-col { border-top: 3px solid #2563eb; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 7: Certainty Factor Deep Dive</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Perhitungan detail CF, MB/MD, CF Gabungan, Resolusi Konflik &mdash; dari teori ke studi kasus</p>
+
+<!-- ====================================================================== -->
+<h2>1. Sumber Ketidakpastian dalam Sistem Pakar</h2>
+
+<p>Sebelum masuk ke rumus, penting memahami <strong>mengapa</strong> sistem pakar butuh mekanisme ketidakpastian. Ada dua sumber utama keraguan:</p>
+
+<div class="info-box">
+<strong>1. Ketidakpastian Data (Input Uncertainty)</strong>
+<ul>
+  <li>Fakta observasi di lapangan tidak lengkap / tidak utuh</li>
+  <li>Data dari sumber dengan tingkat kepercayaan rendah</li>
+  <li>Data dari berbagai sumber yang saling berkonflik</li>
+</ul>
+</div>
+
+<div class="info-box">
+<strong>2. Ketidakpastian Inferensi (Rule Uncertainty)</strong>
+<ul>
+  <li>Aturan dari pakar bersifat <strong>heuristik</strong> (berdasarkan pengalaman praktis), bukan rumus pasti</li>
+  <li>Aturan didesain general, sering gagal akomodasi kasus anomali spesifik</li>
+</ul>
+</div>
+
+<p><strong>Kesimpulan:</strong> Sistem berbasis aturan butuh mekanisme matematika untuk mengubah <em>inexact reasoning</em> menjadi kesimpulan kuantitatif yang presisi.</p>
+
+<!-- ====================================================================== -->
+<h2>2. Formula Dasar Certainty Factor</h2>
+
+<div class="def-box">
+<strong>Definisi: Certainty Factor (CF)</strong>
+<p>Certainty Factor mengukur tingkat keyakinan terhadap suatu hipotesis berdasarkan bukti yang ada. Diperkenalkan oleh <strong>Shortliffe &amp; Buchanan (1975)</strong> pada sistem <strong>MYCIN</strong> (diagnosis medis).</p>
+</div>
+
+<h3>2.1 Rumus Utama</h3>
+
+<div class="formula">
+CF(H, E) = <span class="hl">MB(H, E)</span> &minus; <span class="hl2">MD(H, E)</span>
+</div>
+
+<table>
+  <tr><th>Komponen</th><th>Makna</th><th>Rentang</th></tr>
+  <tr>
+    <td>CF(H, E)</td>
+    <td>Certainty Factor hipotesis H berdasarkan bukti E</td>
+    <td>-1.0 (pasti salah) &ndash; 1.0 (pasti benar)</td>
+  </tr>
+  <tr>
+    <td>MB(H, E)</td>
+    <td><em>Measure of Belief</em> &mdash; ukuran kepercayaan pada H karena E</td>
+    <td>0 &ndash; 1</td>
+  </tr>
+  <tr>
+    <td>MD(H, E)</td>
+    <td><em>Measure of Disbelief</em> &mdash; ukuran ketidakpercayaan pada H karena E</td>
+    <td>0 &ndash; 1</td>
+  </tr>
+</table>
+
+<h3>2.2 Rumus Detil MB dan MD</h3>
+
+<div class="formula">
+<span class="hl">MB(H, E)</span> = <span style="color:#fbbf24;">( max[P(H|E), P(H)] - P(H) ) / ( 1 - P(H) )</span><br>
+Jika P(H) = 1, maka MB(H, E) = 1
+</div>
+
+<div class="formula">
+<span class="hl2">MD(H, E)</span> = <span style="color:#34d399;">( P(H) - min[P(H|E), P(H)] ) / P(H)</span><br>
+Jika P(H) = 0, maka MD(H, E) = 1
+</div>
+
+<p>Dimana:</p>
+<ul>
+  <li><strong>P(H)</strong> = Probabilitas awal (<em>prior</em>) kebenaran hipotesis H</li>
+  <li><strong>P(H|E)</strong> = Probabilitas bersyarat bahwa H benar jika bukti E terjadi</li>
+</ul>
+
+<!-- ====================================================================== -->
+<h2>3. Contoh Perhitungan: Diagnosis Phimosis</h2>
+
+<div class="example-box">
+<strong>Soal:</strong>
+<p>Seorang pakar penyakit dalam menyatakan bahwa probabilitas seseorang terkena penyakit Phimosis secara umum adalah <strong>0,02</strong>. Data lapangan menunjukkan dari 100 orang dengan gejala kulit berminyak, <strong>40 orang</strong> positif Phimosis. Hitung Certainty Factor bahwa Phimosis disebabkan oleh kulit berminyak.</p>
+</div>
+
+<p><strong>Pemetaan Variabel:</strong></p>
+<ul>
+  <li>H = Terjadinya penyakit Phimosis</li>
+  <li>E = Gejala kulit berminyak</li>
+  <li>P(H) = 0,02</li>
+  <li>P(H|E) = 40/100 = 0,4</li>
+</ul>
+
+<p><strong>Langkah 1: Hitung MB(H, E)</strong></p>
+<p>Karena P(H|E) > P(H), maka MB dihitung:</p>
+<div class="formula">
+MB(H, E) = (0,4 &minus; 0,02) / (1 &minus; 0,02)<br>
+= 0,38 / 0,98 = <span class="hl">0,3878</span>
+</div>
+
+<p><strong>Langkah 2: Hitung MD(H, E)</strong></p>
+<p>Karena P(H|E) >= P(H) (bukti E meningkatkan kepercayaan), maka:</p>
+<div class="formula">MD(H, E) = <span class="hl2">0</span></div>
+
+<p><strong>Langkah 3: Hitung CF(H, E)</strong></p>
+<div class="formula">
+CF = 0,3878 &minus; 0 = <span class="hl" style="font-size:1.2em;">0,3878</span>
+</div>
+
+<p><strong>Interpretasi:</strong> Terdapat kecenderungan keyakinan yang kuat pada Belief (kepercayaan), dengan nilai CF positif 0,3878 mendekati 0,4.</p>
+
+<!-- ====================================================================== -->
+<h2>4. Linguistic-to-Numeric Mapping</h2>
+
+<p>Pakar manusia menggunakan istilah kualitatif. Sistem pakar memetakannya ke skala numerik:</p>
+
+<table>
+  <tr><th>Istilah Linguistik</th><th>Nilai CF</th></tr>
+  <tr><td>Pasti Tidak (Definitely not)</td><td>-1,0</td></tr>
+  <tr><td>Kemungkinan Besar Tidak (Probably not)</td><td>-0,6</td></tr>
+  <tr><td>Tidak Tahu (Unknown)</td><td>0,0</td></tr>
+  <tr><td>Kemungkinan Besar (Probably)</td><td>0,6</td></tr>
+  <tr><td>Hampir Pasti (Almost certainly)</td><td>0,8</td></tr>
+  <tr><td>Pasti (Definitely)</td><td>1,0</td></tr>
+</table>
+
+<div class="example-box">
+<strong>Contoh Translasi:</strong><br>
+<strong>Pakar:</strong> "Jika pasien mengalami batuk dan panas, maka <em>hampir dipastikan</em> penyakitnya influenza."<br>
+<strong>Mesin:</strong> IF batuk AND panas THEN influenza <strong>(CF = 0,8)</strong>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Perhitungan CF Gabungan</h2>
+
+<p>Dalam sistem pakar nyata, satu aturan sering dipicu oleh beberapa bukti sekaligus. Ada tiga skenario utama:</p>
+
+<h3>5.1 Skenario 1: Evidence Tunggal, Hipotesis Tunggal</h3>
+
+<div class="formula">
+IF E THEN H (CF Rule)<br>
+CF(H, E) = <span class="hl">CF(E)</span> x <span class="hl2">CF(Rule)</span>
+</div>
+
+<div class="info-box">
+<strong>Catatan Praktis:</strong>
+<ul>
+  <li>CF(Rule) bersifat <strong>statis</strong> &mdash; ditentukan pakar saat sistem dibangun</li>
+  <li>CF(E) bersifat <strong>dinamis</strong> &mdash; dimasukkan pengguna saat konsultasi</li>
+</ul>
+</div>
+
+<div class="example-box">
+<strong>Contoh:</strong><br>
+Rule: IF hari ini terang THEN besok hujan (CF Rule = 0,6)<br>
+User: CF(hari ini terang) = 0,4<br>
+CF(besok hujan, hari ini terang) = 0,4 x 0,6 = <strong>0,24</strong>
+</div>
+
+<h3>5.2 Skenario 2: Evidence Ganda, Hipotesis Tunggal</h3>
+
+<p><strong>Logika AND (Konjungsi):</strong> Rantai AND sekuat mata rantai terlemahnya.</p>
+<div class="formula">
+IF E<sub>1</sub> AND E<sub>2</sub> AND ... E<sub>n</sub> THEN H (CF Rule)<br>
+CF(H, E) = <span class="hl">min</span>[ CF(E<sub>1</sub>), CF(E<sub>2</sub>), ..., CF(E<sub>n</sub>) ] x CF(Rule)
+</div>
+
+<p><strong>Logika OR (Disjungsi):</strong> Ambil indikator tunggal yang paling kuat.</p>
+<div class="formula">
+IF E<sub>1</sub> OR E<sub>2</sub> OR ... E<sub>n</sub> THEN H (CF Rule)<br>
+CF(H, E) = <span class="hl">max</span>[ CF(E<sub>1</sub>), CF(E<sub>2</sub>), ..., CF(E<sub>n</sub>) ] x CF(Rule)
+</div>
+
+<div class="example-box">
+<strong>Contoh AND:</strong><br>
+Rule: IF demam AND batuk AND muntah THEN penyakit = TBC (CF Rule = 0,3)<br>
+CF(demam)=0,4; CF(batuk)=0,2; CF(muntah)=0,7<br>
+CF = min(0,4; 0,2; 0,7) x 0,3 = 0,2 x 0,3 = <strong>0,06</strong>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Resolusi Konflik: Dua Aturan, Satu Hipotesis</h2>
+
+<p>Kasus klasik: Ada dua aturan berbeda (dengan bukti E1 dan E2) yang menghasilkan <strong>kesimpulan yang sama (H)</strong>.</p>
+
+<div class="rule-card">
+<span class="if">Rule 1:</span> IF E<sub>1</sub> THEN H (CF Rule 1)<br>
+CF<sub>1</sub> = CF(E<sub>1</sub>) x CF(Rule 1)<br><br>
+<span class="if">Rule 2:</span> IF E<sub>2</sub> THEN H (CF Rule 2)<br>
+CF<sub>2</sub> = CF(E<sub>2</sub>) x CF(Rule 2)
+</div>
+
+<h3>Tiga Kondisi Resolusi</h3>
+
+<p><strong>Kondisi 1: Saling Memperkuat (CF1 >= 0 dan CF2 >= 0)</strong></p>
+<div class="formula">
+CF<sub>combine</sub> = CF<sub>1</sub> + CF<sub>2</sub> x (1 &minus; CF<sub>1</sub>)
+</div>
+
+<p><strong>Kondisi 2: Saling Bertentangan (satu positif, satu negatif)</strong></p>
+<div class="formula">
+CF<sub>combine</sub> = (CF<sub>1</sub> + CF<sub>2</sub>) / (1 &minus; min[ |CF<sub>1</sub>|, |CF<sub>2</sub>| ])
+</div>
+
+<p><strong>Kondisi 3: Saling Melemahkan (CF1 < 0 dan CF2 < 0)</strong></p>
+<div class="formula">
+CF<sub>combine</sub> = CF<sub>1</sub> + CF<sub>2</sub> x (1 + CF<sub>1</sub>)
+</div>
+
+<h3>Contoh: Diagnosis Batuk Rejan</h3>
+
+<div class="rule-card">
+<span class="if">Rule 1:</span> IF batuk THEN batuk rejan (CF = 0,8)<br>
+<span class="if">Rule 2:</span> IF demam THEN batuk rejan (CF = 0,6)
+</div>
+
+<p><strong>Kasus A: Kedua gejala positif</strong><br>
+CF(batuk)=1, CF(demam)=1</p>
+<div class="formula">
+CF<sub>1</sub> = 1 x 0,8 = 0,8<br>
+CF<sub>2</sub> = 1 x 0,6 = 0,6<br>
+Kedua &ge; 0 &rArr; CF = 0,8 + 0,6(1-0,8) = 0,8 + 0,12 = <span class="hl">0,92</span>
+</div>
+
+<p><strong>Kasus B: Satu positif, satu negatif</strong><br>
+CF(batuk)=1, CF(demam)=-1</p>
+<div class="formula">
+CF<sub>1</sub> = 0,8; CF<sub>2</sub> = -0,6<br>
+Berbeda tanda &rArr; CF = (0,8 - 0,6) / (1 - min[|0,8|, |-0,6|])<br>
+= 0,2 / (1 - 0,6) = 0,2 / 0,4 = <span class="hl">0,50</span>
+</div>
+
+<p><strong>Kasus C: Kedua gejala negatif</strong><br>
+CF(batuk)=-1, CF(demam)=-1</p>
+<div class="formula">
+CF<sub>1</sub> = -0,8; CF<sub>2</sub> = -0,6<br>
+Kedua &lt; 0 &rArr; CF = -0,8 + (-0,6)(1 + (-0,8))<br>
+= -0,8 - 0,12 = <span class="hl">-0,92</span>
+</div>
+
+<!-- ====================================================================== -->
+<h2>7. Studi Kasus: Sistem FORECAST</h2>
+
+<p>Sistem FORECAST adalah aplikasi prakiraan cuaca dengan 6 aturan pakar. Mari kita analisis langkah demi langkah.</p>
+
+<h3>Basis Pengetahuan (6 Rules)</h3>
+<div class="rule-card">
+R1: <span class="if">IF</span> today is rain <span class="then">THEN</span> tomorrow is rain (CF = 0,5)<br>
+R2: <span class="if">IF</span> today is dry <span class="then">THEN</span> tomorrow is dry (CF = 0,5)<br>
+R3: <span class="if">IF</span> today is rain <span class="and">AND</span> rainfall is low <span class="then">THEN</span> tomorrow is dry (CF = 0,6)<br>
+R4: <span class="if">IF</span> today is rain <span class="and">AND</span> rainfall is low <span class="and">AND</span> temperature is cold <span class="then">THEN</span> tomorrow is dry (CF = 0,7)<br>
+R5: <span class="if">IF</span> today is dry <span class="and">AND</span> temperature is warm <span class="then">THEN</span> tomorrow is rain (CF = 0,65)<br>
+R6: <span class="if">IF</span> today is dry <span class="and">AND</span> temperature is warm <span class="and">AND</span> sky is overcast <span class="then">THEN</span> tomorrow is rain (CF = 0,55)
+</div>
+
+<h3>Input Pengguna</h3>
+<table>
+  <tr><th>Fakta</th><th>CF</th></tr>
+  <tr><td>Rain Today</td><td>1,0 (pasti hujan)</td></tr>
+  <tr><td>Rainfall Low</td><td>0,8 (yakin rendah)</td></tr>
+  <tr><td>Cold</td><td>0,9 (yakin dingin)</td></tr>
+</table>
+
+<h3>Langkah 1: Evaluasi Aturan yang Terpicu</h3>
+<p><strong>R1 terpicu</strong> (rain hari ini = 1,0):</p>
+<div class="formula">CF_R1 = 1,0 x 0,5 = <span class="hl">0,50</span> (Prediksi: Hujan)</div>
+
+<p><strong>R3 terpicu</strong> (rain=1,0 AND rainfall low=0,8):</p>
+<div class="formula">CF_R3 = min(1,0; 0,8) x 0,6 = 0,8 x 0,6 = <span class="hl">0,48</span> (Prediksi: Kering)</div>
+
+<p><strong>R4 terpicu</strong> (rain=1,0 AND rainfall low=0,8 AND cold=0,9):</p>
+<div class="formula">CF_R4 = min(1,0; 0,8; 0,9) x 0,7 = 0,8 x 0,7 = <span class="hl">0,56</span> (Prediksi: Kering)</div>
+
+<h3>Langkah 2: Resolusi Konflik untuk Prediksi "Kering"</h3>
+<p>R3 dan R4 sama-sama memprediksi "Kering". Keduanya positif, gunakan rumus saling memperkuat:</p>
+
+<div class="formula">
+CF_combine = 0,48 + 0,56 x (1 &minus; 0,48)<br>
+= 0,48 + 0,56 x 0,52<br>
+= 0,48 + 0,2912 = <span class="hl">0,7712</span> (dibulatkan 0,77 untuk Kering)
+</div>
+
+<h3>Langkah 3: Keputusan Akhir</h3>
+<table>
+  <tr><th>Prediksi</th><th>CF</th></tr>
+  <tr><td>Esok Kering</td><td><strong>0,77</strong></td></tr>
+  <tr><td>Esok Hujan</td><td>0,50</td></tr>
+</table>
+
+<div class="info-box">
+<strong>Kesimpulan:</strong> Sistem memutuskan "Esok Hari Kering" karena CF 0,77 mengalahkan prediksi hujan 0,50. Meskipun hari ini hujan, kombinasi curah hujan rendah + suhu dingin memberikan keyakinan lebih kuat bahwa besok akan kering.
+</div>
+
+<!-- ====================================================================== -->
+<h2>8. Quiz</h2>
+
+<div class="quiz-box">
+  <div class="q">1. Dalam rumus CF = MB - MD, apa yang terjadi jika MD > MB?</div>
+  <button class="opt" onclick="checkQuiz(this, 1)">CF menjadi positif</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">CF menjadi negatif (ketidakpercayaan lebih kuat)</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">CF tetap 0</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">CF tidak terdefinisi</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">2. IF demam AND batuk THEN influenza (CF Rule = 0,7). CF(demam)=0,5, CF(batuk)=0,9. Berapa CF(influenza)?</div>
+  <button class="opt" onclick="checkQuiz(this, 2)">0,35</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">0,63</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">0,50</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">0,45</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">3. Dua rule: R1 dengan CF1=0,7 dan R2 dengan CF2=0,5, keduanya positif. Berapa CF_combine?</div>
+  <button class="opt" onclick="checkQuiz(this, 3)">1,20</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">0,85</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">0,35</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">0,60</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">4. Dalam FORECAST, jika CF_R3=0,48 dan CF_R4=0,56, keduanya memprediksi kering, berapa CF gabungan?</div>
+  <button class="opt" onclick="checkQuiz(this, 4)">1,04</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">0,52</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">0,77</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">0,48</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">5. MB = 0,8 dan MD = 0,3. Berapa CF?</div>
+  <button class="opt" onclick="checkQuiz(this, 5)">0,5</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">1,1</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">0,24</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">-0,5</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn, correctIdx) {
+  const box = btn.closest('.quiz-box');
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+  
+  // Reset
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  
+  // Mark correct answer (1-indexed correctIdx)
+  options[correctIdx].classList.add('correct');
+  
+  // Mark user's answer if wrong
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> Giarratano (2007) Expert Systems: Principles and Programming; Sutojo et al. (2018) Kecerdasan Buatan; Shortliffe &amp; Buchanan (1975) MYCIN.
+</p>
+
+</body>
+</html>

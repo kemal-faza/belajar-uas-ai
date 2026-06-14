@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8: Probabilitas Bayes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #2563eb; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #dbeafe;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #2563eb;
+    background: #f0f5ff;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .formula .hl { color: #60a5fa; }
+  .formula .hl2 { color: #34d399; }
+
+  /* --- Rule Card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+    line-height: 1.8;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #2563eb;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #eff6ff; }
+  td.best { background: #dcfce7; font-weight: 600; }
+  td.worst { background: #fecaca; font-weight: 600; }
+  td.elim { background: #1c1917; color: #fafaf9; font-weight: 600; }
+
+  /* --- Progress Bar --- */
+  .progress-bar {
+    display: flex;
+    height: 1.8rem;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .progress-bar .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: width 0.3s;
+  }
+  .pb-h1 { background: #3b82f6; }
+  .pb-h2 { background: #8b5cf6; }
+  .pb-h3 { background: #10b981; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #2563eb;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #f0f5ff;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #dbeafe; border-color: #2563eb; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+  .comp-grid .col.cf-col { border-top: 3px solid #d97706; }
+  .comp-grid .col.bayes-col { border-top: 3px solid #2563eb; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 8: Probabilitas Bayes</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Teorema Bayes, Multi-Evidence, Conditional Independence &mdash; dari prior ke posterior</p>
+
+<!-- ====================================================================== -->
+<h2>1. Konsep Dasar Probabilitas Bayes</h2>
+
+<div class="def-box">
+<strong>Probabilitas Bayes</strong>
+<p>Pendekatan berbasis teori statistika klasik untuk menghitung peluang kebenaran suatu hipotesis setelah diperoleh bukti tertentu. Berbeda dengan CF yang berbasis heuristik pakar, Bayes menggunakan perhitungan peluang matematis secara ketat.</p>
+</div>
+
+<h3>1.1 Rumus Teorema Bayes</h3>
+
+<div class="formula" style="font-size:1.1em;">
+p(H<sub>i</sub> | E) = <span class="hl">p(E | H<sub>i</sub>) x p(H<sub>i</sub>)</span><br>
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;<br>
+<span class="hl2">&Sigma;</span><sub>k=1</sub><sup>m</sup> p(E | H<sub>k</sub>) x p(H<sub>k</sub>)
+</div>
+
+<h3>1.2 Tiga Jenis Probabilitas</h3>
+
+<table>
+  <tr><th>Istilah</th><th>Notasi</th><th>Makna</th><th>Sumber</th></tr>
+  <tr>
+    <td><strong>Prior Probability</strong></td>
+    <td>p(H<sub>i</sub>)</td>
+    <td>Probabilitas awal hipotesis H<sub>i</sub> sebelum ada bukti</td>
+    <td>Pakar / data historis</td>
+  </tr>
+  <tr>
+    <td><strong>Conditional Probability</strong></td>
+    <td>p(E | H<sub>i</sub>)</td>
+    <td>Peluang munculnya bukti E jika hipotesis H<sub>i</sub> benar</td>
+    <td>Pakar / penelitian</td>
+  </tr>
+  <tr>
+    <td><strong>Posterior Probability</strong></td>
+    <td>p(H<sub>i</sub> | E)</td>
+    <td>Probabilitas H<sub>i</sub> benar setelah melihat bukti E</td>
+    <td>Hasil perhitungan Bayes</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Syarat Mutlak: Mutually Exclusive</strong>
+<p>Pendekatan Bayes mensyaratkan semua hipotesis bersifat <strong>saling lepas (mutually exclusive)</strong> &mdash; tidak boleh ada dua hipotesis yang terjadi bersamaan. Jika H1 terjadi, maka H2 dan H3 tidak mungkin terjadi.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Multi-Evidence: Conditional Independence</h2>
+
+<p>Ketika ada banyak bukti (E1, E2, ..., En) yang memengaruhi satu hipotesis, perhitungan Bayes menjadi kompleks. Solusinya: <strong>Asumsi Kemandirian Bersyarat (Conditional Independence)</strong>.</p>
+
+<div class="info-box">
+<strong>Conditional Independence</strong>
+<p>Setiap observasi atau bukti dianggap berdiri sendiri dan tidak saling memengaruhi satu sama lain dalam membuktikan hipotesis H<sub>i</sub>.</p>
+</div>
+
+<h3>Rumus Bayes Multi-Evidence</h3>
+
+<div class="formula">
+p(H<sub>i</sub> | E<sub>1</sub> E<sub>2</sub> ... E<sub>n</sub>) = <span style="color:#60a5fa;">p(E<sub>1</sub>|H<sub>i</sub>) x p(E<sub>2</sub>|H<sub>i</sub>) x ... x p(E<sub>n</sub>|H<sub>i</sub>) x p(H<sub>i</sub>)</span><br>
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;<br>
+<span style="color:#34d399;">&Sigma;</span><sub>k=1</sub><sup>m</sup> p(E<sub>1</sub>|H<sub>k</sub>) x p(E<sub>2</sub>|H<sub>k</sub>) x ... x p(E<sub>n</sub>|H<sub>k</sub>) x p(H<sub>k</sub>)
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Studi Kasus: Iterasi Bayes (3 Hipotesis, 3 Evidence)</h2>
+
+<p>Mari kita ikuti studi kasus lengkap. Sistem pakar memiliki <strong>3 hipotesis (H1, H2, H3)</strong> dan <strong>3 bukti potensial (E1, E2, E3)</strong>.</p>
+
+<h3>3.1 Tabel Probabilitas Awal (dari Pakar)</h3>
+
+<table>
+  <tr><th>Parameter</th><th>H<sub>1</sub></th><th>H<sub>2</sub></th><th>H<sub>3</sub></th></tr>
+  <tr><td>p(H<sub>i</sub>) &mdash; Prior</td><td>0,40</td><td>0,35</td><td>0,25</td></tr>
+  <tr><td>p(E<sub>1</sub> | H<sub>i</sub>)</td><td>0,3</td><td>0,8</td><td>0,5</td></tr>
+  <tr><td>p(E<sub>2</sub> | H<sub>i</sub>)</td><td>0,9</td><td>0,0</td><td>0,7</td></tr>
+  <tr><td>p(E<sub>3</sub> | H<sub>i</sub>)</td><td>0,6</td><td>0,7</td><td>0,9</td></tr>
+</table>
+
+<h3>3.2 Status Awal (Prior State) &mdash; Sebelum Ada Bukti</h3>
+
+<div class="progress-bar">
+  <div class="seg pb-h1" style="width:40%">H1: 40%</div>
+  <div class="seg pb-h2" style="width:35%">H2: 35%</div>
+  <div class="seg pb-h3" style="width:25%">H3: 25%</div>
+</div>
+
+<p>Ini adalah status awal. Sekarang kita amati bagaimana probabilitas bergeser secara dinamis setelah bukti dimasukkan satu per satu.</p>
+
+<!-- ====================================================================== -->
+<h3>3.3 Iterasi 1: Pengguna Mengobservasi E3</h3>
+
+<p><strong>Langkah 1: Hitung Faktor Normalisasi (Penyebut)</strong></p>
+<div class="formula">
+Penyebut = &Sigma; p(E<sub>3</sub> | H<sub>k</sub>) x p(H<sub>k</sub>)<br>
+= (0,6 x 0,40) + (0,7 x 0,35) + (0,9 x 0,25)<br>
+= 0,24 + 0,245 + 0,225 = <span class="hl">0,71</span>
+</div>
+
+<p><strong>Langkah 2: Hitung Posterior untuk Masing-masing Hipotesis</strong></p>
+<div class="formula">
+p(H<sub>1</sub> | E<sub>3</sub>) = (0,6 x 0,40) / 0,71 = 0,24 / 0,71 = <span class="hl">0,338</span> &rarr; 34%<br>
+p(H<sub>2</sub> | E<sub>3</sub>) = (0,7 x 0,35) / 0,71 = 0,245 / 0,71 = <span class="hl">0,345</span> &rarr; 34%<br>
+p(H<sub>3</sub> | E<sub>3</sub>) = (0,9 x 0,25) / 0,71 = 0,225 / 0,71 = <span class="hl">0,317</span> &rarr; 32%
+</div>
+
+<p><strong>Progress Bar setelah E3:</strong></p>
+<div class="progress-bar">
+  <div class="seg pb-h1" style="width:34%">H1: 34%</div>
+  <div class="seg pb-h2" style="width:34%">H2: 34%</div>
+  <div class="seg pb-h3" style="width:32%">H3: 32%</div>
+</div>
+
+<table>
+  <tr><th>Hipotesis</th><th>Prior</th><th>Posterior (E3)</th><th>Perubahan</th></tr>
+  <tr>
+    <td>H<sub>1</sub></td><td>40%</td><td class="worst">34%</td><td>Turun 6%</td>
+  </tr>
+  <tr>
+    <td>H<sub>2</sub></td><td>35%</td><td>34%</td><td>Turun 1%</td>
+  </tr>
+  <tr>
+    <td>H<sub>3</sub></td><td>25%</td><td class="best">32%</td><td>Naik 7% &uarr;</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>Analisis Iterasi 1:</strong> Masuknya bukti E3 sangat menguntungkan H3 (naik 7%), sementara H1 dan H2 mulai menurun. Persaingan masih ketat.
+</div>
+
+<!-- ====================================================================== -->
+<h3>3.4 Iterasi 2: Memasukkan E1 (Setelah E3)</h3>
+
+<p>Sekarang pengguna memasukkan bukti E1. Perhatikan bahwa kita gunakan <strong>perkalian</strong> karena asumsi <em>Conditional Independence</em>.</p>
+
+<p><strong>Langkah 1: Hitung Faktor Normalisasi Baru</strong></p>
+<div class="formula">
+Penyebut = &Sigma; p(E<sub>1</sub>|H<sub>k</sub>) x p(E<sub>3</sub>|H<sub>k</sub>) x p(H<sub>k</sub>)<br>
+= (0,3 x 0,6 x 0,40) + (0,8 x 0,7 x 0,35) + (0,5 x 0,9 x 0,25)<br>
+= 0,072 + 0,196 + 0,1125 = <span class="hl">0,3805</span>
+</div>
+
+<p><strong>Langkah 2: Hitung Posterior Terkini</strong></p>
+<div class="formula">
+p(H<sub>1</sub> | E<sub>1</sub> E<sub>3</sub>) = 0,072 / 0,3805 = <span class="hl">0,189</span> &rarr; 19%<br>
+p(H<sub>2</sub> | E<sub>1</sub> E<sub>3</sub>) = 0,196 / 0,3805 = <span class="hl">0,515</span> &rarr; 52%<br>
+p(H<sub>3</sub> | E<sub>1</sub> E<sub>3</sub>) = 0,1125 / 0,3805 = <span class="hl">0,296</span> &rarr; 29%
+</div>
+
+<p><strong>Progress Bar setelah E3 + E1:</strong></p>
+<div class="progress-bar">
+  <div class="seg pb-h1" style="width:19%">H1: 19%</div>
+  <div class="seg pb-h2" style="width:52%">H2: 52%</div>
+  <div class="seg pb-h3" style="width:29%">H3: 29%</div>
+</div>
+
+<table>
+  <tr><th>Hipotesis</th><th>Prior</th><th>Setelah E3</th><th>Setelah E3+E1</th><th>Perubahan</th></tr>
+  <tr>
+    <td>H<sub>1</sub></td><td>40%</td><td>34%</td><td class="worst">19%</td><td>Anjlok!</td>
+  </tr>
+  <tr>
+    <td>H<sub>2</sub></td><td>35%</td><td>34%</td><td class="best">52%</td><td>Naik drastis!</td>
+  </tr>
+  <tr>
+    <td>H<sub>3</sub></td><td>25%</td><td>32%</td><td>29%</td><td>Turun sedikit</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>Analisis Iterasi 2:</strong> Evidence 1 (E1) menghancurkan peluang H1 (turun ke 19%) dan menempatkan H2 sebagai kandidat terkuat (52%). H3 bertahan di 29%.
+</div>
+
+<!-- ====================================================================== -->
+<h3>3.5 Iterasi 3: Memasukkan E2 &mdash; The Final Blow</h3>
+
+<p>Terakhir, pengguna memasukkan bukti E2. Perhatikan bahwa p(E2 | H2) = <strong>0,0</strong> &mdash; artinya bukti E2 <em>tidak mungkin</em> muncul jika H2 benar.</p>
+
+<p><strong>Langkah 1: Hitung Faktor Normalisasi</strong></p>
+<div class="formula">
+Penyebut = &Sigma; p(E<sub>1</sub>|H<sub>k</sub>) x p(E<sub>2</sub>|H<sub>k</sub>) x p(E<sub>3</sub>|H<sub>k</sub>) x p(H<sub>k</sub>)<br>
+= (0,3 x 0,9 x 0,6 x 0,40) + (0,8 x 0,0 x 0,7 x 0,35) + (0,5 x 0,7 x 0,9 x 0,25)<br>
+= 0,0648 + <span class="hl2">0</span> + 0,07875 = <span class="hl">0,14355</span>
+</div>
+
+<p><strong>Langkah 2: Hitung Posterior Akhir</strong></p>
+<div class="formula">
+p(H<sub>1</sub> | E<sub>1</sub> E<sub>2</sub> E<sub>3</sub>) = 0,0648 / 0,14355 = <span class="hl">0,451</span> &rarr; 45%<br>
+p(H<sub>2</sub> | E<sub>1</sub> E<sub>2</sub> E<sub>3</sub>) = 0 / 0,14355 = <span class="hl2">0,000</span> &rarr; <strong>0% (ELIMINATED!)</strong><br>
+p(H<sub>3</sub> | E<sub>1</sub> E<sub>2</sub> E<sub>3</sub>) = 0,07875 / 0,14355 = <span class="hl">0,549</span> &rarr; 55%
+</div>
+
+<p><strong>Progress Bar Final (setelah semua evidence):</strong></p>
+<div class="progress-bar">
+  <div class="seg pb-h1" style="width:45%">H1: 45%</div>
+  <div class="seg pb-h3" style="width:55%">H3: 55%</div>
+</div>
+
+<table>
+  <tr><th>Hipotesis</th><th>Prior</th><th>+E3</th><th>+E3+E1</th><th>+E3+E1+E2</th></tr>
+  <tr>
+    <td>H<sub>1</sub></td><td>40%</td><td>34%</td><td>19%</td><td><strong>45%</strong></td>
+  </tr>
+  <tr>
+    <td>H<sub>2</sub></td><td>35%</td><td>34%</td><td class="best">52%</td><td class="elim">0% (ELIM)</td>
+  </tr>
+  <tr>
+    <td>H<sub>3</sub></td><td>25%</td><td class="best">32%</td><td>29%</td><td class="best">55% &larr; WINNER</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Critical Insight:</strong> Karena p(E2 | H2) = 0,0, maka masuknya E2 seketika <strong>mengeliminasi H2</strong> sepenuhnya. Ini adalah kekuatan Teorema Bayes &mdash; satu bukti yang mustahil di bawah suatu hipotesis langsung mendiskualifikasi hipotesis tersebut.
+</div>
+
+<div class="info-box">
+<strong>Kesimpulan Akhir:</strong> Dengan terkumpulnya bukti lengkap (E3, E1, E2), sistem menyimpulkan bahwa <strong>H3 adalah hasil diagnosis paling mungkin (55%)</strong>, diikuti H1 (45%), dan H2 telah tereliminasi.
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Perbandingan: Certainty Factor vs Probabilitas Bayes</h2>
+
+<div class="comp-grid">
+  <div class="col cf-col">
+    <h4 style="color:#d97706;">Certainty Factor</h4>
+    <ul>
+      <li><strong>Landasan:</strong> Heuristik & intuisi pakar</li>
+      <li><strong>Asumsi:</strong> Fleksibel, hipotesis bisa ganda</li>
+      <li><strong>Kompleksitas:</strong> Ringan, linier terhadap jumlah rule</li>
+      <li><strong>Cocok untuk:</strong> Diagnosis medis/kerusakan dengan pakar dominan</li>
+    </ul>
+  </div>
+  <div class="col bayes-col">
+    <h4 style="color:#2563eb;">Probabilitas Bayes</h4>
+    <ul>
+      <li><strong>Landasan:</strong> Statistika formal, kalkulasi ketat</li>
+      <li><strong>Asumsi:</strong> Mutually Exclusive + Conditional Independence</li>
+      <li><strong>Kompleksitas:</strong> Eksponensial dengan jumlah hipotesis/bukti</li>
+      <li><strong>Cocok untuk:</strong> Klasifikasi dengan data historis berlimpah</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Rangkuman</h2>
+
+<div class="def-box">
+<strong>Tiga Poin Kunci Bayes</strong>
+<ol>
+  <li><strong>Prior &rarr; Posterior:</strong> Bayes memperbarui keyakinan awal (prior) dengan bukti baru untuk menghasilkan keyakinan akhir (posterior).</li>
+  <li><strong>Mutually Exclusive:</strong> Hipotesis harus saling lepas &mdash; hanya satu yang bisa benar.</li>
+  <li><strong>Conditional Independence:</strong> Asumsi bahwa bukti-bukti tidak saling memengaruhi, sehingga probabilitas bisa dikalikan.</li>
+</ol>
+</div>
+
+<p style="font-size:1.05em; font-style:italic; color:#52525b;">"Ketidakpastian bukanlah kegagalan sistem, melainkan parameter matematis yang harus diukur." &mdash; Anotasi Kuliah Manajemen Ketidakpastian</p>
+
+<!-- ====================================================================== -->
+<h2>6. Quiz</h2>
+
+<div class="quiz-box">
+  <div class="q">1. Dalam Teorema Bayes, apa yang dimaksud dengan p(H<sub>i</sub> | E)?</div>
+  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas awal hipotesis sebelum ada bukti</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas hipotesis setelah melihat bukti (posterior)</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas bukti muncul tanpa hipotesis</button>
+  <button class="opt" onclick="checkQuiz(this, 1)">Probabilitas bahwa bukti salah</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">2. Apa syarat mutlak yang harus dipenuhi oleh hipotesis dalam Probabilitas Bayes?</div>
+  <button class="opt" onclick="checkQuiz(this, 2)">Hipotesis harus independen secara statistik</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">Hipotesis harus mutually exclusive (saling lepas)</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">Hipotesis harus memiliki probabilitas yang sama</button>
+  <button class="opt" onclick="checkQuiz(this, 2)">Tidak ada syarat khusus</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">3. Dalam iterasi Bayes studi kasus, setelah E3 dan E1 dimasukkan, hipotesis mana yang paling mungkin?</div>
+  <button class="opt" onclick="checkQuiz(this, 3)">H1 (19%)</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">H2 (52%)</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">H3 (29%)</button>
+  <button class="opt" onclick="checkQuiz(this, 3)">Tidak bisa ditentukan</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">4. Mengapa H2 tereliminasi (menjadi 0%) pada iterasi ke-3?</div>
+  <button class="opt" onclick="checkQuiz(this, 4)">Karena H2 memiliki prior terendah</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">Karena p(E2|H2) = 0, bukti E2 tidak mungkin muncul jika H2 benar</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">Karena E2 bertentangan dengan E1</button>
+  <button class="opt" onclick="checkQuiz(this, 4)">Karena H3 memiliki CF lebih tinggi</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="q">5. Manakah pernyataan yang BENAR tentang perbedaan CF dan Bayes?</div>
+  <button class="opt" onclick="checkQuiz(this, 5)">CF lebih cocok untuk klasifikasi data historis besar</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">Bayes mensyaratkan mutually exclusive, CF tidak</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">CF menggunakan probabilitas; Bayes menggunakan heuristik</button>
+  <button class="opt" onclick="checkQuiz(this, 5)">Bayes lebih ringan komputasi daripada CF</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn, correctIdx) {
+  const box = btn.closest('.quiz-box');
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+  
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+  
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> Giarratano (2007) Expert Systems: Principles and Programming; Sutojo et al. (2018) Kecerdasan Buatan.
+</p>
+
+</body>
+</html>
