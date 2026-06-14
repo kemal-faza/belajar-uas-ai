@@ -292,53 +292,83 @@
 <p>Dengan fuzzy, variabel umur yang sama bisa direpresentasikan ulang dengan kurva yang <strong>halus</strong>:</p>
 
 <div class="plot">
-<svg width="700" height="220" viewBox="0 0 700 220" style="max-width:100%;">
-  <!-- Axis -->
-  <line x1="50" y1="190" x2="670" y2="190" stroke="#1c1917" stroke-width="1.5"/>
-  <line x1="50" y1="190" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
-  <!-- X labels -->
-  <text x="50" y="208" font-size="11" text-anchor="middle">0</text>
-  <text x="90" y="208" font-size="11" text-anchor="middle">15</text>
-  <text x="170" y="208" font-size="11" text-anchor="middle">25</text>
-  <text x="270" y="208" font-size="11" text-anchor="middle">35</text>
-  <text x="370" y="208" font-size="11" text-anchor="middle">45</text>
-  <text x="470" y="208" font-size="11" text-anchor="middle">55</text>
-  <text x="570" y="208" font-size="11" text-anchor="middle">65</text>
-  <text x="630" y="208" font-size="11" text-anchor="middle">90</text>
-  <!-- Y labels -->
-  <text x="40" y="194" font-size="10" text-anchor="end">0</text>
-  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
-  <!-- MUDA: 1 from 0 to 25, linear down to 0 at 35 -->
-  <line x1="50" y1="95" x2="170" y2="95" stroke="#dc2626" stroke-width="2.5"/>
-  <line x1="170" y1="95" x2="270" y2="190" stroke="#dc2626" stroke-width="2.5"/>
-  <text x="120" y="86" font-size="11" fill="#dc2626" font-weight="600">MUDA</text>
-  <!-- PAROBAYA: 0 at 35, 1 at 45, 0 at 55 (triangle) -->
-  <line x1="270" y1="190" x2="370" y2="95" stroke="#7c3aed" stroke-width="2.5"/>
-  <line x1="370" y1="95" x2="470" y2="190" stroke="#7c3aed" stroke-width="2.5"/>
-  <text x="370" y="86" font-size="11" fill="#7c3aed" font-weight="600">PAROBAYA</text>
-  <!-- TUA: 0 at 55, linear up to 1 at 65 -->
-  <line x1="470" y1="190" x2="570" y2="95" stroke="#16a34a" stroke-width="2.5"/>
-  <line x1="570" y1="95" x2="670" y2="95" stroke="#16a34a" stroke-width="2.5"/>
-  <text x="620" y="86" font-size="11" fill="#16a34a" font-weight="600">TUA</text>
-  <!-- Marker at 40 -->
-  <line x1="310" y1="190" x2="310" y2="20" stroke="#0d9488" stroke-width="0.7" stroke-dasharray="2,2"/>
-  <circle cx="310" cy="142.5" r="4" fill="#dc2626"/>
-  <text x="318" y="146" font-size="10" fill="#dc2626" font-weight="600">0,25</text>
-  <circle cx="310" cy="142.5" r="4" fill="#7c3aed" opacity="0.0"/>
-  <text x="318" y="160" font-size="10" fill="#7c3aed" font-weight="600">0,5</text>
-  <text x="310" y="20" font-size="11" text-anchor="middle" fill="#0d9488" font-weight="600">umur 40</text>
+<svg width="800" height="260" viewBox="0 0 800 260" style="max-width:100%;">
+  <!-- Y axis -->
+  <line x1="50" y1="200" x2="50" y2="30" stroke="#1c1917" stroke-width="1.5"/>
+  <!-- X axis -->
+  <line x1="50" y1="200" x2="760" y2="200" stroke="#1c1917" stroke-width="1.5"/>
+  <!-- Y axis label -->
+  <text x="20" y="40" font-size="12" font-style="italic" fill="#1c1917">&mu;[x]</text>
+  <!-- Y axis tick labels -->
+  <text x="42" y="105" font-size="11" text-anchor="end">1</text>
+  <text x="42" y="155" font-size="11" text-anchor="end" fill="#16a34a" font-weight="600">0,5</text>
+  <text x="42" y="180" font-size="11" text-anchor="end" fill="#dc2626" font-weight="600">0,25</text>
+  <text x="42" y="205" font-size="11" text-anchor="end">0</text>
+  <!-- Top labels (above curves) -->
+  <text x="170" y="55" font-size="14" text-anchor="middle" fill="#1c1917" font-weight="600">MUDA</text>
+  <text x="490" y="55" font-size="14" text-anchor="middle" fill="#1c1917" font-weight="600">PAROBAYA</text>
+  <text x="680" y="55" font-size="14" text-anchor="middle" fill="#1c1917" font-weight="600">TUA</text>
+  <!-- X axis labels -->
+  <text x="300" y="220" font-size="11" text-anchor="middle">25</text>
+  <text x="400" y="220" font-size="11" text-anchor="middle">35</text>
+  <text x="450" y="220" font-size="11" text-anchor="middle" fill="#2563eb" font-weight="600">40</text>
+  <text x="500" y="220" font-size="11" text-anchor="middle">45</text>
+  <text x="550" y="220" font-size="11" text-anchor="middle" fill="#16a34a" font-weight="600">50</text>
+  <text x="600" y="220" font-size="11" text-anchor="middle">55</text>
+  <text x="700" y="220" font-size="11" text-anchor="middle">65</text>
+  <text x="755" y="220" font-size="10" text-anchor="end" fill="#52525b" font-style="italic">Umur (th)</text>
+  <!-- Dotted verticals at transition points -->
+  <line x1="300" y1="200" x2="300" y2="35" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>
+  <line x1="400" y1="200" x2="400" y2="35" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>
+  <line x1="500" y1="200" x2="500" y2="35" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>
+  <line x1="600" y1="200" x2="600" y2="35" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>
+  <line x1="700" y1="200" x2="700" y2="35" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>
+  <!-- MUDA: flat 1 from x=0 to x=25, linear down to 0 at x=45 -->
+  <line x1="50" y1="100" x2="300" y2="100" stroke="#1c1917" stroke-width="2"/>
+  <line x1="300" y1="100" x2="500" y2="200" stroke="#1c1917" stroke-width="2"/>
+  <!-- PAROBAYA: 0 at x=35, 1 at x=45, 0 at x=55 -->
+  <line x1="400" y1="200" x2="500" y2="100" stroke="#1c1917" stroke-width="2"/>
+  <line x1="500" y1="100" x2="600" y2="200" stroke="#1c1917" stroke-width="2"/>
+  <!-- TUA: 0 at x=45, linear up to 1 at x=65, flat 1 after -->
+  <line x1="500" y1="200" x2="700" y2="100" stroke="#1c1917" stroke-width="2"/>
+  <line x1="700" y1="100" x2="760" y2="100" stroke="#1c1917" stroke-width="2"/>
+  <!-- Horizontal arrows from dots to y-axis labels -->
+  <!-- x=40: red dot at mu=0.25 (y=175), green dot at mu=0.5 (y=150) -->
+  <line x1="450" y1="175" x2="80" y2="175" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+  <polygon points="80,175 88,171 88,179" fill="#dc2626"/>
+  <line x1="450" y1="150" x2="80" y2="150" stroke="#16a34a" stroke-width="1" stroke-dasharray="3,2"/>
+  <polygon points="80,150 88,146 88,154" fill="#16a34a"/>
+  <!-- x=50: red dot at mu=0.25 (y=175), green dot at mu=0.5 (y=150) -->
+  <line x1="550" y1="175" x2="80" y2="175" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+  <polygon points="80,175 88,171 88,179" fill="#dc2626"/>
+  <line x1="550" y1="150" x2="80" y2="150" stroke="#16a34a" stroke-width="1" stroke-dasharray="3,2"/>
+  <polygon points="80,150 88,146 88,154" fill="#16a34a"/>
+  <!-- Dots at x=40 -->
+  <circle cx="450" cy="175" r="4" fill="#dc2626"/>
+  <circle cx="450" cy="150" r="4" fill="#16a34a"/>
+  <!-- Dots at x=50 -->
+  <circle cx="550" cy="175" r="4" fill="#dc2626"/>
+  <circle cx="550" cy="150" r="4" fill="#16a34a"/>
+  <!-- Vertical guide lines for the two sample points -->
+  <line x1="450" y1="200" x2="450" y2="30" stroke="#2563eb" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.5"/>
+  <line x1="550" y1="200" x2="550" y2="30" stroke="#16a34a" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.5"/>
 </svg>
-<p class="plot-caption">Gambar 2: Himpunan fuzzy untuk variabel Umur. Di umur 40, satu titik bisa "memiliki" dua nilai keanggotaan sekaligus.</p>
+<p class="plot-caption">Gambar 2: Himpunan fuzzy untuk variabel Umur. Contoh: umur <strong style="color:#2563eb;">40</strong> (biru) &rarr; &mu;<sub>MUDA</sub>=0,25 + &mu;<sub>PAROBAYA</sub>=0,5; umur <strong style="color:#16a34a;">50</strong> (hijau) &rarr; &mu;<sub>PAROBAYA</sub>=0,5 + &mu;<sub>TUA</sub>=0,25.</p>
 </div>
 
 <div class="example-box">
-<strong>Contoh Evaluasi Fuzzy (umur 40)</strong>
-<p>Seseorang berumur 40 tahun masuk ke:</p>
+<strong>Contoh Evaluasi Fuzzy (2 skenario dari PDF)</strong>
+<p><strong>Skenario 1 &mdash; Seseorang berumur 40 tahun</strong> (titik biru di Gambar 2) masuk ke:</p>
 <ul>
   <li>Himpunan <strong>MUDA</strong> dengan derajat &mu;<sub>MUDA</sub>[40] = <strong>0,25</strong> (masih muda sedikit)</li>
   <li>Himpunan <strong>PAROBAYA</strong> dengan derajat &mu;<sub>PAROBAYA</sub>[40] = <strong>0,5</strong> (setengah parobaya)</li>
 </ul>
-<p>Jumlahnya tidak harus 1. Yang penting: dia "agak muda" DAN "setengah parobaya" secara bersamaan.</p>
+<p><strong>Skenario 2 &mdash; Seseorang berumur 50 tahun</strong> (titik hijau di Gambar 2) masuk ke:</p>
+<ul>
+  <li>Himpunan <strong>PAROBAYA</strong> dengan derajat &mu;<sub>PAROBAYA</sub>[50] = <strong>0,5</strong> (setengah parobaya)</li>
+  <li>Himpunan <strong>TUA</strong> dengan derajat &mu;<sub>TUA</sub>[50] = <strong>0,25</strong> (masih tua sedikit)</li>
+</ul>
+<p>Jumlahnya tidak harus 1. Yang penting: satu orang bisa "memiliki" dua nilai keanggotaan di dua himpunan sekaligus.</p>
 </div>
 
 <!-- ====================================================================== -->
