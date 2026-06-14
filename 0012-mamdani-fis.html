@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 12: Sistem Inferensi Fuzzy &amp; Metode Mamdani</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #0d9488; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #0d9488; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #ccfbf1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #0d9488;
+    background: #f0fdfa;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.9em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .formula .hl { color: #5eead4; }
+  .formula .hl2 { color: #fcd34d; }
+  .formula .hlr { color: #fca5a5; }
+  .formula .hlb { color: #93c5fd; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #0d9488;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #f0fdfa; }
+  td.center { text-align: center; font-weight: 600; }
+
+  /* --- Step Header --- */
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .step-num {
+    background: #0d9488;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Rule card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+    line-height: 1.8;
+  }
+  .rule-card .r { color: #5eead4; }
+  .rule-card .if { color: #5eead4; }
+  .rule-card .then { color: #fcd34d; }
+  .rule-card .and { color: #f472b6; }
+  .rule-card .alpha { color: #fca5a5; }
+  .rule-card .comment { color: #94a3b8; font-style: italic; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #0d9488;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #f0fdfa;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #ccfbf1; border-color: #0d9488; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 12: Sistem Inferensi Fuzzy &amp; Mamdani</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">FIS 4-langkah: Fuzzifikasi &rarr; Implikasi &rarr; Agregasi &rarr; Defuzzifikasi, plus studi kasus produksi lengkap</p>
+
+<!-- ====================================================================== -->
+<h2>1. Apa itu FIS?</h2>
+
+<div class="def-box">
+<strong>Definisi: Fuzzy Inference System (FIS)</strong>
+<p>FIS adalah proses penarikan kesimpulan dari sekumpulan kaidah/aturan fuzzy (minimal 2 aturan) untuk <strong>memetakan input tegas (crisp) menjadi output tegas (crisp)</strong>. Ibarat "memanggang kue" dengan input: bahan &rarr; aturan resep &rarr; output: kue matang.</p>
+</div>
+
+<p>Contoh penerapan FIS di industri:</p>
+<ul>
+  <li><strong>Mesin Cuci:</strong> Input (massa pakaian, jenis kotoran, kepekaan) &rarr; Output (kecepatan putar)</li>
+  <li><strong>Air Conditioner (AC):</strong> Input (suhu setting, suhu aktual, titik embun) &rarr; Output (kecepatan kompresor, kipas, mode)</li>
+  <li><strong>Optimasi Produksi:</strong> Input (permintaan, persediaan) &rarr; Output (jumlah produksi)</li>
+</ul>
+
+<!-- ====================================================================== -->
+<h2>2. Empat Langkah FIS (Mamdani)</h2>
+
+<div class="info-box">
+<strong>Metode Mamdani (Ebrahim Mamdani, 1975)</strong>
+<p>Langkah-langkah:</p>
+<ol>
+  <li><strong>Fuzzifikasi</strong> &mdash; map nilai input crisp ke derajat keanggotaan fuzzy</li>
+  <li><strong>Evaluasi aturan &amp; implikasi</strong> &mdash; hitung &alpha;-predikat dengan operator Zadeh, terapkan MIN</li>
+  <li><strong>Agregasi/Komposisi</strong> &mdash; gabungkan output semua aturan dengan MAX</li>
+  <li><strong>Defuzzifikasi</strong> &mdash; konversi kurva komposit ke satu nilai crisp dengan <strong>Centroid</strong> (default)</li>
+</ol>
+</div>
+
+<div class="plot">
+<svg width="700" height="120" viewBox="0 0 700 120" style="max-width:100%;">
+  <!-- 4 boxes connected by arrows -->
+  <rect x="10" y="35" width="150" height="50" rx="6" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="85" y="55" font-size="11" text-anchor="middle" fill="#0d9488" font-weight="600">1. FUZZIFIKASI</text>
+  <text x="85" y="72" font-size="9" text-anchor="middle" fill="#52525b">crisp &rarr; &mu;</text>
+  <line x1="160" y1="60" x2="190" y2="60" stroke="#1c1917" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="190" y="35" width="150" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="265" y="55" font-size="11" text-anchor="middle" fill="#3b82f6" font-weight="600">2. APLIKASI IMPLIKASI</text>
+  <text x="265" y="72" font-size="9" text-anchor="middle" fill="#52525b">MIN ke konsekuen</text>
+  <line x1="340" y1="60" x2="370" y2="60" stroke="#1c1917" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="370" y="35" width="150" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="445" y="55" font-size="11" text-anchor="middle" fill="#d97706" font-weight="600">3. AGREGASI</text>
+  <text x="445" y="72" font-size="9" text-anchor="middle" fill="#52525b">MAX semua aturan</text>
+  <line x1="520" y1="60" x2="550" y2="60" stroke="#1c1917" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="550" y="35" width="140" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="620" y="55" font-size="11" text-anchor="middle" fill="#16a34a" font-weight="600">4. DEFUZZIFIKASI</text>
+  <text x="620" y="72" font-size="9" text-anchor="middle" fill="#52525b">Centroid &rarr; z*</text>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 z" fill="#1c1917"/>
+    </marker>
+  </defs>
+</svg>
+<p class="plot-caption">Gambar 1: Alur 4 langkah FIS Mamdani dari input crisp ke keputusan crisp tunggal.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Studi Kasus: Optimasi Produksi Makanan Kaleng ABC</h2>
+
+<p>Mari kita kerjakan studi kasus lengkap dari PDF. Perusahaan ingin menentukan jumlah produksi (z) berdasarkan permintaan (x) dan persediaan (y).</p>
+
+<h3>3.1 Parameter Sistem</h3>
+
+<table>
+  <tr><th>Variabel</th><th>Simbol</th><th>Range</th></tr>
+  <tr><td>Permintaan (input)</td><td>x</td><td>[1000, 5000] kemasan/hari</td></tr>
+  <tr><td>Persediaan (input)</td><td>y</td><td>[100, 600] kemasan/hari</td></tr>
+  <tr><td>Produksi (output)</td><td>z</td><td>[2000, 7000] kemasan/hari</td></tr>
+</table>
+
+<h3>3.2 Basis Aturan (Rule Base)</h3>
+
+<div class="rule-card">
+<span class="r">[R1]</span> <span class="if">IF</span> Permintaan TURUN <span class="and">AND</span> Persediaan BANYAK <span class="then">THEN</span> Produksi BERKURANG<br>
+<span class="r">[R2]</span> <span class="if">IF</span> Permintaan TURUN <span class="and">AND</span> Persediaan SEDIKIT <span class="then">THEN</span> Produksi BERKURANG<br>
+<span class="r">[R3]</span> <span class="if">IF</span> Permintaan NAIK <span class="and">AND</span> Persediaan BANYAK <span class="then">THEN</span> Produksi BERTAMBAH<br>
+<span class="r">[R4]</span> <span class="if">IF</span> Permintaan NAIK <span class="and">AND</span> Persediaan SEDIKIT <span class="then">THEN</span> Produksi BERTAMBAH
+</div>
+
+<h3>3.3 Fungsi Keanggotaan (Asumsi Linear)</h3>
+
+<p>PDF tidak memberikan parameter a, b eksplisit untuk semua himpunan, tapi dari perhitungan yang ditunjukkan, kita bisa merekonstruksi:</p>
+
+<ul>
+  <li><strong>Permintaan TURUN:</strong> linear turun dari 0 di x=1000 ke 1 di x=5000</li>
+  <li><strong>Permintaan NAIK:</strong> linear naik dari 0 di x=1000 ke 1 di x=5000</li>
+  <li><strong>Persediaan SEDIKIT:</strong> linear turun dari 1 di y=100 ke 0 di y=600</li>
+  <li><strong>Persediaan BANYAK:</strong> linear naik dari 0 di y=100 ke 1 di y=600</li>
+  <li><strong>Produksi BERKURANG:</strong> linear turun (dari puncak 1 ke 0)</li>
+  <li><strong>Produksi BERTAMBAH:</strong> linear naik &mu;(z) = (z-2000)/5000</li>
+</ul>
+
+<h3>3.4 Pertanyaan</h3>
+
+<div class="warn-box">
+<strong>Problem</strong>
+<p>Berapa z (jumlah produksi) yang optimal jika <strong>Permintaan = 4000</strong> dan <strong>Persediaan = 300</strong>?</p>
+</div>
+
+<!-- ====================================================================== -->
+<div class="step">
+<div class="step-num">1</div>
+<h2 style="margin:0; border:none;">Fuzzifikasi &mdash; Hitung Derajat Keanggotaan Input</h2>
+</div>
+
+<p>Untuk setiap himpunan input, hitung &mu; pada nilai crisp yang diketahui.</p>
+
+<h3>1a. Variabel Permintaan (x = 4000, range [1000, 5000])</h3>
+
+<div class="formula">
+&mu;<sub>PmtTURUN</sub>[4000] = (5000 &minus; 4000) / 4000 = <span class="hl">1000/4000 = 0,25</span><br><br>
+&mu;<sub>PmtNAIK</sub>[4000] = (4000 &minus; 1000) / 4000 = <span class="hl2">3000/4000 = 0,75</span>
+</div>
+
+<h3>1b. Variabel Persediaan (y = 300, range [100, 600])</h3>
+
+<div class="formula">
+&mu;<sub>PsdSEDIKIT</sub>[300] = (600 &minus; 300) / 500 = <span class="hlr">300/500 = 0,6</span><br><br>
+&mu;<sub>PsdBANYAK</sub>[300] = (300 &minus; 100) / 500 = <span class="hl2">200/500 = 0,4</span>
+</div>
+
+<p><strong>Sanity check:</strong> Untuk himpunan yang berpasangan (TURUN/NAIK, SEDIKIT/BANYAK), jika satu turun satu naik, totalnya = 1. Di sini: 0,25 + 0,75 = 1 dan 0,6 + 0,4 = 1. Konsisten.</p>
+
+<!-- ====================================================================== -->
+<div class="step">
+<div class="step-num">2</div>
+<h2 style="margin:0; border:none;">Aplikasi Fungsi Implikasi (MIN) &mdash; Hitung &alpha;-predikat Tiap Rule</h2>
+</div>
+
+<p>Untuk setiap rule, hitung &alpha; = min dari semua anteseden, lalu "potong" kurva konsekuen di level &alpha;.</p>
+
+<table>
+  <tr><th>Rule</th><th>Anteseden</th><th>&alpha;-predikat</th><th>Aksi ke Konsekuen</th></tr>
+  <tr>
+    <td><strong>[R1]</strong></td>
+    <td>PmtTURUN(0,25) AND PsdBANYAK(0,4)</td>
+    <td class="center">min(0,25; 0,4) = <span style="color:#dc2626;"><strong>0,25</strong></span></td>
+    <td>Kurva BERKURANG dipotong di 0,25</td>
+  </tr>
+  <tr>
+    <td><strong>[R2]</strong></td>
+    <td>PmtTURUN(0,25) AND PsdSEDIKIT(0,6)</td>
+    <td class="center">min(0,25; 0,6) = <span style="color:#dc2626;"><strong>0,25</strong></span></td>
+    <td>Kurva BERKURANG dipotong di 0,25</td>
+  </tr>
+  <tr>
+    <td><strong>[R3]</strong></td>
+    <td>PmtNAIK(0,75) AND PsdBANYAK(0,4)</td>
+    <td class="center">min(0,75; 0,4) = <span style="color:#16a34a;"><strong>0,4</strong></span></td>
+    <td>Kurva BERTAMBAH dipotong di 0,4</td>
+  </tr>
+  <tr>
+    <td><strong>[R4]</strong></td>
+    <td>PmtNAIK(0,75) AND PsdSEDIKIT(0,6)</td>
+    <td class="center">min(0,75; 0,6) = <span style="color:#16a34a;"><strong>0,6</strong></span></td>
+    <td>Kurva BERTAMBAH dipotong di 0,6</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>Observasi Penting</strong>
+<p>Aturan R1, R2, R4 <strong>bertambah kuat</strong> (0,25 &rarr; 0,6) seiring berubahnya kondisi. Ini mencerminkan knowledge: "Permintaan NAIK + Persediaan SEDIKIT" paling butuh produksi tinggi.</p>
+</div>
+
+<!-- ====================================================================== -->
+<div class="step">
+<div class="step-num">3</div>
+<h2 style="margin:0; border:none;">Agregasi / Komposisi (MAX) &mdash; Gabungkan Semua Output</h2>
+</div>
+
+<p>Gabungkan 4 output aturan jadi satu kurva komposit dengan MAX per region.</p>
+
+<h3>3a. MAX per Sisi Konsekuen</h3>
+
+<div class="formula">
+Sisi BERKURANG (R1, R2) = max(0,25; 0,25) = <span class="hlr">0,25</span><br><br>
+Sisi BERTAMBAH (R3, R4) = max(0,4; 0,6) = <span class="hl">0,6</span>
+</div>
+
+<h3>3b. Hitung Batas a1 dan a2 pada Kurva Komposisi</h3>
+
+<p>Fungsi keanggotaan kurva naik BERTAMBAH: <code>&mu;(z) = (z &minus; 2000) / 5000</code></p>
+
+<div class="formula">
+<u>Batas a1 (di &mu; = 0,25):</u><br>
+(a<sub>1</sub> &minus; 2000) / 5000 = 0,25<br>
+a<sub>1</sub> &minus; 2000 = 1250<br>
+<span class="hl">a<sub>1</sub> = 3250</span><br><br>
+<u>Batas a2 (di &mu; = 0,6):</u><br>
+(a<sub>2</sub> &minus; 2000) / 5000 = 0,60<br>
+a<sub>2</sub> &minus; 2000 = 3000<br>
+<span class="hl">a<sub>2</sub> = 5000</span>
+</div>
+
+<h3>3c. Bentuk Kurva Komposit (3 Daerah)</h3>
+
+<div class="formula">
+&mu;[z] = <span class="hlr">0,25</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;untuk z &le; 3250<br>
+&mu;[z] = <span class="hl2">(z &minus; 2000) / 5000</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;untuk 3250 &le; z &le; 5000<br>
+&mu;[z] = <span class="hl">0,6</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;untuk z &ge; 5000
+</div>
+
+<div class="plot">
+<svg width="700" height="240" viewBox="0 0 700 240" style="max-width:100%;">
+  <line x1="50" y1="200" x2="680" y2="200" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="200" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <!-- Y labels -->
+  <text x="40" y="204" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="138" font-size="10" text-anchor="end" fill="#dc2626">0,25</text>
+  <text x="40" y="56" font-size="10" text-anchor="end" fill="#16a34a">0,6</text>
+  <!-- X labels for a1=3250, a2=5000, z=7000 -->
+  <text x="50" y="220" font-size="10" text-anchor="middle">2000</text>
+  <text x="350" y="220" font-size="10" text-anchor="middle">3250</text>
+  <text x="450" y="220" font-size="10" text-anchor="middle">5000</text>
+  <text x="650" y="220" font-size="10" text-anchor="middle">7000</text>
+  <text x="640" y="234" font-size="9" text-anchor="end" fill="#52525b" font-style="italic">z (produksi)</text>
+  <!-- Composite shape: 3 regions -->
+  <!-- Region 1: 0,25 from z=2000 to 3250 -->
+  <line x1="50" y1="138" x2="350" y2="138" stroke="#dc2626" stroke-width="3"/>
+  <line x1="50" y1="200" x2="50" y2="138" stroke="#dc2626" stroke-width="2"/>
+  <!-- Region 2: linear from (350,138) to (450,56) -->
+  <line x1="350" y1="138" x2="450" y2="56" stroke="#d97706" stroke-width="3"/>
+  <!-- Region 3: 0,6 from 5000 to 7000 -->
+  <line x1="450" y1="56" x2="650" y2="56" stroke="#16a34a" stroke-width="3"/>
+  <line x1="650" y1="56" x2="650" y2="200" stroke="#16a34a" stroke-width="2"/>
+  <!-- Labels for regions -->
+  <text x="200" y="128" font-size="10" fill="#dc2626" font-weight="600">A1 = 812,5</text>
+  <text x="395" y="100" font-size="10" fill="#d97706" font-weight="600">A2 = 743,75</text>
+  <text x="540" y="46" font-size="10" fill="#16a34a" font-weight="600">A3 = 1200</text>
+  <!-- Dashed verticals -->
+  <line x1="350" y1="200" x2="350" y2="20" stroke="#78716c" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <line x1="450" y1="200" x2="450" y2="20" stroke="#78716c" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="350" y="14" font-size="9" text-anchor="middle" fill="#78716c">a1</text>
+  <text x="450" y="14" font-size="9" text-anchor="middle" fill="#78716c">a2</text>
+</svg>
+<p class="plot-caption">Gambar 2: Kurva komposit hasil agregasi MAX. Tiga daerah: A1 (kiri datar), A2 (tengah naik), A3 (kanan datar).</p>
+</div>
+
+<!-- ====================================================================== -->
+<div class="step">
+<div class="step-num">4</div>
+<h2 style="margin:0; border:none;">Defuzzifikasi (Centroid / Center of Gravity) &mdash; Cari Nilai Crisp z*</h2>
+</div>
+
+<div class="def-box">
+<strong>Metode Centroid</strong>
+<p>Mencari nilai tegas <code>z*</code> dengan membagi <strong>total momen (M)</strong> dengan <strong>total luas daerah (A)</strong> dari kurva komposit.</p>
+<div class="formula">z* = Total Momen (M) / Total Luas (A)</div>
+</div>
+
+<h3>4a. Hitung Luas Tiap Daerah</h3>
+
+<div class="formula">
+<u>Daerah A1</u> (Persegi Panjang, z: 0&ndash;3250, tinggi 0,25):<br>
+A<sub>1</sub> = 3250 &times; 0,25 = <span class="hlr">812,5</span><br><br>
+<u>Daerah A2</u> (Trapesium, z: 3250&ndash;5000, tinggi 0,25 ke 0,6):<br>
+A<sub>2</sub> = (0,25 + 0,6) &times; (5000 &minus; 3250) / 2 = 0,85 &times; 1750 / 2 = <span class="hl2">743,75</span><br><br>
+<u>Daerah A3</u> (Persegi Panjang, z: 5000&ndash;7000, tinggi 0,6):<br>
+A<sub>3</sub> = (7000 &minus; 5000) &times; 0,6 = 2000 &times; 0,6 = <span class="hl">1200</span><br><br>
+<u>Total Luas (A):</u><br>
+A = 812,5 + 743,75 + 1200 = <span style="color:#0d9488; font-weight:700;">2756,25</span>
+</div>
+
+<h3>4b. Hitung Momen Tiap Daerah (Integral)</h3>
+
+<p>Momen didefinisikan sebagai: <code>M<sub>i</sub> = &int; &mu;(z) &middot; z dz</code> pada batas daerahnya.</p>
+
+<div class="formula">
+<u>Momen M1</u> (z: 0&ndash;3250, &mu; = 0,25 konstan):<br>
+M<sub>1</sub> = &int;<sub>0</sub><sup>3250</sup> 0,25 &middot; z dz = [0,125 &middot; z<sup>2</sup>]<sub>0</sub><sup>3250</sup><br>
+&nbsp;&nbsp;&nbsp;= 0,125 &times; 3250<sup>2</sup> = 0,125 &times; 10.562.500 = <span class="hlr">1.320.312,5</span>
+</div>
+
+<div class="formula">
+<u>Momen M2</u> (z: 3250&ndash;5000, &mu; = (z-2000)/5000):<br>
+M<sub>2</sub> = &int;<sub>3250</sub><sup>5000</sup> (z&minus;2000)/5000 &middot; z dz = &int; (0,0002z<sup>2</sup> &minus; 0,4z) dz<br>
+&nbsp;&nbsp;&nbsp;= [0,000067 &middot; z<sup>3</sup> &minus; 0,2 &middot; z<sup>2</sup>]<sub>3250</sub><sup>5000</sup><br>
+&nbsp;&nbsp;&nbsp;= (0,000067 &times; 5000<sup>3</sup> &minus; 0,2 &times; 5000<sup>2</sup>) &minus; (0,000067 &times; 3250<sup>3</sup> &minus; 0,2 &times; 3250<sup>2</sup>)<br>
+&nbsp;&nbsp;&nbsp;= (8.375.000 &minus; 5.000.000) &minus; (2.299.984 &minus; 2.112.500)<br>
+&nbsp;&nbsp;&nbsp;= 3.375.000 &minus; 187.484 = <span class="hl2">3.187.515,625</span>
+</div>
+
+<div class="formula">
+<u>Momen M3</u> (z: 5000&ndash;7000, &mu; = 0,6 konstan):<br>
+M<sub>3</sub> = &int;<sub>5000</sub><sup>7000</sup> 0,6 &middot; z dz = [0,3 &middot; z<sup>2</sup>]<sub>5000</sub><sup>7000</sup><br>
+&nbsp;&nbsp;&nbsp;= 0,3 &times; (7000<sup>2</sup> &minus; 5000<sup>2</sup>) = 0,3 &times; (49.000.000 &minus; 25.000.000)<br>
+&nbsp;&nbsp;&nbsp;= 0,3 &times; 24.000.000 = <span class="hl">7.200.000</span><br><br>
+<u>Total Momen (M):</u><br>
+M = 1.320.312,5 + 3.187.515,625 + 7.200.000 = <span style="color:#0d9488; font-weight:700;">11.707.828,125</span>
+</div>
+
+<h3>4c. Hitung Nilai Defuzzifikasi z*</h3>
+
+<div class="formula" style="font-size:1.1em;">
+z* = M / A<br>
+&nbsp;&nbsp;&nbsp;= 11.707.828,125 / 2756,25<br>
+&nbsp;&nbsp;&nbsp;= <span style="color:#0d9488; font-weight:700; font-size:1.2em;">4247,74 &asymp; 4248</span>
+</div>
+
+<div class="example-box">
+<strong>Kesimpulan Studi Kasus</strong>
+<p>Berdasarkan perhitungan FIS Mamdani, perusahaan sebaiknya memproduksi <strong>4248 kemasan</strong> makanan kaleng ABC per hari, dengan kondisi Permintaan = 4000 dan Persediaan = 300.</p>
+<p>Artinya: lebih banyak dari permintaan aktual (4000) karena persediaan sedikit (300) &mdash; perlu buffer untuk jaga-jaga. Logis!</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Metode Defuzzifikasi Alternatif</h2>
+
+<p>Centroid adalah default Mamdani, tapi ada 4 metode lain yang juga umum:</p>
+
+<table>
+  <tr><th>Metode</th><th>Prinsip</th><th>Karakteristik</th></tr>
+  <tr>
+    <td><strong>Centroid (COG)</strong></td>
+    <td>Titik pusat massa kurva</td>
+    <td>Paling akurat, smooth, default Mamdani</td>
+  </tr>
+  <tr>
+    <td><strong>Bisektor</strong></td>
+    <td>Nilai z yang membagi area jadi 2 sama besar</td>
+    <td>Median area, robust terhadap outlier</td>
+  </tr>
+  <tr>
+    <td><strong>MOM (Mean of Maxima)</strong></td>
+    <td>Rata-rata dari semua z dengan &mu; maksimum</td>
+    <td>Untuk himpunan dengan puncak datar</td>
+  </tr>
+  <tr>
+    <td><strong>LOM (Largest of Maxima)</strong></td>
+    <td>Nilai z terbesar dengan &mu; maksimum</td>
+    <td>Konservatif (nilai terbesar)</td>
+  </tr>
+  <tr>
+    <td><strong>SOM (Smallest of Maxima)</strong></td>
+    <td>Nilai z terkecil dengan &mu; maksimum</td>
+    <td>Agresif (nilai terkecil)</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>Fokus UAS</strong>
+<p>Soal UAS umumnya <strong>hanya menggunakan Centroid</strong> (sesuai PDF). Cukup kuasai Centroid &mdash; tahu bahwa ada 4 metode lain &amp; kapan mereka relevan.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Trade-off: Mamdani vs Sugeno</h2>
+
+<div class="comp-grid">
+  <div class="col" style="border-top: 3px solid #0d9488;">
+    <h4 style="color:#0d9488;">Mamdani (yang kita pakai)</h4>
+    <ul>
+      <li><strong>Konsekuen:</strong> Himpunan fuzzy (mis: Produksi BERTAMBAH)</li>
+      <li><strong>Defuzzifikasi:</strong> Centroid (integral)</li>
+      <li><strong>Kelebihan:</strong> Intuitif, mudah diinterpretasi, cocok untuk expert knowledge</li>
+      <li><strong>Kekurangan:</strong> Komputasi lebih berat (perlu integral)</li>
+    </ul>
+  </div>
+  <div class="col" style="border-top: 3px solid #78716c;">
+    <h4 style="color:#78716c;">Sugeno (alternatif, tak dibahas)</h4>
+    <ul>
+      <li><strong>Konsekuen:</strong> Fungsi linear (mis: z = ax + by + c)</li>
+      <li><strong>Defuzzifikasi:</strong> Weighted average (tanpa integral)</li>
+      <li><strong>Kelebihan:</strong> Sangat cepat, cocok untuk real-time/optimasi</li>
+      <li><strong>Kekurangan:</strong> Kurang intuitif, butuh data training untuk fitting parameter</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Rangkuman: Workflow 4-Langkah Mamdani</h2>
+
+<div class="def-box">
+<strong>Checklist Pengerjaan Soal Mamdani</strong>
+<ol>
+  <li><strong>Fuzzifikasi</strong> &mdash; Hitung &mu; untuk semua himpunan input pada nilai crisp yang diberikan.</li>
+  <li><strong>Hitung &alpha;-predikat</strong> tiap rule &mdash; Gunakan MIN untuk AND, MAX untuk OR. Terapkan implikasi MIN ke konsekuen.</li>
+  <li><strong>Agregasi</strong> &mdash; Gabungkan output semua rule dengan MAX. Identifikasi batas-batas a1, a2, ... di mana &mu; berubah.</li>
+  <li><strong>Defuzzifikasi Centroid</strong> &mdash; Pecah jadi beberapa region geometris (persegi, trapesium, segitiga). Hitung A_i dan M_i per region. z* = &Sigma;M_i / &Sigma;A_i.</li>
+</ol>
+</div>
+
+<p style="font-size:1.05em; font-style:italic; color:#52525b;">"Mamdani mengubah bahasa manusia (&lsquo;agak naik&rsquo;, &lsquo;sedikit turun&rsquo;) menjadi angka produksi yang presisi." &mdash; Esensi FIS</p>
+
+<!-- ====================================================================== -->
+<h2>7. Quiz</h2>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">1. Urutan 4 langkah FIS Mamdani yang BENAR adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Implikasi &rarr; Defuzzifikasi &rarr; Fuzzifikasi &rarr; Agregasi</button>
+  <button class="opt" onclick="checkQuiz(this)">Fuzzifikasi &rarr; Implikasi &rarr; Agregasi &rarr; Defuzzifikasi</button>
+  <button class="opt" onclick="checkQuiz(this)">Agregasi &rarr; Fuzzifikasi &rarr; Implikasi &rarr; Defuzzifikasi</button>
+  <button class="opt" onclick="checkQuiz(this)">Fuzzifikasi &rarr; Agregasi &rarr; Implikasi &rarr; Defuzzifikasi</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">2. Untuk rule R1 (Permintaan TURUN AND Persediaan BANYAK) dengan &mu;_PmtTURUN = 0,3 dan &mu;_PsdBANYAK = 0,7, berapakah &alpha;-predikat?</div>
+  <button class="opt" onclick="checkQuiz(this)">1,0 (karena 0,3 + 0,7)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,7 (MAX)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,3 (MIN)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,4 (rata-rata)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">3. Jika aturan R1 dan R2 menghasilkan &alpha; = 0,3 dan 0,5 untuk konsekuen yang SAMA, agregasi MAX menghasilkan output setinggi...</div>
+  <button class="opt" onclick="checkQuiz(this)">0,5 (nilai terbesar)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,3 (nilai terkecil)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,8 (jumlahan)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,15 (perkalian)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">4. Metode defuzzifikasi yang digunakan dalam studi kasus produksi PDF adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Bisektor</button>
+  <button class="opt" onclick="checkQuiz(this)">Mean of Maxima (MOM)</button>
+  <button class="opt" onclick="checkQuiz(this)">Largest of Maxima (LOM)</button>
+  <button class="opt" onclick="checkQuiz(this)">Centroid (Center of Gravity)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Dalam studi kasus produksi, total luas A = 2756,25 dan total momen M = 11.707.828,125. Berapakah z*?</div>
+  <button class="opt" onclick="checkQuiz(this)">2756,25 &divide; 11.707.828,125 = 0,000235</button>
+  <button class="opt" onclick="checkQuiz(this)">11.707.828,125 &minus; 2756,25 = 11.705.071,875</button>
+  <button class="opt" onclick="checkQuiz(this)">11.707.828,125 &divide; 2756,25 = 4247,74 (dibulatkan 4248)</button>
+  <button class="opt" onclick="checkQuiz(this)">(11.707.828,125 + 2756,25) / 2 = 5.855.292,19</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">6. Mengapa output z* = 4248 LEBIH TINGGI dari permintaan aktual 4000? Ini logis karena...</div>
+  <button class="opt" onclick="checkQuiz(this)">Selalu lebih tinggi oleh rumus centroid</button>
+  <button class="opt" onclick="checkQuiz(this)">Persediaan sedikit (0,6) mengaktifkan rule R4 dengan &alpha; tinggi (0,6) yang menambah produksi</button>
+  <button class="opt" onclick="checkQuiz(this)">Rentang produksi [2000, 7000] memang selalu di atas 4000</button>
+  <button class="opt" onclick="checkQuiz(this)">Permintaan TURUN (0,25) menurunkan produksi terlalu rendah</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Logika Fuzzy" hlm. 37-59 (FIS &amp; studi kasus produksi lengkap); Mamdani &amp; Assilian (1975); Kusumadewi (2003) Artificial Intelligence.
+</p>
+
+</body>
+</html>

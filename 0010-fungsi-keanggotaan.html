@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 10: Fungsi Keanggotaan Himpunan Fuzzy</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #0d9488; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #0d9488; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #ccfbf1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #0d9488;
+    background: #f0fdfa;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.9em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .formula .hl { color: #5eead4; }
+  .formula .hl2 { color: #fcd34d; }
+  .formula .hlr { color: #fca5a5; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #0d9488;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #f0fdfa; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Type Card --- */
+  .type-card {
+    background: white;
+    border: 1px solid #99f6e4;
+    border-left: 4px solid #0d9488;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 0.8rem 0;
+  }
+  .type-card .num {
+    display: inline-block;
+    background: #0d9488;
+    color: white;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #0d9488;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #f0fdfa;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #ccfbf1; border-color: #0d9488; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 10: Fungsi Keanggotaan Himpunan Fuzzy</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">7 jenis kurva untuk menerjemahkan nilai numerik ke derajat keanggotaan 0&ndash;1</p>
+
+<!-- ====================================================================== -->
+<h2>1. Apa itu Fungsi Keanggotaan?</h2>
+
+<div class="def-box">
+<strong>Definisi</strong>
+<p>Fungsi keanggotaan (membership function) adalah <strong>kurva matematis</strong> yang memetakan titik-titik input (nilai x) ke <strong>nilai/derajat keanggotaan</strong> dalam interval <strong>0 sampai 1</strong>.</p>
+</div>
+
+<p>Lesson 9 sudah membahas konsep dasarnya. Sekarang pertanyaannya: <strong>kurva mana yang dipakai</strong>? Tergantung:</p>
+<ul>
+  <li>Berapa parameter domain yang tersedia (1, 2, 3, atau 4 titik)</li>
+  <li>Apakah himpunan ada di ujung, tengah, atau mencakup seluruh variabel</li>
+  <li>Seberapa mulus transisi yang diinginkan (linear vs kurva)</li>
+</ul>
+
+<p>Berikut 7 jenis yang akan kita bahas, diurutkan dari yang paling sederhana sampai yang paling eksotis:</p>
+
+<table>
+  <tr><th>#</th><th>Jenis</th><th>Parameter</th><th>Paling Cocok Untuk</th></tr>
+  <tr><td>1</td><td>Linear Naik</td><td>a, b (2 titik)</td><td>"Bertambah"-nya sesuatu dari rendah ke tinggi</td></tr>
+  <tr><td>2</td><td>Linear Turun</td><td>a, b (2 titik)</td><td>"Berkurang"-nya sesuatu dari tinggi ke rendah</td></tr>
+  <tr><td>3</td><td>Segitiga</td><td>a, b, c (3 titik)</td><td>Himpunan yang punya satu puncak (paling umum)</td></tr>
+  <tr><td>4</td><td>Trapesium</td><td>a, b, c, d (4 titik)</td><td>Himpunan dengan area puncak datar</td></tr>
+  <tr><td>5</td><td>Bahu (Kiri/Kanan)</td><td>a, b (2 titik)</td><td>Himpunan di ujung variabel (DINGIN, PANAS)</td></tr>
+  <tr><td>6</td><td>Koordinat Diskret</td><td>Pasangan (skalar, derajat)</td><td>Data diskret, tidak ada rumus kontinu</td></tr>
+  <tr><td>7</td><td>Non-Linear (S, Lonceng)</td><td>Beragam</td><td>Transisi mulus, model distribusi probabilitas</td></tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>2. Linear Naik (Linear Up)</h2>
+
+<div class="type-card">
+<span class="num">1</span><strong>Karakteristik:</strong> Garis lurus dari derajat 0 di titik a, naik linear ke derajat 1 di titik b.
+</div>
+
+<div class="formula">
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a<br>
+&mu;[x] = <span class="hl2">(x &minus; a) / (b &minus; a)</span>;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl">1</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &ge; b
+</div>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="370" y="190" font-size="11" text-anchor="middle">b</text>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <!-- Flat 0 before a -->
+  <line x1="50" y1="170" x2="50" y2="170" stroke="#0d9488" stroke-width="2.5"/>
+  <!-- Diagonal from (50,170) to (370,95) -->
+  <line x1="50" y1="170" x2="370" y2="95" stroke="#0d9488" stroke-width="2.5"/>
+  <!-- Flat 1 after b -->
+  <line x1="370" y1="95" x2="470" y2="95" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="280" y="80" font-size="12" fill="#0d9488" font-weight="600">Linear Naik</text>
+  <text x="160" y="135" font-size="10" fill="#52525b" font-style="italic">slope = 1/(b-a)</text>
+</svg>
+<p class="plot-caption">Gambar 1: Kurva linear naik &mdash; derajat keanggotaan bertambah secara proporsional dengan x.</p>
+</div>
+
+<div class="example-box">
+<strong>Contoh: Himpunan PANAS pada variabel temperatur (a=25, b=35)</strong>
+<p>Himpunan PANAS didefinisikan naik dari 25&deg;C (derajat 0) ke 35&deg;C (derajat 1).</p>
+<p>Berapa <code>&mu;<sub>PANAS</sub>[32]</code>?</p>
+<div class="formula" style="text-align:left;">
+&mu;<sub>PANAS</sub>[32] = (32 &minus; 25) / (35 &minus; 25) = <span class="hl">7/10 = 0,7</span>
+</div>
+<p>Artinya: pada 32&deg;C, seseorang "agak panas" dengan derajat 0,7.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Linear Turun (Linear Down)</h2>
+
+<div class="type-card">
+<span class="num">2</span><strong>Karakteristik:</strong> Garis lurus dari derajat 1 di titik a, turun linear ke derajat 0 di titik b. <em>Kebalikan</em> dari linear naik.
+</div>
+
+<div class="formula">
+&mu;[x] = <span class="hl">1</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a<br>
+&mu;[x] = <span class="hl2">(b &minus; x) / (b &minus; a)</span>;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &ge; b
+</div>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="370" y="190" font-size="11" text-anchor="middle">b</text>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <line x1="50" y1="95" x2="50" y2="170" stroke="#0d9488" stroke-width="2.5"/>
+  <line x1="50" y1="95" x2="370" y2="170" stroke="#0d9488" stroke-width="2.5"/>
+  <line x1="370" y1="170" x2="470" y2="170" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="280" y="80" font-size="12" fill="#0d9488" font-weight="600">Linear Turun</text>
+  <text x="160" y="135" font-size="10" fill="#52525b" font-style="italic">slope = -1/(b-a)</text>
+</svg>
+<p class="plot-caption">Gambar 2: Kurva linear turun &mdash; derajat keanggotaan berkurang secara proporsional dengan x.</p>
+</div>
+
+<div class="example-box">
+<strong>Contoh: Himpunan DINGIN pada variabel temperatur (a=15, b=30)</strong>
+<p>Himpunan DINGIN didefinisikan turun dari 15&deg;C (derajat 1) ke 30&deg;C (derajat 0).</p>
+<p>Berapa <code>&mu;<sub>DINGIN</sub>[20]</code>?</p>
+<div class="formula" style="text-align:left;">
+&mu;<sub>DINGIN</sub>[20] = (30 &minus; 20) / (30 &minus; 15) = <span class="hl">10/15 = 0,667</span>
+</div>
+<p>Artinya: pada 20&deg;C, seseorang masih "agak dingin" dengan derajat 0,667.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Kurva Segitiga (Triangular)</h2>
+
+<div class="type-card">
+<span class="num">3</span><strong>Karakteristik:</strong> Kombinasi linear naik + linear turun, membentuk segitiga dengan puncak bernilai 1. Ditentukan oleh 3 titik: <strong>a (kaki kiri), b (puncak), c (kaki kanan)</strong>.
+</div>
+
+<div class="formula">
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a atau x &ge; c<br>
+&mu;[x] = <span class="hl2">(x &minus; a) / (b &minus; a)</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl2">(c &minus; x) / (c &minus; b)</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika b &le; x &le; c
+</div>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="200" y="190" font-size="11" text-anchor="middle">b</text>
+  <text x="380" y="190" font-size="11" text-anchor="middle">c</text>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <polyline points="50,170 200,95 380,170" fill="none" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="215" y="80" font-size="12" fill="#0d9488" font-weight="600">Segitiga</text>
+  <line x1="200" y1="170" x2="200" y2="20" stroke="#78716c" stroke-width="0.5" stroke-dasharray="3,3"/>
+</svg>
+<p class="plot-caption">Gambar 3: Kurva segitiga &mdash; satu titik puncak (b) di mana keanggotaan mencapai 1.</p>
+</div>
+
+<div class="example-box">
+<strong>Contoh: Himpunan NORMAL pada temperatur (a=15, b=25, c=35)</strong>
+<p>Berapa <code>&mu;<sub>NORMAL</sub>[23]</code>? Karena 15 &le; 23 &le; 25, kita pakai rumus sisi kiri:</p>
+<div class="formula" style="text-align:left;">
+&mu;<sub>NORMAL</sub>[23] = (23 &minus; 15) / (25 &minus; 15) = <span class="hl">8/10 = 0,8</span>
+</div>
+<p>Artinya: pada 23&deg;C, derajat keanggotaan "normal" adalah 0,8 (mendekati puncak).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Kurva Trapesium (Trapezoidal)</h2>
+
+<div class="type-card">
+<span class="num">4</span><strong>Karakteristik:</strong> Modifikasi segitiga yang memiliki <strong>area puncak datar</strong> (bernilai 1 dari b ke c). Ditentukan oleh 4 titik: <strong>a (kaki kiri), b (puncak kiri), c (puncak kanan), d (kaki kanan)</strong>.
+</div>
+
+<div class="formula">
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a atau x &ge; d<br>
+&mu;[x] = <span class="hl2">(x &minus; a) / (b &minus; a)</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl">1</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika b &le; x &le; c&nbsp;&nbsp;<em>(puncak datar)</em><br>
+&mu;[x] = <span class="hl2">(d &minus; x) / (d &minus; c)</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika c &le; x &le; d
+</div>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="170" y="190" font-size="11" text-anchor="middle">b</text>
+  <text x="280" y="190" font-size="11" text-anchor="middle">c</text>
+  <text x="430" y="190" font-size="11" text-anchor="middle">d</text>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <polyline points="50,170 170,95 280,95 430,170" fill="none" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="220" y="80" font-size="12" fill="#0d9488" font-weight="600">Trapesium</text>
+  <text x="200" y="85" font-size="9" fill="#0d9488" font-style="italic">puncak = 1 dari b ke c</text>
+</svg>
+<p class="plot-caption">Gambar 4: Kurva trapesium &mdash; ada "plateau" di puncak dengan keanggotaan penuh 1.</p>
+</div>
+
+<div class="example-box">
+<strong>Contoh: NORMAL trapesium (a=15, b=24, c=27, d=35)</strong>
+<p>Berapa <code>&mu;<sub>NORMAL</sub>[32]</code>? Karena 27 &le; 32 &le; 35, kita pakai sisi kanan:</p>
+<div class="formula" style="text-align:left;">
+&mu;<sub>NORMAL</sub>[32] = (35 &minus; 32) / (35 &minus; 27) = <span class="hl">3/8 = 0,375</span>
+</div>
+<p>Artinya: pada 32&deg;C, masih "agak normal" (0,375), di luar rentang puncak 24&ndash;27.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Kurva Bentuk Bahu (Shoulder)</h2>
+
+<div class="type-card">
+<span class="num">5</span><strong>Karakteristik:</strong> Untuk himpunan di <strong>ujung variabel</strong>, di mana nilai tidak berubah lagi setelah batas ekstrem. Ada dua varian: <strong>Bahu Kiri</strong> (untuk batas bawah) dan <strong>Bahu Kanan</strong> (untuk batas atas).
+</div>
+
+<h3>6a. Bahu Kiri (Left Shoulder) &mdash; Contoh: DINGIN</h3>
+
+<div class="formula">
+&mu;[x] = <span class="hl">1</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a&nbsp;&nbsp;<em>(datar penuh di kiri)</em><br>
+&mu;[x] = <span class="hl2">(b &minus; x) / (b &minus; a)</span>;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &ge; b
+</div>
+
+<h3>6b. Bahu Kanan (Right Shoulder) &mdash; Contoh: PANAS</h3>
+
+<div class="formula">
+&mu;[x] = <span class="hl">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &le; a<br>
+&mu;[x] = <span class="hl2">(x &minus; a) / (b &minus; a)</span>;&nbsp;&nbsp;jika a &le; x &le; b<br>
+&mu;[x] = <span class="hl">1</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jika x &ge; b&nbsp;&nbsp;<em>(datar penuh di kanan)</em>
+</div>
+
+<div class="plot">
+<svg width="700" height="200" viewBox="0 0 700 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="670" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <!-- Left shoulder (DINGIN) -->
+  <line x1="50" y1="95" x2="50" y2="170" stroke="#3b82f6" stroke-width="2.5"/>
+  <line x1="50" y1="95" x2="200" y2="95" stroke="#3b82f6" stroke-width="2.5"/>
+  <line x1="200" y1="95" x2="320" y2="170" stroke="#3b82f6" stroke-width="2.5"/>
+  <text x="80" y="86" font-size="12" fill="#3b82f6" font-weight="600">Bahu Kiri (DINGIN)</text>
+  <!-- Right shoulder (PANAS) -->
+  <line x1="430" y1="170" x2="540" y2="95" stroke="#dc2626" stroke-width="2.5"/>
+  <line x1="540" y1="95" x2="670" y2="95" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="580" y="86" font-size="12" fill="#dc2626" font-weight="600">Bahu Kanan (PANAS)</text>
+  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="320" y="190" font-size="11" text-anchor="middle">b</text>
+  <text x="430" y="190" font-size="11" text-anchor="middle">a</text>
+  <text x="540" y="190" font-size="11" text-anchor="middle">b</text>
+</svg>
+<p class="plot-caption">Gambar 5: Bahu kiri (DINGIN, datar 1 di kiri) dan bahu kanan (PANAS, datar 1 di kanan).</p>
+</div>
+
+<div class="info-box">
+<strong>Kapan Pakai Bahu?</strong>
+<p>Gunakan <strong>bahu</strong> ketika himpunan ada di <strong>ekstrem</strong> dari variabel dan tidak masuk akal untuk didefinisikan "naik" atau "turun" di luar batas itu. Contoh: pada variabel temperatur [0, 40], himpunan <strong>DINGIN</strong> dan <strong>PANAS</strong> idealnya pakai bahu.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>7. Koordinat Keanggotaan (Diskret)</h2>
+
+<div class="type-card">
+<span class="num">6</span><strong>Karakteristik:</strong> Representasi <strong>diskret</strong> &mdash; himpunan didefinisikan sebagai <strong>daftar pasangan berurutan</strong> (skalar, derajat). Tidak ada rumus kontinu.
+</div>
+
+<div class="formula" style="text-align:left;">
+Himpunan = { <span class="hl">skalar<sub>1</sub>/derajat<sub>1</sub></span>,&nbsp; <span class="hl2">skalar<sub>2</sub>/derajat<sub>2</sub></span>,&nbsp; ...,&nbsp; <span class="hl">skalar<sub>n</sub>/derajat<sub>n</sub></span> }
+</div>
+
+<div class="example-box">
+<strong>Contoh: PENGENDARA BERISIKO TINGGI (variabel umur)</strong>
+<p>Sistem asuransi kendaraan motor. Kurva berbentuk 'U' (risiko tinggi di usia muda DAN tua):</p>
+<div class="formula" style="text-align:left;">
+{ 16/1.0, 21/0.6, 28/0.3, 68/0.3, 76/0.5, 80/0.7, 96/1.0 }
+</div>
+<p>Artinya:</p>
+<ul>
+  <li>Pengendara <strong>16 tahun</strong>: risiko = 1,0 (maksimal, masih sangat muda)</li>
+  <li>Pengendara <strong>28 tahun</strong>: risiko = 0,3 (aman, sudah dewasa)</li>
+  <li>Pengendara <strong>96 tahun</strong>: risiko = 1,0 (maksimal, sudah sangat tua)</li>
+</ul>
+</div>
+
+<div class="info-box">
+<strong>Kapan Pakai Representasi Diskret?</strong>
+<p>Ketika data historis <strong>tidak kontinu</strong> (misalnya hasil survey, database pelanggan) atau ketika pakar mendefinisikan risiko secara eksplisit pada titik-titik tertentu. Untuk nilai x yang <strong>berada di antara dua titik</strong>, biasanya dilakukan <strong>interpolasi linear</strong>.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>8. Representasi Non-Linear (S-Curve &amp; Lonceng)</h2>
+
+<p>Untuk pemetaan dengan kelandaian yang <strong>lebih mulus</strong> dibanding garis lurus, tersedia dua keluarga kurva non-linear:</p>
+
+<h3>8a. Kurva S (Sigmoid)</h3>
+<p>Kurva berbentuk huruf S, transisi halus dari 0 ke 1. Cocok untuk model pertumbuhan/logistik yang dimulai lambat, akselerasi, lalu saturasi.</p>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <path d="M 50,168 Q 200,168 250,95 Q 300,22 450,22" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="240" y="80" font-size="12" fill="#7c3aed" font-weight="600">Kurva S</text>
+  <text x="100" y="155" font-size="10" fill="#52525b" font-style="italic">lambat</text>
+  <text x="380" y="40" font-size="10" fill="#52525b" font-style="italic">saturasi</text>
+</svg>
+</div>
+
+<h3>8b. Kurva Lonceng (Bell-shaped)</h3>
+<p>Berbentuk lonceng simetris, mencapai puncak 1 di tengah. Tiga varian populer:</p>
+<ul>
+  <li><strong>Kurva Pi</strong> &mdash; mirip segitiga tapi dengan kurva di ujungnya</li>
+  <li><strong>Kurva Beta</strong> &mdash; lebih fleksibel, bisa asimetris</li>
+  <li><strong>Kurva Gauss</strong> &mdash; distribusi normal, simetris sempurna</li>
+</ul>
+
+<div class="plot">
+<svg width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;">
+  <line x1="50" y1="170" x2="470" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <path d="M 50,170 Q 200,170 250,95 Q 300,20 450,20" fill="none" stroke="#7c3aed" stroke-width="2.5" opacity="0.5"/>
+  <!-- Bell -->
+  <path d="M 60,168 C 150,168 180,95 250,95 C 320,95 350,168 440,168" fill="none" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="250" y="80" font-size="12" fill="#0d9488" font-weight="600">Lonceng (Bell)</text>
+</svg>
+</div>
+
+<div class="info-box">
+<strong>Fokus UAS</strong>
+<p>Untuk soal UAS, yang paling sering keluar adalah <strong>linear, segitiga, trapesium, dan bahu</strong>. S-Curve dan lonceng cukup dipahami konsepnya saja &mdash; dipakai di aplikasi yang butuh distribusi halus (misalnya pengenalan pola).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>9. Cheat Matrix: Kapan Pakai Yang Mana</h2>
+
+<table>
+  <tr><th>Kondisi</th><th>Pilih</th><th>Alasan</th></tr>
+  <tr><td>Himpunan di tengah, satu puncak</td><td><strong>Segitiga</strong></td><td>Sederhana, cukup 3 parameter (a,b,c)</td></tr>
+  <tr><td>Himpunan di tengah, dengan "zona aman" datar</td><td><strong>Trapesium</strong></td><td>Ada rentang di mana keanggotaan = 1 (4 parameter)</td></tr>
+  <tr><td>Himpunan di ujung kiri (cth: DINGIN)</td><td><strong>Bahu Kiri</strong></td><td>Datar 1 di ekstrem, turun ke kanan</td></tr>
+  <tr><td>Himpunan di ujung kanan (cth: PANAS)</td><td><strong>Bahu Kanan</strong></td><td>Naik dari 0, datar 1 di ekstrem</td></tr>
+  <tr><td>Hanya "bertambah" tanpa puncak</td><td><strong>Linear Naik</strong></td><td>Contoh: Produksi BERTAMBAH</td></tr>
+  <tr><td>Hanya "berkurang" tanpa puncak</td><td><strong>Linear Turun</strong></td><td>Contoh: Produksi BERKURANG</td></tr>
+  <tr><td>Data historis diskret</td><td><strong>Koordinat Diskret</strong></td><td>Pasangan (skalar, derajat) eksplisit</td></tr>
+  <tr><td>Distribusi statistik / model probabilitas</td><td><strong>Bell / Gauss</strong></td><td>Simetris, mulus</td></tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>10. Quiz</h2>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">1. Himpunan PANAS pada temperatur didefinisikan: a=25, b=35, linear naik. Berapakah &mu;<sub>PANAS</sub>[30]?</div>
+  <button class="opt" onclick="checkQuiz(this)">0,3</button>
+  <button class="opt" onclick="checkQuiz(this)">0,5</button>
+  <button class="opt" onclick="checkQuiz(this)">0,7</button>
+  <button class="opt" onclick="checkQuiz(this)">1,0</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">2. Himpunan NORMAL didefinisikan: a=15, b=25, c=35, kurva segitiga. Berapakah &mu;<sub>NORMAL</sub>[30]?</div>
+  <button class="opt" onclick="checkQuiz(this)">(30&minus;15)/(25&minus;15) = 1,5 (di luar jangkauan)</button>
+  <button class="opt" onclick="checkQuiz(this)">(30&minus;15)/(35&minus;15) = 0,75</button>
+  <button class="opt" onclick="checkQuiz(this)">(35&minus;30)/(35&minus;25) = 0,5</button>
+  <button class="opt" onclick="checkQuiz(this)">(35&minus;30)/(35&minus;15) = 0,25</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">3. Anda ingin himpunan DINGIN pada variabel temperatur [0, 40] yang didefinisikan "datar di 1" untuk x &le; 15 dan turun ke 0 di x=20. Fungsi apa yang tepat?</div>
+  <button class="opt" onclick="checkQuiz(this)">Linear Turun biasa</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Segitiga</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Bahu Kiri</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Bahu Kanan</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">4. Studi kasus produksi di PDF: Produksi = (z-2000)/5000. Ini menggunakan representasi fungsi keanggotaan apa?</div>
+  <button class="opt" onclick="checkQuiz(this)">Linear Naik (a=2000, b=7000)</button>
+  <button class="opt" onclick="checkQuiz(this)">Linear Turun (a=2000, b=7000)</button>
+  <button class="opt" onclick="checkQuiz(this)">Segitiga (a=2000, b=5000, c=7000)</button>
+  <button class="opt" onclick="checkQuiz(this)">Trapesium (a=2000, b=3000, c=5000, d=7000)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">5. Representasi himpunan {16/1, 21/0.6, 28/0.3, 68/0.3, 76/0.5, 80/0.7, 96/1} berbentuk 'U' pada variabel umur. Representasi ini masuk kategori apa?</div>
+  <button class="opt" onclick="checkQuiz(this)">Linear Naik-Turun Berselang</button>
+  <button class="opt" onclick="checkQuiz(this)">Koordinat Keanggotaan (Diskret)</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Bahu Kiri dan Kanan Gabungan</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Trapesium Simetris</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">6. Anda butuh himpunan NORMAL dengan area "nyaman" antara 20&ndash;25 (derajat = 1) di mana pun di area itu. Fungsi apa yang PALING COCOK?</div>
+  <button class="opt" onclick="checkQuiz(this)">Linear Naik</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Segitiga</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Trapesium (a, b=20, c=25, d)</button>
+  <button class="opt" onclick="checkQuiz(this)">Kurva Bahu Kiri + Kanan</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Logika Fuzzy" hlm. 14-29 (7 representasi fungsi keanggotaan); Kusumadewi (2003) Artificial Intelligence; Sutojo et al. (2018) Kecerdasan Buatan.
+</p>
+
+</body>
+</html>

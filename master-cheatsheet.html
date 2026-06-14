@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Master Cheatsheet: Reasoning KBA + Sistem Pakar</title>
+<title>Master Cheatsheet: KBA + SP + UC + Fuzzy</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -763,8 +763,166 @@
   </table>
 </div>
 
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge" style="background:#ccfbf1; color:#0d9488; border:1px solid #0d9488;">FZ</span> Bagian 10: Logika Fuzzy</h2>
+
+<div class="grid-2">
+
+<div class="card green">
+  <h3>Crisp vs Fuzzy</h3>
+  <table>
+    <tr><th>Aspek</th><th>Crisp</th><th>Fuzzy</th></tr>
+    <tr><td>Keanggotaan</td><td>0 atau 1 (biner)</td><td>0 sampai 1 (kontinu)</td></tr>
+    <tr><td>Batasan</td><td>Tegas, "tangga"</td><td>Luwes, kurva halus</td></tr>
+    <tr><td>Keanggotaan ganda</td><td>Tidak bisa</td><td>Bisa (umur 40 = MUDA 0,25 + PAROBAYA 0,5)</td></tr>
+    <tr><td>Realisme</td><td>Kurang untuk kategori samar</td><td>Cocok (muda, panas, tinggi)</td></tr>
+  </table>
+</div>
+
+<div class="card green">
+  <h3>4 Istilah Sistem Fuzzy</h3>
+  <table>
+    <tr><th>Istilah</th><th>Definisi</th><th>Contoh</th></tr>
+    <tr><td>Variabel Fuzzy</td><td>Yang diamati/diukur</td><td>umur, temperatur, produksi</td></tr>
+    <tr><td>Himpunan Fuzzy</td><td>Kategori linguistik</td><td>MUDA, PAROBAYA, TUA</td></tr>
+    <tr><td>Semesta Pembicaraan</td><td>Domain keseluruhan</td><td>umur: [0, +&infin;)</td></tr>
+    <tr><td>Domain</td><td>Rentang spesifik himpunan</td><td>MUDA = [0, 45]</td></tr>
+  </table>
+</div>
+
+</div>
+
+<div class="card green fullw">
+  <h3>7 Fungsi Keanggotaan</h3>
+  <table>
+    <tr><th>#</th><th>Jenis</th><th>Parameter</th><th>Karakteristik</th><th>Rumus Inti</th></tr>
+    <tr><td>1</td><td>Linear Naik</td><td>a, b (2)</td><td>Dari 0 di a ke 1 di b</td><td>&mu; = (x-a)/(b-a)</td></tr>
+    <tr><td>2</td><td>Linear Turun</td><td>a, b (2)</td><td>Dari 1 di a ke 0 di b</td><td>&mu; = (b-x)/(b-a)</td></tr>
+    <tr><td>3</td><td>Segitiga</td><td>a, b, c (3)</td><td>Puncak 1 di b</td><td>naik (a&rarr;b) + turun (b&rarr;c)</td></tr>
+    <tr><td>4</td><td>Trapesium</td><td>a, b, c, d (4)</td><td>Puncak datar 1 di [b,c]</td><td>naik + plateau + turun</td></tr>
+    <tr><td>5a</td><td>Bahu Kiri</td><td>a, b (2)</td><td>Datar 1 di kiri (x &le; a), turun ke 0</td><td>Untuk DINGIN (ekstrem bawah)</td></tr>
+    <tr><td>5b</td><td>Bahu Kanan</td><td>a, b (2)</td><td>Naik dari 0, datar 1 di kanan (x &ge; b)</td><td>Untuk PANAS (ekstrem atas)</td></tr>
+    <tr><td>6</td><td>Koordinat Diskret</td><td>Pasangan (skalar, derajat)</td><td>Data diskret, tidak ada rumus kontinu</td><td>{ 16/1, 21/0.6, 28/0.3, ... }</td></tr>
+    <tr><td>7</td><td>Non-Linear (S, Bell)</td><td>Beragam</td><td>Transisi mulus, untuk model statistik</td><td>Sigmoid, Gauss, Pi, Beta</td></tr>
+  </table>
+</div>
+
+<div class="grid-2">
+
+<div class="card green">
+  <h3>3 Operator Zadeh</h3>
+  <div class="formula" style="font-size:0.72rem;">
+    AND: &mu;<sub>A&cap;B</sub> = min(&mu;<sub>A</sub>, &mu;<sub>B</sub>)<br>
+    OR:  &mu;<sub>A&cup;B</sub> = max(&mu;<sub>A</sub>, &mu;<sub>B</sub>)<br>
+    NOT: &mu;<sub>A'</sub> = 1 &minus; &mu;<sub>A</sub>
+  </div>
+  <p><strong>AND = MIN</strong> (rantai sekuat mata rantai terlemah)</p>
+  <p><strong>OR = MAX</strong> (cukup satu yang kuat)</p>
+</div>
+
+<div class="card green">
+  <h3>2 Fungsi Implikasi</h3>
+  <div class="formula" style="font-size:0.72rem;">
+    MIN: potong puncak di level &alpha;<br>
+    DOT: kalikan skala &prop; &alpha;
+  </div>
+  <table>
+    <tr><th>MIN</th><th>DOT</th></tr>
+    <tr><td>Trapesium (datar)</td><td>Segitiga proporsional</td></tr>
+    <tr><td>Default Mamdani</td><td>Alternatif</td></tr>
+  </table>
+</div>
+
+</div>
+
+<div class="card green fullw">
+  <h3>Workflow 4-Langkah FIS Mamdani</h3>
+<table>
+<tr><th>Langkah</th><th>Input</th><th>Proses</th><th>Output</th></tr>
+<tr>
+  <td><strong>1. Fuzzifikasi</strong></td>
+  <td>Nilai crisp (x, y)</td>
+  <td>Hitung &mu; untuk semua himpunan input</td>
+  <td>Derajat keanggotaan per himpunan</td>
+</tr>
+<tr>
+  <td><strong>2. Implikasi (MIN)</strong></td>
+  <td>Aturan + &mu; anteseden</td>
+  <td>&alpha; = min(&mu;_1, &mu;_2, ...) lalu potong konsekuen di &alpha;</td>
+  <td>Kurva terpotong per rule</td>
+</tr>
+<tr>
+  <td><strong>3. Agregasi (MAX)</strong></td>
+  <td>Semua output rule</td>
+  <td>MAX per region konsekuen, hitung batas a1, a2</td>
+  <td>1 kurva komposit</td>
+</tr>
+<tr>
+  <td><strong>4. Defuzzifikasi Centroid</strong></td>
+  <td>Kurva komposit</td>
+  <td>Hitung A_i (luas) dan M_i (momen integral), z* = &Sigma;M/&Sigma;A</td>
+  <td>Nilai crisp tunggal z*</td>
+</tr>
+</table>
+</div>
+
+<div class="card yellow fullw">
+  <h3>Studi Kasus Produksi &mdash; Quick Reference</h3>
+  <div class="grid-2">
+    <div>
+      <p><strong>Input:</strong> x=4000 (Permintaan), y=300 (Persediaan)</p>
+      <div class="code-block">
+        Fuzzifikasi:<br>
+        &mu;_PmtTURUN[4000] = 0,25<br>
+        &mu;_PmtNAIK[4000] = 0,75<br>
+        &mu;_PsdSEDIKIT[300] = 0,6<br>
+        &mu;_PsdBANYAK[300] = 0,4<br>
+        <br>
+        Implikasi MIN (&alpha;-predikat):<br>
+        R1: min(0,25; 0,4) = 0,25<br>
+        R2: min(0,25; 0,6) = 0,25<br>
+        R3: min(0,75; 0,4) = 0,4<br>
+        R4: min(0,75; 0,6) = 0,6
+      </div>
+    </div>
+    <div>
+      <p><strong>Output:</strong> z* = <span style="color:#0d9488; font-weight:700;">4248 kemasan</span></p>
+      <div class="code-block">
+        Agregasi MAX:<br>
+        BERKURANG: max(0,25; 0,25) = 0,25<br>
+        BERTAMBAH: max(0,4; 0,6) = 0,6<br>
+        a1=3250 (di &mu;=0,25), a2=5000 (di &mu;=0,6)<br>
+        <br>
+        Defuzzifikasi Centroid:<br>
+        A1 = 812,5 | A2 = 743,75 | A3 = 1200<br>
+        Total A = 2756,25<br>
+        M1 = 1.320.312,5 | M2 = 3.187.515,625 | M3 = 7.200.000<br>
+        Total M = 11.707.828,125<br>
+        <span class="then">z* = 11.707.828,125 / 2756,25 = 4248</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card purple fullw">
+  <h3>Cheat Matrix: Pilih Fungsi Keanggotaan</h3>
+  <table>
+    <tr><th>Kondisi</th><th>Pilih</th><th>Alasan</th></tr>
+    <tr><td>Himpunan tengah, satu puncak</td><td><strong>Segitiga</strong></td><td>Sederhana, 3 parameter cukup</td></tr>
+    <tr><td>Himpunan tengah, dengan zona aman datar</td><td><strong>Trapesium</strong></td><td>Area puncak = 1 (4 parameter)</td></tr>
+    <tr><td>Di ujung kiri variabel (DINGIN)</td><td><strong>Bahu Kiri</strong></td><td>Datar 1 di ekstrem bawah</td></tr>
+    <tr><td>Di ujung kanan variabel (PANAS)</td><td><strong>Bahu Kanan</strong></td><td>Datar 1 di ekstrem atas</td></tr>
+    <tr><td>Hanya bertambah tanpa puncak</td><td><strong>Linear Naik</strong></td><td>Produksi BERTAMBAH</td></tr>
+    <tr><td>Hanya berkurang tanpa puncak</td><td><strong>Linear Turun</strong></td><td>Produksi BERKURANG</td></tr>
+    <tr><td>Data historis diskret</td><td><strong>Koordinat Diskret</strong></td><td>Pasangan eksplisit</td></tr>
+    <tr><td>Distribusi statistik/probabilitas</td><td><strong>Bell/Gauss</strong></td><td>Simetris, mulus</td></tr>
+  </table>
+</div>
+
 <p style="text-align:center; font-size:0.65rem; color:#78716c; margin-top:1rem; border-top:1px solid #e7e5e4; padding-top:0.4rem;">
-  Sumber: Giarratano (2007), Sutojo et al. (2018), Negnevitsky (2011), Suyanto (2007), Russel &amp; Norvig (2010).
+  Sumber: Zadeh (1965); Mamdani &amp; Assilian (1975); Giarratano (2007); Sutojo et al. (2018); Negnevitsky (2011); Suyanto (2007); Russel &amp; Norvig (2010); materi kuliah "Pengenalan Logika Fuzzy".
   &bull; File ini akan terus diupdate setiap ada materi baru.
 </p>
 

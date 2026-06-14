@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 9: Himpunan Fuzzy &amp; Terminologi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #0d9488; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #0d9488; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #ccfbf1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #0d9488;
+    background: #f0fdfa;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .formula .hl { color: #5eead4; }
+  .formula .hl2 { color: #fcd34d; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #0d9488;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #f0fdfa; }
+  td.crisp { background: #fef2f2; font-weight: 600; color: #991b1b; }
+  td.fuzzy { background: #dcfce7; font-weight: 600; color: #166534; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+  .legend {
+    display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;
+    font-size: 0.85em; margin-top: 0.5rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
+  .legend-line { width: 22px; height: 3px; border-radius: 1px; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #0d9488;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #f0fdfa;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #ccfbf1; border-color: #0d9488; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+  .comp-grid .col.crisp-col { border-top: 3px solid #dc2626; background: #fef2f2; }
+  .comp-grid .col.fuzzy-col { border-top: 3px solid #16a34a; background: #f0fdf4; }
+
+  /* --- Term card --- */
+  .term-card {
+    background: white;
+    border: 1px solid #99f6e4;
+    border-left: 4px solid #0d9488;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 0.8rem 0;
+  }
+  .term-card h4 {
+    font-size: 0.95em;
+    color: #0d9488;
+    margin-bottom: 0.3rem;
+  }
+  .term-card .example {
+    font-size: 0.85em;
+    color: #52525b;
+    margin-top: 0.3rem;
+    font-style: italic;
+  }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 9: Himpunan Fuzzy &amp; Terminologi</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Dari batas kaku (0/1) ke keanggotaan kontinu (0&ndash;1) &mdash; paradigma baru untuk dunia yang abu-abu</p>
+
+<!-- ====================================================================== -->
+<h2>1. Paradigm Shift: Mengapa Perlu Logika Fuzzy?</h2>
+
+<p>Selama ini di PL dan FOL, kamu terbiasa dengan logika <strong>binary</strong>: sebuah proposisi benar atau salah, 1 atau 0. Tapi dunia nyata tidak sesederhana itu. Pertanyaan ini akan membuktikannya:</p>
+
+<div class="warn-box">
+<strong>Pertanyaan Provokatif</strong>
+<p>Berapa nilai keanggotaan seseorang berumur <strong>34 tahun</strong> pada himpunan "MUDA"?</p>
+<p>Bagaimana dengan <strong>35 tahun kurang 1 hari</strong>? Apakah langsung "bukan muda"?</p>
+</div>
+
+<p>Selisih beberapa hari bisa melompatkan kategori dari "Muda" ke "Parobaya" &mdash; sebuah <strong>transisi diskontinyu</strong> yang tidak realistis. Logika fuzzy adalah jawaban untuk masalah batas kaku seperti ini.</p>
+
+<div class="def-box">
+<strong>Definisi: Logika Fuzzy</strong>
+<p>Logika fuzzy adalah logika yang menggunakan <strong>nilai keanggotaan kontinu antara 0 sampai 1</strong>, bukan hanya 0 atau 1. Diperkenalkan oleh <strong>Prof. Lotfi A. Zadeh</strong> dari University of California, Berkeley, pada tahun <strong>1965</strong> melalui paper seminalnya "Fuzzy Sets".</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Himpunan Tegas (Crisp Set) &mdash; Yang Sudah Kamu Tahu</h2>
+
+<p>Di himpunan tegas (crisp), nilai keanggotaan <code>&mu;<sub>A</sub>[x]</code> hanya punya 2 kemungkinan:</p>
+
+<ul>
+  <li><strong>1</strong> &mdash; x adalah anggota penuh himpunan A</li>
+  <li><strong>0</strong> &mdash; x sama sekali bukan anggota himpunan A</li>
+</ul>
+
+<div class="example-box">
+<strong>Contoh Klasik Himpunan Crisp</strong>
+<p>Diberikan:</p>
+<ul>
+  <li>Semesta pembicaraan S = {1, 2, 3, 4, 5, 6}</li>
+  <li>Himpunan A = {1, 2, 3}</li>
+  <li>Himpunan B = {3, 4, 5}</li>
+</ul>
+<p>Maka:</p>
+<table>
+  <tr><th>x</th><th>&mu;<sub>A</sub>[x]</th><th>&mu;<sub>B</sub>[x]</th><th>Penjelasan</th></tr>
+  <tr><td>2</td><td class="crisp">1</td><td>0</td><td>2 &isin; A, tapi 2 &notin; B</td></tr>
+  <tr><td>3</td><td>1</td><td>1</td><td>3 &isin; A dan 3 &isin; B (irisan)</td></tr>
+  <tr><td>4</td><td>0</td><td>1</td><td>4 &notin; A, tapi 4 &isin; B</td></tr>
+</table>
+</div>
+
+<p>Perhatikan: tidak ada nilai "antara". 4 <strong>bukan</strong> anggota A, titik. Tidak ada "sedikit anggota" atau "setengah anggota".</p>
+
+<!-- ====================================================================== -->
+<h2>3. The Gotcha: Batasan Kaku yang Tidak Realistis</h2>
+
+<p>Misalkan kita kategorikan umur secara <strong>crisp</strong>:</p>
+
+<ul>
+  <li><strong>MUDA</strong>: umur &lt; 35 tahun</li>
+  <li><strong>PAROBAYA</strong>: 35 &le; umur &le; 55 tahun</li>
+  <li><strong>TUA</strong>: umur &gt; 55 tahun</li>
+</ul>
+
+<div class="plot">
+<svg width="700" height="200" viewBox="0 0 700 200" style="max-width:100%;">
+  <!-- Axis -->
+  <line x1="50" y1="170" x2="670" y2="170" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <!-- X labels -->
+  <text x="50" y="190" font-size="11" text-anchor="middle">0</text>
+  <text x="150" y="190" font-size="11" text-anchor="middle">15</text>
+  <text x="270" y="190" font-size="11" text-anchor="middle">35</text>
+  <text x="430" y="190" font-size="11" text-anchor="middle">55</text>
+  <text x="630" y="190" font-size="11" text-anchor="middle">90</text>
+  <!-- Y labels -->
+  <text x="40" y="174" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="98" font-size="10" text-anchor="end">1</text>
+  <!-- MUDA (crisp): constant 1 from 0 to 35, drop to 0 -->
+  <line x1="50" y1="95" x2="270" y2="95" stroke="#dc2626" stroke-width="2.5"/>
+  <line x1="270" y1="95" x2="270" y2="170" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="160" y="88" font-size="11" fill="#dc2626" font-weight="600">MUDA</text>
+  <!-- PAROBAYA: 1 from 35 to 55 -->
+  <line x1="270" y1="95" x2="430" y2="95" stroke="#7c3aed" stroke-width="2.5"/>
+  <line x1="270" y1="170" x2="270" y2="95" stroke="#7c3aed" stroke-width="2.5"/>
+  <line x1="430" y1="95" x2="430" y2="170" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="350" y="88" font-size="11" fill="#7c3aed" font-weight="600">PAROBAYA</text>
+  <!-- TUA: 1 from 55 to end -->
+  <line x1="430" y1="170" x2="430" y2="95" stroke="#16a34a" stroke-width="2.5"/>
+  <line x1="430" y1="95" x2="670" y2="95" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="550" y="88" font-size="11" fill="#16a34a" font-weight="600">TUA</text>
+  <!-- Vertical boundary lines at 35 and 55 -->
+  <line x1="270" y1="170" x2="270" y2="20" stroke="#78716c" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <line x1="430" y1="170" x2="430" y2="20" stroke="#78716c" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="270" y="14" font-size="10" text-anchor="middle" fill="#78716c">batas kaku</text>
+  <text x="430" y="14" font-size="10" text-anchor="middle" fill="#78716c">batas kaku</text>
+</svg>
+<p class="plot-caption">Gambar 1: Himpunan crisp untuk variabel Umur. Perhatikan "tangga" tegak lurus di batas 35 dan 55.</p>
+</div>
+
+<div class="warn-box">
+<strong>Masalah Batasan Kaku</strong>
+<p>Bayangkan dua orang: <strong>A</strong> berumur 34 tahun 11 bulan 30 hari, <strong>B</strong> berumur 35 tahun tepat. Secara crisp:</p>
+<ul>
+  <li>A: &mu;<sub>MUDA</sub>[A] = <strong>1</strong> (masih muda penuh)</li>
+  <li>B: &mu;<sub>MUDA</sub>[B] = <strong>0</strong> (bukan muda, langsung parobaya)</li>
+</ul>
+<p>Selisih <strong>1 hari</strong> mengubah totalitas keanggotaan dari 1 ke 0. Tidak ada "setengah muda", "agak muda", "masih muda sedikit". Di dunia nyata, transisi ini <strong>tidak natural</strong>.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Himpunan Fuzzy: Solusinya</h2>
+
+<div class="def-box">
+<strong>Definisi: Himpunan Fuzzy</strong>
+<p>Suatu himpunan di mana nilai keanggotaan suatu item <strong>tidak lagi biner (0 atau 1)</strong>, melainkan <strong>kontinu</strong> dengan rentang <strong>0 sampai 1</strong>. Semakin besar nilai keanggotaan (mendekati 1), semakin kuat item tersebut menjadi anggota himpunan.</p>
+</div>
+
+<p>Dengan fuzzy, variabel umur yang sama bisa direpresentasikan ulang dengan kurva yang <strong>halus</strong>:</p>
+
+<div class="plot">
+<svg width="700" height="220" viewBox="0 0 700 220" style="max-width:100%;">
+  <!-- Axis -->
+  <line x1="50" y1="190" x2="670" y2="190" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="190" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <!-- X labels -->
+  <text x="50" y="208" font-size="11" text-anchor="middle">0</text>
+  <text x="90" y="208" font-size="11" text-anchor="middle">15</text>
+  <text x="170" y="208" font-size="11" text-anchor="middle">25</text>
+  <text x="270" y="208" font-size="11" text-anchor="middle">35</text>
+  <text x="370" y="208" font-size="11" text-anchor="middle">45</text>
+  <text x="470" y="208" font-size="11" text-anchor="middle">55</text>
+  <text x="570" y="208" font-size="11" text-anchor="middle">65</text>
+  <text x="630" y="208" font-size="11" text-anchor="middle">90</text>
+  <!-- Y labels -->
+  <text x="40" y="194" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="100" font-size="10" text-anchor="end">1</text>
+  <!-- MUDA: 1 from 0 to 25, linear down to 0 at 35 -->
+  <line x1="50" y1="95" x2="170" y2="95" stroke="#dc2626" stroke-width="2.5"/>
+  <line x1="170" y1="95" x2="270" y2="190" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="120" y="86" font-size="11" fill="#dc2626" font-weight="600">MUDA</text>
+  <!-- PAROBAYA: 0 at 35, 1 at 45, 0 at 55 (triangle) -->
+  <line x1="270" y1="190" x2="370" y2="95" stroke="#7c3aed" stroke-width="2.5"/>
+  <line x1="370" y1="95" x2="470" y2="190" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="370" y="86" font-size="11" fill="#7c3aed" font-weight="600">PAROBAYA</text>
+  <!-- TUA: 0 at 55, linear up to 1 at 65 -->
+  <line x1="470" y1="190" x2="570" y2="95" stroke="#16a34a" stroke-width="2.5"/>
+  <line x1="570" y1="95" x2="670" y2="95" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="620" y="86" font-size="11" fill="#16a34a" font-weight="600">TUA</text>
+  <!-- Marker at 40 -->
+  <line x1="310" y1="190" x2="310" y2="20" stroke="#0d9488" stroke-width="0.7" stroke-dasharray="2,2"/>
+  <circle cx="310" cy="142.5" r="4" fill="#dc2626"/>
+  <text x="318" y="146" font-size="10" fill="#dc2626" font-weight="600">0,25</text>
+  <circle cx="310" cy="142.5" r="4" fill="#7c3aed" opacity="0.0"/>
+  <text x="318" y="160" font-size="10" fill="#7c3aed" font-weight="600">0,5</text>
+  <text x="310" y="20" font-size="11" text-anchor="middle" fill="#0d9488" font-weight="600">umur 40</text>
+</svg>
+<p class="plot-caption">Gambar 2: Himpunan fuzzy untuk variabel Umur. Di umur 40, satu titik bisa "memiliki" dua nilai keanggotaan sekaligus.</p>
+</div>
+
+<div class="example-box">
+<strong>Contoh Evaluasi Fuzzy (umur 40)</strong>
+<p>Seseorang berumur 40 tahun masuk ke:</p>
+<ul>
+  <li>Himpunan <strong>MUDA</strong> dengan derajat &mu;<sub>MUDA</sub>[40] = <strong>0,25</strong> (masih muda sedikit)</li>
+  <li>Himpunan <strong>PAROBAYA</strong> dengan derajat &mu;<sub>PAROBAYA</sub>[40] = <strong>0,5</strong> (setengah parobaya)</li>
+</ul>
+<p>Jumlahnya tidak harus 1. Yang penting: dia "agak muda" DAN "setengah parobaya" secara bersamaan.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Tabel Perbandingan: Crisp vs Fuzzy</h2>
+
+<table>
+  <tr><th>Parameter</th><th>Himpunan Tegas (Crisp)</th><th>Himpunan Fuzzy</th></tr>
+  <tr>
+    <td><strong>Nilai Keanggotaan</strong></td>
+    <td class="crisp">Hanya 0 atau 1 (biner)</td>
+    <td class="fuzzy">Kontinu, rentang 0 sampai 1</td>
+  </tr>
+  <tr>
+    <td><strong>Keanggotaan Ganda</strong></td>
+    <td class="crisp">Tidak bisa &mdash; x masuk A atau bukan A, titik.</td>
+    <td class="fuzzy">Bisa &mdash; x bisa masuk A dan B sekaligus dengan derajat berbeda</td>
+  </tr>
+  <tr>
+    <td><strong>Contoh Usia 40</strong></td>
+    <td class="crisp">Hanya masuk PAROBAYA (kalau 35&le;40&le;55)</td>
+    <td class="fuzzy">Masuk MUDA (0,25) DAN PAROBAYA (0,5)</td>
+  </tr>
+  <tr>
+    <td><strong>Batasan</strong></td>
+    <td class="crisp">Tegas, diskontinyu (ada "tangga")</td>
+    <td class="fuzzy">Luwes, kontinyu (transisi halus)</td>
+  </tr>
+  <tr>
+    <td><strong>Realisme</strong></td>
+    <td class="crisp">Kurang cocok untuk kategori subjektif</td>
+    <td class="fuzzy">Cocok untuk kategori samar (muda, panas, tinggi)</td>
+  </tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>6. 4 Istilah Penting dalam Sistem Fuzzy</h2>
+
+<p>Sebelum masuk ke fungsi keanggotaan (lesson 10), kuasai dulu 4 istilah fondasi ini. Semuanya akan muncul berulang di soal UAS.</p>
+
+<div class="term-card">
+<h4>1. Variabel Fuzzy (Fuzzy Variable)</h4>
+<p>Variabel yang sedang diamati/diukur dalam sistem fuzzy. Ini adalah "sesuatu" yang ingin kita kategorikan.</p>
+<div class="example">Contoh: umur, temperatur ruangan, jumlah produksi, permintaan, kecepatan motor, tingkat risiko.</div>
+</div>
+
+<div class="term-card">
+<h4>2. Himpunan Fuzzy (Fuzzy Set)</h4>
+<p>Kelompok atau <strong>nilai linguistik</strong> yang mewakili kondisi/kategori tertentu di dalam variabel fuzzy. Satu variabel punya beberapa himpunan.</p>
+<div class="example">
+Contoh untuk variabel temperatur: DINGIN, SEJUK, NORMAL, HANGAT, PANAS.<br>
+Contoh untuk variabel umur: MUDA, PAROBAYA, TUA.
+</div>
+</div>
+
+<div class="term-card">
+<h4>3. Semesta Pembicaraan (Universe of Discourse)</h4>
+<p>Keseluruhan <strong>domain nilai riil</strong> yang diperbolehkan untuk suatu variabel fuzzy. Bersifat <strong>monoton naik</strong> dari kiri ke kanan (bilangan riil terurut).</p>
+<div class="example">
+Variabel umur: [0, +&infin;)<br>
+Variabel temperatur: [0, 40]<br>
+Variabel permintaan: [1000, 5000]
+</div>
+</div>
+
+<div class="term-card">
+<h4>4. Domain</h4>
+<p><strong>Rentang spesifik</strong> pada semesta pembicaraan yang digunakan oleh satu himpunan fuzzy. Domain adalah subset dari semesta.</p>
+<div class="example">
+Variabel umur:<br>
+&nbsp;&nbsp;MUDA = [0, 45]<br>
+&nbsp;&nbsp;PAROBAYA = [35, 55]<br>
+&nbsp;&nbsp;TUA = [45, +&infin;)<br>
+<strong>Catatan:</strong> Domain himpunan bisa saling overlap (di sini 35&ndash;45 overlap antara MUDA dan PAROBAYA, 45&ndash;55 overlap antara PAROBAYA dan TUA).
+</div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>7. Rangkuman</h2>
+
+<div class="def-box">
+<strong>Tiga Pergeseran Paradigma</strong>
+<ol>
+  <li><strong>Biner &rarr; Kontinu:</strong> Keanggotaan bukan hanya 0 atau 1, tapi kontinu 0&ndash;1.</li>
+  <li><strong>Diskontinyu &rarr; Kontinyu:</strong> Batasan kategori dibuat "lunak" dengan kurva, bukan tangga tegak.</li>
+  <li><strong>Eksklusif &rarr; Inklusif:</strong> Satu item bisa masuk ke beberapa himpunan sekaligus dengan derajat berbeda.</li>
+</ol>
+</div>
+
+<p style="font-size:1.05em; font-style:italic; color:#52525b;">"Himpunan crisp bertanya 'masuk atau tidak'. Himpunan fuzzy bertanya 'seberapa masuk'." &mdash; Parafrase prinsip Zadeh (1965)</p>
+
+<!-- ====================================================================== -->
+<h2>8. Quiz</h2>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">1. Siapakah yang memperkenalkan konsep Logika Fuzzy, dan pada tahun berapa?</div>
+  <button class="opt" onclick="checkQuiz(this)">Alan Turing, 1950</button>
+  <button class="opt" onclick="checkQuiz(this)">John McCarthy, 1956</button>
+  <button class="opt" onclick="checkQuiz(this)">Lotfi A. Zadeh, 1965</button>
+  <button class="opt" onclick="checkQuiz(this)">Edward Shortliffe, 1975</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">2. Pada himpunan tegas (crisp), nilai keanggotaan &mu;<sub>A</sub>[x] hanya bisa bernilai...</div>
+  <button class="opt" onclick="checkQuiz(this)">Nilai riil sembarang antara 0 dan 1</button>
+  <button class="opt" onclick="checkQuiz(this)">0 atau 1 (biner)</button>
+  <button class="opt" onclick="checkQuiz(this)">Hanya nilai 1 (selalu anggota)</button>
+  <button class="opt" onclick="checkQuiz(this)">Nilai negatif, nol, atau positif</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">3. Seseorang berumur 50 tahun. Dalam representasi fuzzy, ia masuk himpunan TUA dengan derajat 0,25 dan PAROBAYA dengan derajat 0,5. Pernyataan yang PALING TEPAT adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Satu orang bisa memiliki keanggotaan di lebih dari satu himpunan sekaligus</button>
+  <button class="opt" onclick="checkQuiz(this)">Total derajat keanggotaan harus selalu 1</button>
+  <button class="opt" onclick="checkQuiz(this)">Yang lebih besar (PAROBAYA=0,5) yang menang, TUA diabaikan</button>
+  <button class="opt" onclick="checkQuiz(this)">Data ini tidak konsisten dengan logika fuzzy</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">4. Manakah yang PALING TEPAT menggambarkan "Semesta Pembicaraan" untuk variabel temperatur ruang server?</div>
+  <button class="opt" onclick="checkQuiz(this)">[DINGIN, SEJUK, NORMAL, HANGAT, PANAS] &mdash; kumpulan label</button>
+  <button class="opt" onclick="checkQuiz(this)">[15, 25] &mdash; domain spesifik himpunan NORMAL saja</button>
+  <button class="opt" onclick="checkQuiz(this)">Derajat keanggotaan dari 0 sampai 1</button>
+  <button class="opt" onclick="checkQuiz(this)">[0, 40] &mdash; keseluruhan rentang nilai riil yang mungkin</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Domain himpunan MUDA = [0, 45], PAROBAYA = [35, 55], TUA = [45, +&infin;). Karakteristik apa yang ditunjukkan konfigurasi ini?</div>
+  <button class="opt" onclick="checkQuiz(this)">Domain himpunan fuzzy harus selalu saling lepas (non-overlap)</button>
+  <button class="opt" onclick="checkQuiz(this)">Semesta pembicaraan lebih sempit dari domain</button>
+  <button class="opt" onclick="checkQuiz(this)">Domain himpunan fuzzy BOLEH saling overlap (tumpang tindih)</button>
+  <button class="opt" onclick="checkQuiz(this)">Jumlah himpunan harus sama dengan panjang domain</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> Zadeh, L.A. (1965) "Fuzzy Sets", Information and Control, 8(3), 338-353; Sutojo et al. (2018) Kecerdasan Buatan; materi kuliah "Pengenalan Logika Fuzzy" hlm. 1-13.
+</p>
+
+</body>
+</html>

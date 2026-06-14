@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 11: Operator Zadeh &amp; Fungsi Implikasi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #0d9488; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #0d9488; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #ccfbf1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #0d9488;
+    background: #f0fdfa;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #7c3aed; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .formula .hl { color: #5eead4; }
+  .formula .hl2 { color: #fcd34d; }
+  .formula .hlr { color: #fca5a5; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #0d9488;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td { background: #f0fdfa; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Rule card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+    line-height: 1.8;
+  }
+  .rule-card .if { color: #5eead4; }
+  .rule-card .then { color: #fcd34d; }
+  .rule-card .and { color: #f472b6; }
+  .rule-card .alpha { color: #fca5a5; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #0d9488;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #f0fdfa;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #ccfbf1; border-color: #0d9488; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+  .comp-grid .col.min-col { border-top: 3px solid #3b82f6; }
+  .comp-grid .col.dot-col { border-top: 3px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 11: Operator Zadeh &amp; Fungsi Implikasi</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Logika untuk anteseden (AND/OR/NOT) dan cara memotong kurva konsekuen (MIN vs DOT)</p>
+
+<!-- ====================================================================== -->
+<h2>1. Recap: Kita Sudah Punya Apa?</h2>
+
+<p>Di lesson 9 dan 10, kamu sudah bisa:</p>
+<ul>
+  <li>Mendefinisikan himpunan fuzzy (mis: <strong>MUDA</strong>, <strong>PANAS</strong>, <strong>BERTAMBAH</strong>)</li>
+  <li>Menghitung derajat keanggotaan <code>&mu;[x]</code> untuk sembarang nilai input</li>
+</ul>
+
+<p>Sekarang pertanyaannya: <strong>bagaimana mengombinasikan</strong> beberapa himpunan dalam satu aturan (rule), dan bagaimana menurunkan kesimpulan?</p>
+
+<p>Jawabannya: pakai <strong>3 Operator Zadeh</strong> (untuk anteseden) + <strong>2 Fungsi Implikasi</strong> (untuk menurunkan konsekuen).</p>
+
+<!-- ====================================================================== -->
+<h2>2. 3 Operator Zadeh</h2>
+
+<p>Dalam logika fuzzy, kita tidak punya "benar/salah" &mdash; kita punya "derajat keanggotaan" di interval [0, 1]. Lotfi Zadeh (1965) merumuskan 3 operator dasar:</p>
+
+<h3>2.1 Operator AND (Irisan / Interseksi)</h3>
+
+<p>Ketika antesenden memiliki lebih dari satu kondisi yang harus <strong>keduanya benar</strong>, kita pakai AND.</p>
+
+<div class="formula">
+&mu;<sub>A &cap; B</sub>[x] = <span class="hl">min( &mu;<sub>A</sub>[x], &mu;<sub>B</sub>[y] )</span>
+</div>
+
+<p><strong>Logika:</strong> Ambil derajat keanggotaan <strong>terkecil</strong> di antara elemen-elemen himpunan. Ini mencerminkan "rantai hanya sekuat mata rantai terlemahnya".</p>
+
+<div class="example-box">
+<strong>Contoh: Syarat kredit "MUDA AND GAJITINGGI"</strong>
+<p>Diketahui:</p>
+<ul>
+  <li><code>&mu;<sub>MUDA</sub>[27]</code> = 0,6 (umur 27, derajat muda = 0,6)</li>
+  <li><code>&mu;<sub>GAJITINGGI</sub>[2 jt]</code> = 0,8 (gaji 2 jt, derajat tinggi = 0,8)</li>
+</ul>
+<p>Maka &alpha;-predikat untuk (MUDA AND GAJITINGGI):</p>
+<div class="formula">
+&alpha; = min(0,6 ; 0,8) = <span class="hl">0,6</span>
+</div>
+<p>Yang lebih lemah (MUDA=0,6) yang menentukan. Orang ini 0,6 "memenuhi syarat".</p>
+</div>
+
+<h3>2.2 Operator OR (Gabungan / Union)</h3>
+
+<p>Ketika cukup <strong>salah satu</strong> kondisi benar, kita pakai OR.</p>
+
+<div class="formula">
+&mu;<sub>A &cup; B</sub>[x] = <span class="hl2">max( &mu;<sub>A</sub>[x], &mu;<sub>B</sub>[y] )</span>
+</div>
+
+<p><strong>Logika:</strong> Ambil derajat keanggotaan <strong>terbesar</strong>. "Setidaknya satu kondisi kuat sudah cukup".</p>
+
+<div class="example-box">
+<strong>Contoh: Syarat kelayakan "MUDA OR GAJITINGGI"</strong>
+<p>Dengan data yang sama:</p>
+<div class="formula">
+&alpha; = max(0,6 ; 0,8) = <span class="hl2">0,8</span>
+</div>
+<p>Yang lebih kuat (GAJITINGGI=0,8) yang menentukan. Lebih longgar dari AND.</p>
+</div>
+
+<h3>2.3 Operator NOT (Komplemen)</h3>
+
+<p>Untuk negasi.</p>
+
+<div class="formula">
+&mu;<sub>A'</sub>[x] = <span class="hlr">1 &minus; &mu;<sub>A</sub>[x]</span>
+</div>
+
+<div class="example-box">
+<strong>Contoh: "TIDAK MUDA" pada umur 27 tahun</strong>
+<div class="formula">
+&mu;<sub>TIDAK MUDA</sub>[27] = 1 &minus; 0,6 = <span class="hlr">0,4</span>
+</div>
+<p>Artinya: pada umur 27, seseorang 0,4 "tidak muda" (atau dengan kata lain 0,6 "muda", karena totalnya harus 1).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Tabel Ringkasan Operator</h2>
+
+<table>
+  <tr><th>Operator</th><th>Rumus</th><th>Logika</th><th>Kapan Pakai</th></tr>
+  <tr>
+    <td><strong>AND</strong></td>
+    <td>min(&mu;<sub>A</sub>, &mu;<sub>B</sub>)</td>
+    <td>Ambil yang terkecil</td>
+    <td>Anteseden majemuk dengan "<strong>dan</strong>" (kedua syarat harus terpenuhi)</td>
+  </tr>
+  <tr>
+    <td><strong>OR</strong></td>
+    <td>max(&mu;<sub>A</sub>, &mu;<sub>B</sub>)</td>
+    <td>Ambil yang terbesar</td>
+    <td>Anteseden dengan "<strong>atau</strong>" (salah satu syarat cukup)</td>
+  </tr>
+  <tr>
+    <td><strong>NOT</strong></td>
+    <td>1 &minus; &mu;<sub>A</sub></td>
+    <td>Lawan dari nilai asli</td>
+    <td>Negasi, mis: "bukan muda", "tidak panas"</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Jebakan Umum</strong>
+<p>Operator AND/OR di fuzzy TIDAK sama dengan di PL:</p>
+<ul>
+  <li>PL: A AND B = benar hanya jika A dan B keduanya benar</li>
+  <li>Fuzzy: A AND B = <strong>derajat keanggotaan terkecil</strong> dari A dan B (bisa 0,6 atau 0,73 dst, bukan cuma 0/1)</li>
+</ul>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Konsep &alpha;-predikat (Dasar Implikasi)</h2>
+
+<p>Setelah kita hitung derajat keanggotaan anteseden, hasilnya disebut <strong>&alpha;-predikat</strong> (alpha predicate) atau <strong>fire strength</strong> dari aturan tersebut.</p>
+
+<div class="def-box">
+<strong>Definisi: &alpha;-predikat</strong>
+<p>Nilai kebenaran (fire strength) dari antesenden sebuah aturan fuzzy, setelah dievaluasi dengan operator Zadeh. Berfungsi sebagai "seberapa kuat aturan ini diaktifkan".</p>
+</div>
+
+<div class="rule-card">
+<span class="if">IF</span> Permintaan TURUN (0,25) <span class="and">AND</span> Persediaan BANYAK (0,4) <span class="then">THEN</span> Produksi BERKURANG<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&mu;_PmtTURUN[4000] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&mu;_PsdBANYAK[300] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (kurva Produksi BERKURANG)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="alpha">&alpha;-predikat = 0,25</span>
+</div>
+
+<p>Pertanyaan berikutnya: bagaimana menerapkan &alpha;=0,25 ke kurva konsekuen "Produksi BERKURANG"? <strong>Di sinilah fungsi implikasi berperan</strong>.</p>
+
+<!-- ====================================================================== -->
+<h2>5. Dua Fungsi Implikasi: MIN vs DOT</h2>
+
+<p>Fungsi implikasi adalah mekanisme untuk <strong>menerjemahkan &alpha;-predikat</strong> ke modifikasi pada <strong>kurva output konsekuen</strong>.</p>
+
+<h3>5.1 Implikasi MIN (Minimum / Truncation)</h3>
+
+<p>Memotong <strong>bagian atas</strong> kurva konsekuen secara <strong>horizontal</strong> setinggi nilai &alpha;-predikat. Hasilnya: trapesium "terpangkas" datar.</p>
+
+<div class="plot">
+<svg width="600" height="240" viewBox="0 0 600 240" style="max-width:100%;">
+  <line x1="50" y1="200" x2="560" y2="200" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="200" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="40" y="204" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="65" font-size="10" text-anchor="end">1</text>
+  <text x="40" y="123" font-size="10" text-anchor="end" fill="#0d9488">0,4</text>
+  <!-- Original consequent triangle (Produksi BERKURANG, mis: turun linear dari 1 ke 0) -->
+  <line x1="100" y1="65" x2="500" y2="200" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+  <text x="430" y="190" font-size="10" fill="#94a3b8" font-style="italic">kurva asli</text>
+  <!-- MIN implication: triangle truncated at alpha=0.4 -->
+  <!-- Original peak would be at (100, 65) going to (500, 200). Truncate at y=0.4 means limit max to 0.4 -->
+  <!-- Find where triangle = 0.4: line from (100,65) to (500,200), slope=(200-65)/(500-100)=135/400=0.3375 -->
+  <!-- y = 0.4 -> x = 100 + (65-0.4*100)/0.3375... easier: at alpha=0.4, x = 100 + (1-0.4)/((1-0)/(500-100)) = 100 + 0.6*400 = 340 -->
+  <!-- In pixel coords: alpha=0.4 -> y = 200 - 0.4*(200-65) = 200 - 54 = 146 -->
+  <line x1="100" y1="65" x2="100" y2="146" stroke="#3b82f6" stroke-width="3"/>
+  <line x1="100" y1="146" x2="340" y2="146" stroke="#3b82f6" stroke-width="3"/>
+  <line x1="340" y1="146" x2="500" y2="200" stroke="#3b82f6" stroke-width="3"/>
+  <line x1="100" y1="146" x2="500" y2="146" stroke="#0d9488" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="170" y="50" font-size="12" fill="#3b82f6" font-weight="600">MIN: truncation</text>
+  <text x="280" y="140" font-size="10" fill="#0d9488" font-style="italic">&alpha; = 0,4 (cap)</text>
+  <text x="100" y="220" font-size="11" text-anchor="middle">a</text>
+  <text x="500" y="220" font-size="11" text-anchor="middle">b</text>
+</svg>
+<p class="plot-caption">Gambar 1: Implikasi MIN &mdash; puncak kurva "dipotong" rata di level &alpha; (di sini &alpha;=0,4). Luas area shape berkurang karena bagian atas hilang.</p>
+</div>
+
+<h3>5.2 Implikasi DOT (Product / Scaling)</h3>
+
+<p>Men<strong>skala</strong> tinggi kurva konsekuen secara <strong>proporsional</strong>: tinggi baru = tinggi asli &times; &alpha;-predikat. Hasilnya: segitiga yang lebih "rendah" tapi dengan bentuk (slope) yang sama.</p>
+
+<div class="plot">
+<svg width="600" height="240" viewBox="0 0 600 240" style="max-width:100%;">
+  <line x1="50" y1="200" x2="560" y2="200" stroke="#1c1917" stroke-width="1.5"/>
+  <line x1="50" y1="200" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
+  <text x="40" y="204" font-size="10" text-anchor="end">0</text>
+  <text x="40" y="65" font-size="10" text-anchor="end">1</text>
+  <text x="40" y="146" font-size="10" text-anchor="end" fill="#0d9488">0,4</text>
+  <line x1="100" y1="65" x2="500" y2="200" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+  <text x="430" y="190" font-size="10" fill="#94a3b8" font-style="italic">kurva asli</text>
+  <!-- DOT: scale peak from 1 (y=65) to alpha=0.4 (y=146). All points scaled: y_new = 200 - alpha*(200-y_orig) -->
+  <!-- At x=100, orig y=65, new y = 200 - 0.4*135 = 146 -->
+  <!-- At x=500, orig y=200, new y = 200 - 0.4*0 = 200 -->
+  <line x1="100" y1="146" x2="500" y2="200" stroke="#dc2626" stroke-width="3"/>
+  <line x1="100" y1="65" x2="100" y2="146" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <text x="170" y="135" font-size="12" fill="#dc2626" font-weight="600">DOT: scaling</text>
+  <text x="280" y="170" font-size="10" fill="#0d9488" font-style="italic">&alpha; = 0,4 (scale factor)</text>
+  <text x="100" y="220" font-size="11" text-anchor="middle">a</text>
+  <text x="500" y="220" font-size="11" text-anchor="middle">b</text>
+</svg>
+<p class="plot-caption">Gambar 2: Implikasi DOT &mdash; seluruh kurva "dikecilkan" proporsional dengan &alpha; (di sini &alpha;=0,4). Bentuk slope tetap, hanya tinggi yang berubah.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Trade-off: MIN vs DOT</h2>
+
+<div class="comp-grid">
+  <div class="col min-col">
+    <h4 style="color:#3b82f6;">MIN (Truncation)</h4>
+    <ul>
+      <li><strong>Karakteristik:</strong> Memotong kurva, menghasilkan "top datar" (trapesium).</li>
+      <li><strong>Luas area:</strong> Lebih besar, karena bagian atas cuma "dipotong" sekali.</li>
+      <li><strong>Kecepatan:</strong> Sangat cepat, hanya butuh operasi min.</li>
+      <li><strong>Default Mamdani.</strong> Paling umum dipakai di soal UAS dan industri.</li>
+    </ul>
+  </div>
+  <div class="col dot-col">
+    <h4 style="color:#dc2626;">DOT (Product)</h4>
+    <ul>
+      <li><strong>Karakteristik:</strong> Mengalikan skala, menghasilkan segitiga lebih rendah.</li>
+      <li><strong>Luas area:</strong> Lebih kecil, karena seluruh kurva "dikecilkan".</li>
+      <li><strong>Kecepatan:</strong> Sama cepat, hanya butuh perkalian.</li>
+      <li><strong>Trade-off:</strong> Defuzzifikasi bisa menghasilkan nilai sedikit berbeda &mdash; lebih halus.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="info-box">
+<strong>Cara Praktis Membedakan</strong>
+<ul>
+  <li>Lihat hasil visualnya: ada "datar" di puncak &rarr; MIN. Slope tetap, hanya tinggi yang berkurang &rarr; DOT.</li>
+  <li>Soal UAS biasanya eksplisit sebut "<strong>menggunakan fungsi MIN</strong>" atau "<strong>mengikuti metode Mamdani</strong>" &rarr; default ke MIN.</li>
+</ul>
+</div>
+
+<!-- ====================================================================== -->
+<h2>7. Antesenden dengan Banyak Syarat</h2>
+
+<p>Antesenden sering punya lebih dari satu variabel. Bentuk umumnya:</p>
+
+<div class="rule-card">
+<span class="if">IF</span> (x<sub>1</sub> is A<sub>1</sub>) <span class="and">*</span> (x<sub>2</sub> is A<sub>2</sub>) <span class="and">*</span> ... <span class="and">*</span> (x<sub>n</sub> is A<sub>n</sub>) <span class="then">THEN</span> y is B
+</div>
+
+<p>Di mana <code>*</code> adalah operator AND atau OR (sesuai desain).</p>
+
+<div class="rule-card">
+<span class="if">IF</span> Permintaan TURUN <span class="and">AND</span> Persediaan BANYAK <span class="then">THEN</span> Produksi BERKURANG<br>
+&nbsp;&rarr; &alpha; = min( &mu;<sub>PmtTURUN</sub>, &mu;<sub>PsdBANYAK</sub> )<br>
+&nbsp;&rarr; Terapkan implikasi (MIN) ke kurva Produksi BERKURANG
+</div>
+
+<!-- ====================================================================== -->
+<h2>8. Rangkuman</h2>
+
+<div class="def-box">
+<strong>Empat Konsep Kunci Lesson Ini</strong>
+<ol>
+  <li><strong>AND = MIN</strong>, <strong>OR = MAX</strong>, <strong>NOT = 1 &minus; x</strong> &mdash; operator Zadeh untuk anteseden.</li>
+  <li><strong>&alpha;-predikat</strong> = hasil evaluasi antesenden, menentukan "fire strength" aturan.</li>
+  <li><strong>Implikasi MIN</strong> = potong puncak kurva konsekuen setinggi &alpha; (default Mamdani).</li>
+  <li><strong>Implikasi DOT</strong> = kalikan tinggi kurva dengan &alpha; (skala proporsional).</li>
+</ol>
+</div>
+
+<p style="font-size:1.05em; font-style:italic; color:#52525b;">"Sebelum kita bisa agregasi dan defuzzifikasi, kita harus tahu &alpha; mana yang dipakai dan bagaimana ia 'memotong' konsekuen." &mdash; Bridge ke Lesson 12 (Mamdani FIS)</p>
+
+<!-- ====================================================================== -->
+<h2>9. Quiz</h2>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">1. &mu;<sub>A</sub>[x] = 0,7 dan &mu;<sub>B</sub>[x] = 0,4. Berapakah &alpha;-predikat untuk (A AND B)?</div>
+  <button class="opt" onclick="checkQuiz(this)">1,1 (di luar jangkauan)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,7 (max)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,4 (min)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,3 (selisih)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">2. &mu;<sub>MUDA</sub>[30] = 0,5 dan &mu;<sub>GAJITINGGI</sub>[3 jt] = 0,7. Untuk rule dengan anteseden "MUDA OR GAJITINGGI", &alpha; = ?</div>
+  <button class="opt" onclick="checkQuiz(this)">0,7 (max)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,5 (min)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,35 (rata-rata)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,2 (selisih)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">3. Apa beda visual utama antara implikasi MIN dan DOT pada kurva konsekuen?</div>
+  <button class="opt" onclick="checkQuiz(this)">MIN menghasilkan segitiga, DOT menghasilkan trapesium</button>
+  <button class="opt" onclick="checkQuiz(this)">MIN mengubah slope, DOT hanya mengubah tinggi</button>
+  <button class="opt" onclick="checkQuiz(this)">MIN mempertahankan bentuk, DOT memotong puncak</button>
+  <button class="opt" onclick="checkQuiz(this)">MIN memotong puncak (trapesium datar), DOT memperkecil slope (segitiga proporsional)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">4. Sebuah rule memiliki &alpha;-predikat = 0,4. Implikasi MIN diterapkan pada kurva konsekuen segitiga dengan puncak di derajat 1. Tinggi kurva hasil implikasi pada puncaknya adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Tetap 1, karena MIN tidak mempengaruhi tinggi</button>
+  <button class="opt" onclick="checkQuiz(this)">0,4 (terpotong di level &alpha;)</button>
+  <button class="opt" onclick="checkQuiz(this)">0,6 (1 &minus; &alpha;)</button>
+  <button class="opt" onclick="checkQuiz(this)">2,5 (1 / &alpha;)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Manakah pernyataan yang BENAR tentang metode Mamdani (default-nya)?</div>
+  <button class="opt" onclick="checkQuiz(this)">Menggunakan operator OR untuk anteseden dan DOT untuk implikasi</button>
+  <button class="opt" onclick="checkQuiz(this)">Hanya menggunakan AND, tidak bisa OR</button>
+  <button class="opt" onclick="checkQuiz(this)">Menggunakan AND (MIN) untuk anteseden dan MIN untuk implikasi</button>
+  <button class="opt" onclick="checkQuiz(this)">Tidak memerlukan &alpha;-predikat</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Logika Fuzzy" hlm. 31-36 (Operator Zadeh &amp; Fungsi Implikasi); Mamdani &amp; Assilian (1975) "An experiment in linguistic synthesis with a fuzzy logic controller", International Journal of Man-Machine Studies.
+</p>
+
+</body>
+</html>
