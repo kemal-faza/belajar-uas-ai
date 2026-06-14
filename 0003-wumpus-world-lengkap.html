@@ -431,38 +431,38 @@ Glitter → Emas di kotak ini → GRAB!<br>
 
 <h2>8. Quiz Simulasi UAS</h2>
 
-<div class="quiz-box">
-  <h3>Soal 1: Deduksi</h3>
-  <p class="quiz-question">Agen di [2,3] mendapat percept [Stench, Breeze, None, None, None]. Tetangga [2,3] adalah [1,3], [2,2], [2,4], [3,3]. Jika [2,2] sudah diketahui aman, apa yang bisa disimpulkan?</p>
-  <div class="quiz-option" onclick="selectOption(this)">Wumpus di [2,4], Pit di [3,3]</div>
-  <div class="quiz-option" onclick="selectOption(this)">Wumpus di [1,3] atau [2,4] atau [3,3]; Pit di [1,3] atau [2,4] atau [3,3]</div>
-  <div class="quiz-option" onclick="selectOption(this)">Tidak bisa disimpulkan apa-apa</div>
-  <div class="quiz-option" onclick="selectOption(this)">Wumpus PASTI di [1,3]</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
-  <div class="quiz-feedback"></div>
-</div>
+  <div class="quiz-box" data-correct="1">
+    <h3>Soal 1: Deduksi</h3>
+    <p class="quiz-question">Agen di [2,3] mendapat percept [Stench, Breeze, None, None, None]. Tetangga [2,3] adalah [1,3], [2,2], [2,4], [3,3]. Jika [2,2] sudah diketahui aman, apa yang bisa disimpulkan?</p>
+    <div class="quiz-option" onclick="selectOption(this)">Wumpus di [2,4], Pit di [3,3]</div>
+    <div class="quiz-option" onclick="selectOption(this)">Wumpus di [1,3] atau [2,4] atau [3,3]; Pit di [1,3] atau [2,4] atau [3,3]</div>
+    <div class="quiz-option" onclick="selectOption(this)">Tidak bisa disimpulkan apa-apa</div>
+    <div class="quiz-option" onclick="selectOption(this)">Wumpus PASTI di [1,3]</div>
+    <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
+    <div class="quiz-feedback"></div>
+  </div>
 
-<div class="quiz-box">
-  <h3>Soal 2: Representasi FOL</h3>
-  <p class="quiz-question">Mana representasi FOL yang benar untuk "Ada Breeze di kotak yang bertetangga dengan Pit"?</p>
-  <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Breeze(a,b)</div>
-  <div class="quiz-option" onclick="selectOption(this)">∃x,y Pit(x,y) ∧ Breeze(x,y)</div>
-  <div class="quiz-option" onclick="selectOption(this)">∀x,y Breeze(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Pit(a,b)</div>
-  <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ Breeze(adjacent(x,y))</div>
-  <button class="btn-check" onclick="checkQuiz(this, 0)">Cek Jawaban</button>
-  <div class="quiz-feedback"></div>
-</div>
+  <div class="quiz-box" data-correct="0">
+    <h3>Soal 2: Representasi FOL</h3>
+    <p class="quiz-question">Mana representasi FOL yang benar untuk "Ada Breeze di kotak yang bertetangga dengan Pit"?</p>
+    <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Breeze(a,b)</div>
+    <div class="quiz-option" onclick="selectOption(this)">∃x,y Pit(x,y) ∧ Breeze(x,y)</div>
+    <div class="quiz-option" onclick="selectOption(this)">∀x,y Breeze(x,y) ⇒ ∃a,b Adjacent(x,y,a,b) ∧ Pit(a,b)</div>
+    <div class="quiz-option" onclick="selectOption(this)">∀x,y Pit(x,y) ⇒ Breeze(adjacent(x,y))</div>
+    <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
+    <div class="quiz-feedback"></div>
+  </div>
 
-<div class="quiz-box">
-  <h3>Soal 3: Inference Rules</h3>
-  <p class="quiz-question">Diketahui KB: {B₂,₁, B₂,₁ ⇒ P₁,₁ ∨ P₂,₂ ∨ P₃,₁, ¬P₁,₁}. Apa inference rule yang dipakai untuk mendapatkan P₂,₂ ∨ P₃,₁?</p>
-  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu And Elimination</div>
-  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Resolution</div>
-  <div class="quiz-option" onclick="selectOption(this)">Resolution lalu And Elimination</div>
-  <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Unit Resolution</div>
-  <button class="btn-check" onclick="checkQuiz(this, 3)">Cek Jawaban</button>
-  <div class="quiz-feedback"></div>
-</div>
+  <div class="quiz-box" data-correct="3">
+    <h3>Soal 3: Inference Rules</h3>
+    <p class="quiz-question">Diketahui KB: {B₂,₁, B₂,₁ ⇒ P₁,₁ ∨ P₂,₂ ∨ P₃,₁, ¬P₁,₁}. Apa inference rule yang dipakai untuk mendapatkan P₂,₂ ∨ P₃,₁?</p>
+    <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu And Elimination</div>
+    <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Resolution</div>
+    <div class="quiz-option" onclick="selectOption(this)">Resolution lalu And Elimination</div>
+    <div class="quiz-option" onclick="selectOption(this)">Modus Ponens lalu Unit Resolution</div>
+    <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
+    <div class="quiz-feedback"></div>
+  </div>
 
 <div class="exam-tip">
 <strong>💡 Kunci jawaban:</strong><br>
@@ -486,8 +486,9 @@ function selectOption(el) {
   el.classList.add('selected');
 }
 
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
   const parent = btn.closest('.quiz-box');
+  const correctIdx = parseInt(parent.dataset.correct);
   const selected = parent.querySelector('.quiz-option.selected');
   const feedback = parent.querySelector('.quiz-feedback');
 

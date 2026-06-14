@@ -373,34 +373,34 @@ Resolve:            P₂,₂ ∨ P₃,₁                (Pit di [2,2] atau [3,1
 
 <h2>7. Quiz: Cek Pemahamanmu</h2>
 
-<div class="quiz-box" id="quiz1">
+<div class="quiz-box" id="quiz1" data-correct="1">
   <h3>Quiz 1: Implication</h3>
   <p class="quiz-question">Kapan <code>P ⇒ Q</code> bernilai False?</p>
   <div class="quiz-option" onclick="selectOption(this)">Saat P = False, Q = True</div>
   <div class="quiz-option" onclick="selectOption(this)">Saat P = True, Q = False</div>
   <div class="quiz-option" onclick="selectOption(this)">Saat P = True, Q = True</div>
   <div class="quiz-option" onclick="selectOption(this)">Saat P = False, Q = False</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
-<div class="quiz-box" id="quiz2">
+<div class="quiz-box" id="quiz2" data-correct="1">
   <h3>Quiz 2: Entailment</h3>
   <p class="quiz-question">Jika KB = {W₁,₃ ⇒ P₂,₂}, apakah KB ⊨ ¬W₁,₃?</p>
   <div class="quiz-option" onclick="selectOption(this)">Ya, karena W₁,₃ ⇒ P₂,₂ berarti W₁,₃ pasti False</div>
   <div class="quiz-option" onclick="selectOption(this)">Tidak, karena W₁,₃ bisa True selama P₂,₂ juga True</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
-<div class="quiz-box" id="quiz3">
+<div class="quiz-box" id="quiz3" data-correct="2">
   <h3>Quiz 3: Inference Rules</h3>
   <p class="quiz-question">Dari fakta <code>(P₂,₂ ∨ P₃,₁)</code> dan <code>¬P₂,₂</code>, apa yang bisa kamu simpulkan?</p>
   <div class="quiz-option" onclick="selectOption(this)">P₂,₂</div>
   <div class="quiz-option" onclick="selectOption(this)">P₃,₁ ∧ ¬P₂,₂</div>
   <div class="quiz-option" onclick="selectOption(this)">P₃,₁</div>
   <div class="quiz-option" onclick="selectOption(this)">Tidak bisa menyimpulkan apa-apa</div>
-  <button class="btn-check" onclick="checkQuiz(this, 2)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
@@ -428,8 +428,9 @@ function selectOption(el) {
   el.classList.add('selected');
 }
 
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
   const parent = btn.closest('.quiz-box');
+  const correctIdx = parseInt(parent.dataset.correct);
   const selected = parent.querySelector('.quiz-option.selected');
   const feedback = parent.querySelector('.quiz-feedback');
 

@@ -416,75 +416,75 @@
 <!-- ============================================================ -->
 <h2>Quiz: Cek Pemahaman</h2>
 
-<div class="quiz-box" id="quiz1">
+<div class="quiz-box" id="quiz1" data-correct="0">
   <div class="q">1. Dalam aturan <code>IF [A] AND [B] THEN [C]</code>, manakah yang disebut <em>antecedent</em>?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. [A] AND [B]</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. [C]</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. THEN</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Seluruh aturan</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. [A] AND [B]</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. [C]</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. THEN</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Seluruh aturan</button>
   <div class="quiz-feedback" id="fb1"></div>
 </div>
 
-<div class="quiz-box" id="quiz2">
+<div class="quiz-box" id="quiz2" data-correct="2">
   <div class="q">2. Dalam Semantic Network, relasi apa yang memungkinkan child node mewarisi atribut dari parent node?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. HAS-A</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. PART-OF</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. IS-A</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. CAUSES</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. HAS-A</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. PART-OF</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. IS-A</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. CAUSES</button>
   <div class="quiz-feedback" id="fb2"></div>
 </div>
 
-<div class="quiz-box" id="quiz3">
+<div class="quiz-box" id="quiz3" data-correct="3">
   <div class="q">3. Dalam representasi Frames, apa nama "laci" tempat menyimpan nilai atribut?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Node</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Link</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Rule</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Slot</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Node</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Link</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Rule</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Slot</button>
   <div class="quiz-feedback" id="fb3"></div>
 </div>
 
-<div class="quiz-box" id="quiz4">
+<div class="quiz-box" id="quiz4" data-correct="0">
   <div class="q">4. Manakah pernyataan yang BENAR tentang inheritance di Semantic Networks?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Honda Civic (IS-A Car) otomatis mewarisi atribut "Wheels" dari Vehicle tanpa perlu dideklarasikan ulang</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Setiap node harus mendeklarasikan ulang semua atribut parent-nya</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Inheritance hanya bekerja satu level (parent langsung saja)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. IS-A berarti child punya atribut yang dimiliki parent</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Honda Civic (IS-A Car) otomatis mewarisi atribut "Wheels" dari Vehicle tanpa perlu dideklarasikan ulang</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Setiap node harus mendeklarasikan ulang semua atribut parent-nya</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Inheritance hanya bekerja satu level (parent langsung saja)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. IS-A berarti child punya atribut yang dimiliki parent</button>
   <div class="quiz-feedback" id="fb4"></div>
 </div>
 
-<div class="quiz-box" id="quiz5">
+<div class="quiz-box" id="quiz5" data-correct="2">
   <div class="q">5. Metode representasi manakah yang PALING TEPAT untuk sistem yang mendiagnosis kerusakan mesin berdasarkan aturan gejalanya?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Semantic Networks &mdash; karena perlu hierarki komponen mesin</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Frames &mdash; karena mesin punya banyak atribut</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. IF-THEN Rules &mdash; karena diagnosis adalah proses kondisional (IF gejala THEN kerusakan)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Semantic Networks &mdash; karena diagnosis butuh visualisasi</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Semantic Networks &mdash; karena perlu hierarki komponen mesin</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Frames &mdash; karena mesin punya banyak atribut</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. IF-THEN Rules &mdash; karena diagnosis adalah proses kondisional (IF gejala THEN kerusakan)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Semantic Networks &mdash; karena diagnosis butuh visualisasi</button>
   <div class="quiz-feedback" id="fb5"></div>
 </div>
 
-<div class="quiz-box" id="quiz6">
+<div class="quiz-box" id="quiz6" data-correct="1">
   <div class="q">6. Dalam representasi Frames, nilai slot bisa berupa... (pilih yang PALING LENGKAP)</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Teks dan angka saja</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Teks, angka, fungsi, atau prosedur yang dijalankan secara dinamis</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Hanya referensi ke frame lain</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Boolean (true/false) saja</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Teks dan angka saja</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Teks, angka, fungsi, atau prosedur yang dijalankan secara dinamis</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Hanya referensi ke frame lain</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Boolean (true/false) saja</button>
   <div class="quiz-feedback" id="fb6"></div>
 </div>
 
-<div class="quiz-box" id="quiz7">
+<div class="quiz-box" id="quiz7" data-correct="1">
   <div class="q">7. Manakah yang merupakan KELEMAHAN dari Semantic Networks dibandingkan IF-THEN Rules?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Tidak bisa merepresentasikan inheritance</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Kurang intuitif untuk menelusuri alur penalaran langkah demi langkah</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Tidak bisa digunakan untuk sistem pakar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Lebih kompleks dari Frames</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Tidak bisa merepresentasikan inheritance</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Kurang intuitif untuk menelusuri alur penalaran langkah demi langkah</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Tidak bisa digunakan untuk sistem pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Lebih kompleks dari Frames</button>
   <div class="quiz-feedback" id="fb7"></div>
 </div>
 
-<div class="quiz-box" id="quiz8">
+<div class="quiz-box" id="quiz8" data-correct="1">
   <div class="q">8. Jika Anda ingin membangun sistem pakar untuk klasifikasi spesies hewan dengan hierarki: Mamalia &rarr; Karnivora &rarr; Harimau, representasi mana yang paling efisien untuk menghindari duplikasi data?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. IF-THEN Rules</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Semantic Networks (dengan inheritance IS-A)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Hanya Frames</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Working Storage</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. IF-THEN Rules</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Semantic Networks (dengan inheritance IS-A)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Hanya Frames</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Working Storage</button>
   <div class="quiz-feedback" id="fb8"></div>
 </div>
 
@@ -495,7 +495,8 @@
 </div>
 
 <script>
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
+  var correctIdx = parseInt(btn.parentElement.dataset.correct);
   var options = btn.parentElement.querySelectorAll('.quiz-option');
   var feedback = btn.parentElement.querySelector('.quiz-feedback');
   var selectedIdx = Array.prototype.indexOf.call(options, btn);

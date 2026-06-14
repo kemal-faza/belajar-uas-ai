@@ -513,93 +513,93 @@
 <!-- ============================================================ -->
 <h2>Quiz: Cek Pemahaman</h2>
 
-<div class="quiz-box" id="quiz1">
+<div class="quiz-box" id="quiz1" data-correct="1">
   <div class="q">1. Forward Chaining memulai penalaran dari...</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Hipotesis (goal)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Fakta-fakta awal yang diketahui</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Kesimpulan akhir</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Sub-goal</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Hipotesis (goal)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Fakta-fakta awal yang diketahui</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Kesimpulan akhir</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Sub-goal</button>
   <div class="quiz-feedback" id="fb1"></div>
 </div>
 
-<div class="quiz-box" id="quiz2">
+<div class="quiz-box" id="quiz2" data-correct="3">
   <div class="q">2. Backward Chaining bersifat konvergen. Apa artinya?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Penalaran menyebar ke banyak arah</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Penalaran tidak punya arah jelas</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Penalaran dimulai dari data yang tidak lengkap</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Penalaran memusat ke satu hipotesis yang ingin dibuktikan</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Penalaran menyebar ke banyak arah</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Penalaran tidak punya arah jelas</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Penalaran dimulai dari data yang tidak lengkap</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Penalaran memusat ke satu hipotesis yang ingin dibuktikan</button>
   <div class="quiz-feedback" id="fb2"></div>
 </div>
 
-<div class="quiz-box" id="quiz3">
+<div class="quiz-box" id="quiz3" data-correct="0">
   <div class="q">3. Jika suatu sistem memiliki banyak konklusi potensial tapi sedikit data awal, metode inferensi mana yang lebih efisien?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Backward Chaining (goal-driven)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Forward Chaining (data-driven)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Keduanya sama efisien</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Tidak bisa ditentukan</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Backward Chaining (goal-driven)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Forward Chaining (data-driven)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Keduanya sama efisien</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Tidak bisa ditentukan</button>
   <div class="quiz-feedback" id="fb3"></div>
 </div>
 
-<div class="quiz-box" id="quiz4">
+<div class="quiz-box" id="quiz4" data-correct="2">
   <div class="q">4. Apa fungsi Certainty Factor (CF) dalam sistem pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Menentukan urutan eksekusi aturan</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Mempercepat proses inferensi</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Menggambarkan derajat keyakinan terhadap fakta atau aturan (0.0&ndash;1.0)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Menyimpan fakta sementara di Working Storage</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Menentukan urutan eksekusi aturan</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Mempercepat proses inferensi</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Menggambarkan derajat keyakinan terhadap fakta atau aturan (0.0&ndash;1.0)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Menyimpan fakta sementara di Working Storage</button>
   <div class="quiz-feedback" id="fb4"></div>
 </div>
 
-<div class="quiz-box" id="quiz5">
+<div class="quiz-box" id="quiz5" data-correct="0">
   <div class="q">5. Dua aturan dengan kondisi pemicu SAMA PERSIS tetapi menghasilkan kesimpulan berbeda disebut anomali...</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Conflicting</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Redundant</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Subsumed</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Circular</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Conflicting</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Redundant</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Subsumed</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Circular</button>
   <div class="quiz-feedback" id="fb5"></div>
 </div>
 
-<div class="quiz-box" id="quiz6">
+<div class="quiz-box" id="quiz6" data-correct="2">
   <div class="q">6. Jika suatu aturan spesifik tidak akan pernah terpakai karena sudah terwakili oleh aturan yang lebih umum, ini disebut anomali...</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Redundant</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Conflicting</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Subsumed</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Unnecessary IF</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Redundant</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Conflicting</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Subsumed</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Unnecessary IF</button>
   <div class="quiz-feedback" id="fb6"></div>
 </div>
 
-<div class="quiz-box" id="quiz7">
+<div class="quiz-box" id="quiz7" data-correct="2">
   <div class="q">7. Dalam studi kasus klasifikasi hewan, jika user menjawab "Ya" untuk Hair (rambut), kesimpulan apa yang ditarik?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Hewan adalah Karnivora</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Hewan adalah Ungulate</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Hewan adalah Mamalia (via R1)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Hewan adalah Cheetah</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Hewan adalah Karnivora</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Hewan adalah Ungulate</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Hewan adalah Mamalia (via R1)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Hewan adalah Cheetah</button>
   <div class="quiz-feedback" id="fb7"></div>
 </div>
 
-<div class="quiz-box" id="quiz8">
+<div class="quiz-box" id="quiz8" data-correct="1">
   <div class="q">8. Ketika sistem tidak bisa mengidentifikasi hewan karena kurang informasi, apa yang sebaiknya dilakukan sistem pakar yang baik?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Menampilkan pesan error dan berhenti</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Graceful failure &mdash; memberikan kesimpulan default yang paling aman</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Memaksa user menjawab semua pertanyaan</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Mengulang pertanyaan dari awal</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Menampilkan pesan error dan berhenti</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Graceful failure &mdash; memberikan kesimpulan default yang paling aman</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Memaksa user menjawab semua pertanyaan</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Mengulang pertanyaan dari awal</button>
   <div class="quiz-feedback" id="fb8"></div>
 </div>
 
-<div class="quiz-box" id="quiz9">
+<div class="quiz-box" id="quiz9" data-correct="0">
   <div class="q">9. Jika Backward Chaining membutuhkan sub-goal E, dan ada Rule 3 (IF B THEN E), apa yang dilakukan sistem selanjutnya?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Mencari apakah B adalah fakta yang tersedia, jika tidak maka B menjadi sub-goal baru</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Langsung menyimpulkan E benar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Mengabaikan Rule 3 dan mencari aturan lain</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Mengulang dari goal awal</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Mencari apakah B adalah fakta yang tersedia, jika tidak maka B menjadi sub-goal baru</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Langsung menyimpulkan E benar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Mengabaikan Rule 3 dan mencari aturan lain</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Mengulang dari goal awal</button>
   <div class="quiz-feedback" id="fb9"></div>
 </div>
 
-<div class="quiz-box" id="quiz10">
+<div class="quiz-box" id="quiz10" data-correct="1">
   <div class="q">10. Manakah yang BUKAN termasuk 3 Pilar Keandalan Sistem Pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Inferensi Presisi (pilih FC/BC tepat)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Kecepatan komputasi tinggi</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Integritas Knowledge Base (bebas 6 anomali)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Interaksi Transparan (Why/How)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Inferensi Presisi (pilih FC/BC tepat)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Kecepatan komputasi tinggi</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Integritas Knowledge Base (bebas 6 anomali)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Interaksi Transparan (Why/How)</button>
   <div class="quiz-feedback" id="fb10"></div>
 </div>
 
@@ -616,7 +616,8 @@
 </div>
 
 <script>
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
+  var correctIdx = parseInt(btn.parentElement.dataset.correct);
   var options = btn.parentElement.querySelectorAll('.quiz-option');
   var feedback = btn.parentElement.querySelector('.quiz-feedback');
   var selectedIdx = Array.prototype.indexOf.call(options, btn);

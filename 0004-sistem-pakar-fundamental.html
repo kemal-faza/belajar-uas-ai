@@ -319,75 +319,75 @@
 <!-- ============================================================ -->
 <h2>Quiz: Cek Pemahaman</h2>
 
-<div class="quiz-box" id="quiz1">
+<div class="quiz-box" id="quiz1" data-correct="2">
   <div class="q">1. Apa perbedaan utama antara program tradisional dan sistem pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Sistem pakar lebih cepat daripada program tradisional</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Program tradisional memisahkan inference engine dari knowledge base</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Sistem pakar memisahkan cara berpikir (inference engine) dari apa yang diketahui (knowledge base)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Sistem pakar tidak menggunakan algoritma</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Sistem pakar lebih cepat daripada program tradisional</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Program tradisional memisahkan inference engine dari knowledge base</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Sistem pakar memisahkan cara berpikir (inference engine) dari apa yang diketahui (knowledge base)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Sistem pakar tidak menggunakan algoritma</button>
   <div class="quiz-feedback" id="fb1"></div>
 </div>
 
-<div class="quiz-box" id="quiz2">
+<div class="quiz-box" id="quiz2" data-correct="1">
   <div class="q">2. Manakah yang BUKAN termasuk komponen arsitektur inti sistem pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. User Interface</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Database Management System</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Inference Engine</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Knowledge Base</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. User Interface</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Database Management System</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Inference Engine</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Knowledge Base</button>
   <div class="quiz-feedback" id="fb2"></div>
 </div>
 
-<div class="quiz-box" id="quiz3">
+<div class="quiz-box" id="quiz3" data-correct="1">
   <div class="q">3. Siapakah yang bertugas mengekstrak pengetahuan dari Domain Expert dan merumuskannya ke format logis untuk mesin?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. System Engineer</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Knowledge Engineer</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Domain Expert</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. User</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. System Engineer</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Knowledge Engineer</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Domain Expert</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. User</button>
   <div class="quiz-feedback" id="fb3"></div>
 </div>
 
-<div class="quiz-box" id="quiz4">
+<div class="quiz-box" id="quiz4" data-correct="0">
   <div class="q">4. Manakah yang BUKAN termasuk DNA Sistem Pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Mampu belajar sendiri dari data baru (machine learning)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Inferensi logis (forward/backward chaining)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Domain spesifik</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Nilai keyakinan (Certainty Factor)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Mampu belajar sendiri dari data baru (machine learning)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Inferensi logis (forward/backward chaining)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Domain spesifik</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Nilai keyakinan (Certainty Factor)</button>
   <div class="quiz-feedback" id="fb4"></div>
 </div>
 
-<div class="quiz-box" id="quiz5">
+<div class="quiz-box" id="quiz5" data-correct="2">
   <div class="q">5. Apa tantangan terbesar dalam akuisisi pengetahuan?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Biaya komputer yang mahal</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Pakar tidak mau bekerja sama</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Tacit Knowledge — pengetahuan intuitif yang sulit dijelaskan pakar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Sistem pakar tidak bisa dijalankan di hardware modern</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Biaya komputer yang mahal</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Pakar tidak mau bekerja sama</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Tacit Knowledge — pengetahuan intuitif yang sulit dijelaskan pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Sistem pakar tidak bisa dijalankan di hardware modern</button>
   <div class="quiz-feedback" id="fb5"></div>
 </div>
 
-<div class="quiz-box" id="quiz6">
+<div class="quiz-box" id="quiz6" data-correct="1">
   <div class="q">6. MYCIN adalah contoh sistem pakar di bidang apa?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Pertanian (diagnosis hama padi)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Medis (diagnosis infeksi bakteri)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Keuangan (prediksi saham)</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Teknik (diagnosis kerusakan mesin)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Pertanian (diagnosis hama padi)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Medis (diagnosis infeksi bakteri)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Keuangan (prediksi saham)</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Teknik (diagnosis kerusakan mesin)</button>
   <div class="quiz-feedback" id="fb6"></div>
 </div>
 
-<div class="quiz-box" id="quiz7">
+<div class="quiz-box" id="quiz7" data-correct="3">
   <div class="q">7. Manakah rumus yang benar untuk merepresentasikan Sistem Pakar?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Algoritma + Struktur Data = Sistem Pakar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Knowledge Base + User Interface = Sistem Pakar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Inference Engine + Working Storage = Sistem Pakar</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Inference Engine + Knowledge Base = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Algoritma + Struktur Data = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Knowledge Base + User Interface = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Inference Engine + Working Storage = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Inference Engine + Knowledge Base = Sistem Pakar</button>
   <div class="quiz-feedback" id="fb7"></div>
 </div>
 
-<div class="quiz-box" id="quiz8">
+<div class="quiz-box" id="quiz8" data-correct="0">
   <div class="q">8. Apa yang terjadi jika suatu masalah bisa diselesaikan dengan rumus matematika sederhana? Apakah sistem pakar tepat digunakan?</div>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Tidak tepat — sistem pakar tidak cocok untuk masalah numerik murni</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Tepat — sistem pakar bisa menangani semua jenis masalah</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Tepat — asalkan ada pakar yang bisa diwawancarai</button>
-  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Tidak tepat — sistem pakar hanya untuk masalah medis</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">A. Tidak tepat — sistem pakar tidak cocok untuk masalah numerik murni</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">B. Tepat — sistem pakar bisa menangani semua jenis masalah</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">C. Tepat — asalkan ada pakar yang bisa diwawancarai</button>
+  <button class="quiz-option" onclick="checkQuiz(this)">D. Tidak tepat — sistem pakar hanya untuk masalah medis</button>
   <div class="quiz-feedback" id="fb8"></div>
 </div>
 
@@ -399,7 +399,8 @@
 
 <!-- ============================================================ -->
 <script>
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
+  var correctIdx = parseInt(btn.parentElement.dataset.correct);
   var options = btn.parentElement.querySelectorAll('.quiz-option');
   var feedback = btn.parentElement.querySelector('.quiz-feedback');
   var selectedIdx = Array.prototype.indexOf.call(options, btn);

@@ -412,47 +412,47 @@ Pit(2,2) ∨ Pit(3,1)
 
 <h2>8. Quiz</h2>
 
-<div class="quiz-box" id="quiz1">
+<div class="quiz-box" id="quiz1" data-correct="1">
   <h3>Quiz 1: Universal Quantifier</h3>
   <p class="quiz-question">Mana yang benar untuk menyatakan "Semua kotak yang mengandung Pit pasti tidak aman"?</p>
   <div class="quiz-option" onclick="selectOption(this)">∀x Pit(x) ∧ ¬Safe(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x Pit(x) ⇒ ¬Safe(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x ¬Safe(x) ⇒ Pit(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∃x Pit(x) ⇒ ¬Safe(x)</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
-<div class="quiz-box" id="quiz2">
+<div class="quiz-box" id="quiz2" data-correct="2">
   <h3>Quiz 2: Existential Quantifier</h3>
   <p class="quiz-question">Mana yang benar untuk "Ada kotak yang punya emas dan mengkilau"?</p>
   <div class="quiz-option" onclick="selectOption(this)">∃x Gold(x) ⇒ Glitter(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x Gold(x) ∧ Glitter(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∃x Gold(x) ∧ Glitter(x)</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x Gold(x) ⇒ Glitter(x)</div>
-  <button class="btn-check" onclick="checkQuiz(this, 2)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
-<div class="quiz-box" id="quiz3">
+<div class="quiz-box" id="quiz3" data-correct="1">
   <h3>Quiz 3: Unification</h3>
   <p class="quiz-question">Apa unifier untuk <code>Stench(x, 2)</code> dan <code>Stench(3, y)</code>?</p>
   <div class="quiz-option" onclick="selectOption(this)">FAIL — tidak bisa disatukan</div>
   <div class="quiz-option" onclick="selectOption(this)">{x/3, y/2}</div>
   <div class="quiz-option" onclick="selectOption(this)">{x/3}</div>
   <div class="quiz-option" onclick="selectOption(this)">{x/2, y/3}</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
-<div class="quiz-box" id="quiz4">
+<div class="quiz-box" id="quiz4" data-correct="1">
   <h3>Quiz 4: Nested Quantifiers</h3>
   <p class="quiz-question">Apa beda <code>∀x ∃y Adjacent(x, y)</code> dan <code>∃y ∀x Adjacent(x, y)</code>?</p>
   <div class="quiz-option" onclick="selectOption(this)">Tidak ada beda, urutan quantifier tidak penting</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x∃y: setiap kotak punya tetangga. ∃y∀x: ada satu kotak yang menjadi tetangga semua kotak</div>
   <div class="quiz-option" onclick="selectOption(this)">∀x∃y: ada satu kotak yg jadi tetangga semua. ∃y∀x: setiap kotak punya tetangga</div>
   <div class="quiz-option" onclick="selectOption(this)">Keduanya sama-sama salah secara syntax</div>
-  <button class="btn-check" onclick="checkQuiz(this, 1)">Cek Jawaban</button>
+  <button class="btn-check" onclick="checkQuiz(this)">Cek Jawaban</button>
   <div class="quiz-feedback"></div>
 </div>
 
@@ -471,8 +471,9 @@ function selectOption(el) {
   el.classList.add('selected');
 }
 
-function checkQuiz(btn, correctIdx) {
+function checkQuiz(btn) {
   const parent = btn.closest('.quiz-box');
+  const correctIdx = parseInt(parent.dataset.correct);
   const selected = parent.querySelector('.quiz-option.selected');
   const feedback = parent.querySelector('.quiz-feedback');
 
