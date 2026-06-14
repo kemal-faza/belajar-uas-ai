@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6: Inferensi &amp; Anomali Logika Sistem Pakar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #dc2626; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #dc2626; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #fee2e2;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #dc2626;
+    background: #fef2f2;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #eab308; background: #fefce8; }
+  .def-box { border-left-color: #2563eb; background: #f0f5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Chain Diagram --- */
+  .chain {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    justify-content: center;
+  }
+  .chain .fact {
+    display: inline-block;
+    border: 2px solid #2563eb;
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    background: white;
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+  .chain .rule {
+    display: inline-block;
+    border: 2px solid #dc2626;
+    border-radius: 8px;
+    padding: 0.3rem 0.6rem;
+    background: #fef2f2;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.8em;
+  }
+  .chain .arrow { font-size: 1.3em; color: #666; }
+  .chain .goal { border-color: #16a34a; background: #f0fdf4; }
+
+  /* --- Rule Card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+    line-height: 1.8;
+  }
+  .rule-card .if { color: #fbbf24; }
+  .rule-card .then { color: #34d399; }
+  .rule-card .and { color: #f472b6; }
+  .rule-card .goal { color: #60a5fa; }
+
+  /* --- Anomaly card --- */
+  .anom {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: white;
+  }
+  .anom h3 { margin-top: 0; font-size: 1.05em; }
+  .anom .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .badge-red { background: #fef2f2; color: #dc2626; border: 1px solid #dc2626; }
+  .badge-yellow { background: #fefce8; color: #a16207; border: 1px solid #eab308; }
+  .badge-blue { background: #f0f5ff; color: #2563eb; border: 1px solid #2563eb; }
+  .badge-purple { background: #faf5ff; color: #7c3aed; border: 1px solid #7c3aed; }
+
+  /* --- Dialog simulation --- */
+  .dialog {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.9em;
+  }
+  .dialog .sys { color: #2563eb; }
+  .dialog .user { color: #16a34a; }
+  .dialog .sys::before { content: "Sistem: "; font-weight: 600; }
+  .dialog .user::before { content: "User: "; font-weight: 600; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #dc2626;
+    color: white;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  /* --- Quiz --- */
+  .quiz-box {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.8rem; }
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.6rem 0.8rem;
+    margin: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .quiz-option:hover:not(:disabled) { background: #fee2e2; border-color: #dc2626; }
+  .quiz-option:disabled { cursor: default; opacity: 0.8; }
+  .quiz-option.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-option.wrong { background: #fef2f2; border-color: #dc2626; }
+  .quiz-feedback { margin-top: 0.6rem; font-size: 0.9em; display: none; }
+  .quiz-feedback.show { display: block; }
+
+  .footer-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.9em; color: #666; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; padding: 1rem; }
+    h1 { font-size: 1.6rem; }
+    .chain { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Inferensi &amp; Anomali Logika Sistem Pakar</h1>
+<p><strong>Lesson 6</strong> &mdash; Forward Chaining, Backward Chaining, Certainty Factor, Explanation Facility, 6 Anomali Logika, Studi Kasus</p>
+
+<div class="info-box">
+  <strong>Tujuan Lesson</strong>
+  Setelah lesson ini, kamu bisa: (1) Menjelaskan dan membedakan Forward Chaining vs Backward Chaining, (2) Memahami kapan menggunakan FC vs BC, (3) Menjelaskan konsep Certainty Factor dan penanganan ketidakpastian, (4) Mengidentifikasi 6 anomali logika dalam Knowledge Base, (5) Memahami cara kerja fasilitas Why/How, (6) Menganalisis studi kasus klasifikasi hewan.
+</div>
+
+<!-- ============================================================ -->
+<h2>1. Forward Chaining (Data-Driven Reasoning)</h2>
+<p>
+  <strong>Forward Chaining</strong> adalah penalaran yang dimulai dari <strong>fakta-fakta awal</strong> yang diketahui, kemudian dicocokkan dengan aturan untuk menghasilkan kesimpulan baru. Proses merambat maju selangkah demi selangkah hingga goal tercapai.
+</p>
+
+<div class="def-box">
+  <strong>Karakteristik:</strong> Data-Driven &mdash; "Apa yang bisa saya simpulkan dari data yang saya miliki?" Bersifat <em>divergen</em> (menyebar dari fakta ke konklusi). Cocok untuk sistem yang interaktif dan mengumpulkan informasi bertahap.
+</div>
+
+<h3>Contoh Forward Chaining</h3>
+<p>Aturan yang tersedia:</p>
+<div class="rule-card">
+  <span class="if">Rule 1:</span> IF B <span class="then">THEN</span> E<br>
+  <span class="if">Rule 2:</span> IF A <span class="and">AND</span> E <span class="then">THEN</span> G<br>
+  <span class="if">Rule 3:</span> IF G <span class="then">THEN</span> <span class="goal">D</span> (Goal)
+</div>
+
+<p>Fakta Awal: <strong>A, B</strong></p>
+
+<div class="example-box">
+  <strong>Alur Eksekusi:</strong>
+  <div class="chain">
+    <span class="fact">A, B</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R1: B&rarr;E</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">A, B, E</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R2: A&amp;E&rarr;G</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">A, B, E, G</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R3: G&rarr;D</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact goal">D (Goal!)</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Backward Chaining (Goal-Driven Reasoning)</h2>
+<p>
+  <strong>Backward Chaining</strong> bekerja terbalik. Proses dimulai dari <strong>goal/hipotesis</strong> yang ingin dibuktikan, lalu bergerak mundur mencari aturan yang menghasilkan goal tersebut. Jika kondisi aturan belum diketahui, kondisi itu jadi <strong>sub-goal</strong> baru yang harus dibuktikan.
+</p>
+
+<div class="def-box">
+  <strong>Karakteristik:</strong> Goal-Driven &mdash; "Apakah hipotesis ini benar?" Bersifat <em>konvergen</em> (memusat ke satu hipotesis). Cocok untuk sistem diagnostik yang fokus membuktikan satu dugaan.
+</div>
+
+<h3>Contoh Backward Chaining</h3>
+<p>Aturan yang sama:</p>
+<div class="rule-card">
+  <span class="if">Rule 4:</span> IF G <span class="then">THEN</span> <span class="goal">D</span> (Goal)<br>
+  <span class="if">Rule 2:</span> IF A <span class="and">AND</span> E <span class="then">THEN</span> G<br>
+  <span class="if">Rule 3:</span> IF B <span class="then">THEN</span> E
+</div>
+
+<p>Fakta Awal: <strong>A, B</strong></p>
+
+<div class="example-box">
+  <strong>Alur Eksekusi:</strong>
+  <div class="chain">
+    <span class="fact goal">Goal: D</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R4: ?G &rarr; D</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">Sub-goal: G</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R2: ?A &amp; ?E &rarr; G</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">Sub-goal: A, E</span>
+  </div>
+  <div class="chain">
+    <span class="fact">A = Fakta awal (ADA)</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">E = ?</span>
+    <span class="arrow">&rarr;</span>
+    <span class="rule">R3: ?B &rarr; E</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact">B = Fakta awal (ADA)</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fact goal" style="background:#dcfce7;">Semua sub-goal terbukti &rArr; D BENAR</span>
+  </div>
+  <p style="margin-top:0.5rem; font-size:0.9em;">Sistem menelusuri <strong>mundur</strong>: D &rarr; butuh G &rarr; butuh A dan E &rarr; A ada, E butuh B &rarr; B ada. Rantai lengkap!</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>3. Forward vs Backward: Kapan Pilih yang Mana?</h2>
+
+<table>
+  <tr><th>Parameter</th><th>Forward Chaining</th><th>Backward Chaining</th></tr>
+  <tr>
+    <td>Titik Awal</td>
+    <td>Fakta dan premis awal</td>
+    <td>Hipotesis / kesimpulan (Goal)</td>
+  </tr>
+  <tr>
+    <td>Arah Pencarian</td>
+    <td>Maju (memperluas temuan baru)</td>
+    <td>Mundur (memecah sub-tujuan)</td>
+  </tr>
+  <tr>
+    <td>Visual</td>
+    <td>Divergen &mdash; menyebar dari fakta ke konklusi</td>
+    <td>Konvergen &mdash; memusat ke satu hipotesis</td>
+  </tr>
+  <tr>
+    <td>Karakteristik</td>
+    <td>Interaktif; mengumpulkan informasi baru bertahap</td>
+    <td>Diagnostik; fokus membuktikan satu hipotesis</td>
+  </tr>
+  <tr>
+    <td>Cocok untuk</td>
+    <td>Banyak fakta awal, sedikit konklusi (monitoring, planning)</td>
+    <td>Banyak konklusi potensial, sedikit data (diagnosis medis)</td>
+  </tr>
+  <tr>
+    <td>Contoh</td>
+    <td>Sistem monitoring ruang server</td>
+    <td>Sistem diagnosis penyakit</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>4. Menangani Ketidakpastian: Certainty Factor (CF)</h2>
+<p>
+  Di dunia nyata, informasi jarang 100% benar atau 100% salah. Sistem pakar menggunakan <strong>Certainty Factor (CF)</strong> &mdash; nilai numerik skala 0.0 hingga 1.0 untuk menggambarkan derajat keyakinan.
+</p>
+
+<ul>
+  <li><strong>0.0</strong> = Pasti Salah (Pasti Tidak Yakin)</li>
+  <li><strong>1.0</strong> = Pasti Benar (Pasti Yakin)</li>
+</ul>
+
+<div class="example-box">
+  <strong>Contoh Perhitungan Keyakinan:</strong>
+  <div class="rule-card">
+    Fakta A: CF = 0.90 &larr; "Saya 90% yakin pasien demam"<br>
+    Rule 3: IF A <span class="then">THEN</span> B (CF = 0.75) &larr; "Aturan ini 75% bisa dipercaya"<br>
+    Hasil: CF_akhir = 0.90 &times; 0.75 = <strong>0.675</strong>
+  </div>
+  <p style="margin-top:0.5rem; font-size:0.9em;">Sistem akan menyimpulkan B dengan keyakinan 67.5%.</p>
+</div>
+
+<div class="warn-box">
+  <strong>Catatan:</strong> Mekanisme perhitungan CF yang lebih kompleks melibatkan kombinasi beberapa aturan (CF paralel) dan negasi. Untuk UAS, pahami konsep dasarnya: CF adalah ukuran keyakinan, dan keyakinan output adalah hasil kombinasi CF fakta dengan CF aturan.
+</div>
+
+<!-- ============================================================ -->
+<h2>5. Fasilitas Penjelasan: Why &amp; How</h2>
+<p>
+  Salah satu keunggulan penting sistem pakar adalah <strong>transparansi</strong>. Sistem dapat melacak langkah penalaran dan menjelaskan rasionalitas di balik keputusannya.
+</p>
+
+<h3>Contoh Dialog Interaktif (Diagnosis Mobil)</h3>
+<div class="dialog">
+  <div class="sys">Apakah mobil Anda tidak mau menyala?</div>
+  <div class="user">Ya (No start)</div>
+  <div class="sys">Apakah mesinnya bisa berputar?</div>
+  <div class="user">Ya (Engine turns over)</div>
+  <div class="sys">Apakah Anda mencium bau bensin?</div>
+  <div class="user">Ya (Smell gas)</div>
+  <div class="sys"><strong>Rekomendasi:</strong> Tunggu selama 5 menit.</div>
+  <div class="user"><strong>Why?</strong> (Mengapa merekomendasikan itu?)</div>
+  <div class="sys"><strong>Penjelasan:</strong> Saya menggunakan aturan: <em>IF mobil tidak menyala AND mesin berputar AND tercium bau bensin THEN tunggu 5 menit.</em></div>
+</div>
+
+<p><strong>Mekanisme:</strong> Ketika user bertanya "Why?", sistem membaca mundur node aktif di inference trail untuk menjelaskan tujuan pencariannya saat itu. Fitur "How" menjelaskan bagaimana suatu kesimpulan dicapai.</p>
+
+<!-- ============================================================ -->
+<h2>6. Anomali Logika dalam Knowledge Base</h2>
+<p>
+  Setiap penambahan atau modifikasi aturan di Knowledge Base berpotensi menimbulkan kesalahan logika. Verifikasi berkala penting untuk menjaga konsistensi dan kelengkapan. Ada <strong>6 anomali fundamental</strong> yang wajib dihindari:
+</p>
+
+<div class="anom">
+  <span class="badge badge-yellow">1. REDUNDANT</span>
+  <h3>Duplikasi Logika Aturan</h3>
+  <p>Dua aturan dengan arti sama persis, hanya urutan premis berbeda. Memboroskan memori.</p>
+  <div class="rule-card">
+    <span class="if">R1:</span> IF starter rusak <span class="and">AND</span> suhu naik <span class="then">THEN</span> mesin mati<br>
+    <span class="if">R2:</span> IF suhu naik <span class="and">AND</span> starter rusak <span class="then">THEN</span> mesin mati
+  </div>
+</div>
+
+<div class="anom">
+  <span class="badge badge-red">2. CONFLICTING</span>
+  <h3>Tabrakan Logika (Konflik Keputusan)</h3>
+  <p>Dua aturan dengan kondisi pemicu sama persis, tapi menghasilkan kesimpulan yang <strong>berlawanan</strong>. Sistem bingung menentukan keputusan mana yang benar.</p>
+  <div class="rule-card">
+    <span class="if">R1:</span> IF starter rusak <span class="and">AND</span> suhu naik <span class="then">THEN</span> mesin mati<br>
+    <span class="if">R2:</span> IF starter rusak <span class="and">AND</span> suhu naik <span class="then">THEN</span> mesin <span style="color:#f87171;">berfungsi</span>
+  </div>
+</div>
+
+<div class="anom">
+  <span class="badge badge-blue">3. SUBSUMED</span>
+  <h3>Aturan Tertelan (Tumpang Tindih)</h3>
+  <p>Aturan spesifik sudah terwakili sepenuhnya oleh aturan yang lebih umum. Aturan spesifik tidak akan pernah terpakai.</p>
+  <div class="rule-card">
+    <span class="if">R1 (Spesifik):</span> starter rusak + suhu naik + pompa rusak <span class="then">THEN</span> mesin mati<br>
+    <span class="if">R2 (Umum):</span> starter rusak + suhu naik <span class="then">THEN</span> mesin mati
+    <br><span class="comment">// R1 tidak akan pernah dieksekusi karena R2 sudah cukup</span>
+  </div>
+</div>
+
+<div class="anom">
+  <span class="badge badge-red">4. CIRCULAR</span>
+  <h3>Aturan Berputar (Infinite Loop)</h3>
+  <p>Aturan saling menunjuk secara berputar tanpa henti, menyebabkan sistem crash.</p>
+  <div class="rule-card">
+    <span class="comment">starter rusak &rarr; suhu naik &rarr; starter rusak &rarr; suhu naik &rarr; ...</span>
+    <br><span class="comment">// Tidak ada jalan keluar dari loop!</span>
+  </div>
+</div>
+
+<div class="anom">
+  <span class="badge badge-yellow">5. UNNECESSARY IF</span>
+  <h3>Kondisi Syarat Tidak Relevan</h3>
+  <p>Premis yang tidak berpengaruh sama sekali terhadap kesimpulan. Menjadi beban komputasi.</p>
+  <div class="rule-card">
+    <span class="if">R1:</span> IF mesin mati + starter mati + <span style="color:#f87171;">klakson mati</span> <span class="then">THEN</span> baterai setrum<br>
+    <span class="if">R2:</span> IF mesin mati + starter mati + <span style="color:#f87171;">klakson bunyi</span> <span class="then">THEN</span> baterai setrum
+    <br><span class="comment">// Kondisi klakson (mati/bunyi) TIDAK relevan untuk menentukan baterai setrum</span>
+  </div>
+</div>
+
+<div class="anom">
+  <span class="badge badge-purple">6. DEAD-END</span>
+  <h3>Jalur Keputusan Buntu (Broken Bridge)</h3>
+  <p>Aturan menghasilkan kesimpulan antara, tapi tidak ada aturan lanjutan yang memanfaatkannya, dan itu bukan goal akhir.</p>
+  <div class="rule-card">
+    <span class="if">IF</span> input1 + input2 + input3 <span class="then">THEN</span> baterai perlu disetrum
+    <br><span class="comment">// Lalu? Tidak ada aturan yang menggunakan "baterai perlu disetrum" sebagai premis.</span>
+    <br><span class="comment">// Dan itu bukan goal akhir sistem. Alur penalaran terputus!</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>7. Studi Kasus: Klasifikasi Hewan</h2>
+<p>Sebuah sistem pakar untuk mengidentifikasi spesies hewan berdasarkan ciri-ciri yang diamati. Sistem menggunakan <strong>Forward Chaining</strong> dengan aturan bertingkat.</p>
+
+<h3>Aturan Tingkat Rendah (Klasifikasi Kelas)</h3>
+<div class="rule-card">
+  <span class="if">R1:</span> (Hair <span class="and">OR</span> Milk) <span class="then">THEN</span> Mammal<br>
+  <span class="if">R2:</span> (Meat <span class="and">OR</span> Pointed Teeth) <span class="then">THEN</span> Carnivore<br>
+  <span class="if">R3:</span> (Hooves <span class="and">AND</span> Chews Cud) <span class="then">THEN</span> Ungulate<br>
+</div>
+
+<h3>Aturan Tingkat Tinggi (Klasifikasi Spesies)</h3>
+<div class="rule-card">
+  <span class="if">R4:</span> Mammal + Carnivore + Tawny Color + Dark Spots <span class="then">THEN</span> Cheetah<br>
+  <span class="if">R5:</span> Mammal + Carnivore + Tawny Color + Black Stripes <span class="then">THEN</span> Tiger<br>
+  <span class="if">R6:</span> Ungulate + Long Neck + Black Stripes <span class="then">THEN</span> Zebra<br>
+</div>
+
+<h3>Contoh Sesi Konsultasi</h3>
+<div class="dialog">
+  <div class="sys">Apakah hewan memiliki rambut (Hair)?</div>
+  <div class="user">Ya</div>
+  <div class="sys" style="color:#666;">[Menyimpulkan: Mammal via R1]</div>
+  <div class="sys">Apakah hewan memiliki kuku keras (Hooves)?</div>
+  <div class="user">Tidak tahu (Don't know)</div>
+  <div class="sys">Apakah hewan mengunyah biak (Chews Cud)?</div>
+  <div class="user"><strong>Why?</strong></div>
+  <div class="sys">Saya sedang mencoba menentukan apakah hewan Anda termasuk hewan berkuku (Ungulate), dan hewan berkuku sering kali mengunyah biak.</div>
+  <div class="user">Ya</div>
+  <div class="sys" style="color:#666;">[Menyimpulkan: Ungulate via R3]</div>
+  <div class="sys">Apakah hewan memiliki garis-garis hitam (Black Stripes)?</div>
+  <div class="user">Ya</div>
+  <div class="sys">Apakah hewan memiliki leher panjang (Long Neck)?</div>
+  <div class="user">Ya</div>
+  <div class="sys"><strong>Kesimpulan: Hewan Anda adalah ZEBRA (via R6).</strong></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>8. Graceful Failure</h2>
+<p>
+  Ketika sistem tidak memiliki cukup informasi untuk mengambil keputusan spesifik, sistem pakar yang baik tidak langsung crash. Ia menerapkan <strong>Graceful Failure</strong> -- memberikan kesimpulan teraman yang paling mendekati (default conclusion).
+</p>
+
+<div class="example-box">
+  <strong>Contoh Skenario:</strong>
+  <p>Fakta kelas Carnivore tidak terpenuhi (User menjawab No), dan fakta kelas Ungulate juga ragu-ragu (Don't know).</p>
+  <div class="rule-card">
+    Sistem: "Not enough information is available to positively identify your animal!<br>
+    It is therefore prudent to assume that the animal may be dangerous."<br>
+    <span class="comment">// Rekomendasi default: Strange beast (Hewan tidak dikenal/aneh)</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>9. 3 Pilar Keandalan Sistem Pakar</h2>
+<table>
+  <tr><th>Pilar</th><th>Deskripsi</th></tr>
+  <tr>
+    <td><strong>1. Inferensi Presisi</strong></td>
+    <td>Memilih arah penalaran yang tepat: Forward Chaining atau Backward Chaining sesuai struktur masalah</td>
+  </tr>
+  <tr>
+    <td><strong>2. Integritas Knowledge Base</strong></td>
+    <td>Knowledge Base terbebas dari 6 anomali logika (Redundant, Conflicting, Subsumed, Circular, Unnecessary IF, Dead-End)</td>
+  </tr>
+  <tr>
+    <td><strong>3. Interaksi Transparan</strong></td>
+    <td>UI dilengkapi fasilitas penjelasan (Why/How) untuk menerangkan rasionalitas keputusan</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Quiz: Cek Pemahaman</h2>
+
+<div class="quiz-box" id="quiz1">
+  <div class="q">1. Forward Chaining memulai penalaran dari...</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Hipotesis (goal)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Fakta-fakta awal yang diketahui</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Kesimpulan akhir</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Sub-goal</button>
+  <div class="quiz-feedback" id="fb1"></div>
+</div>
+
+<div class="quiz-box" id="quiz2">
+  <div class="q">2. Backward Chaining bersifat konvergen. Apa artinya?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Penalaran menyebar ke banyak arah</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Penalaran tidak punya arah jelas</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Penalaran dimulai dari data yang tidak lengkap</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Penalaran memusat ke satu hipotesis yang ingin dibuktikan</button>
+  <div class="quiz-feedback" id="fb2"></div>
+</div>
+
+<div class="quiz-box" id="quiz3">
+  <div class="q">3. Jika suatu sistem memiliki banyak konklusi potensial tapi sedikit data awal, metode inferensi mana yang lebih efisien?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Backward Chaining (goal-driven)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Forward Chaining (data-driven)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Keduanya sama efisien</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Tidak bisa ditentukan</button>
+  <div class="quiz-feedback" id="fb3"></div>
+</div>
+
+<div class="quiz-box" id="quiz4">
+  <div class="q">4. Apa fungsi Certainty Factor (CF) dalam sistem pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Menentukan urutan eksekusi aturan</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Mempercepat proses inferensi</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Menggambarkan derajat keyakinan terhadap fakta atau aturan (0.0&ndash;1.0)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Menyimpan fakta sementara di Working Storage</button>
+  <div class="quiz-feedback" id="fb4"></div>
+</div>
+
+<div class="quiz-box" id="quiz5">
+  <div class="q">5. Dua aturan dengan kondisi pemicu SAMA PERSIS tetapi menghasilkan kesimpulan berbeda disebut anomali...</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Conflicting</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Redundant</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Subsumed</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Circular</button>
+  <div class="quiz-feedback" id="fb5"></div>
+</div>
+
+<div class="quiz-box" id="quiz6">
+  <div class="q">6. Jika suatu aturan spesifik tidak akan pernah terpakai karena sudah terwakili oleh aturan yang lebih umum, ini disebut anomali...</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Redundant</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Conflicting</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Subsumed</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Unnecessary IF</button>
+  <div class="quiz-feedback" id="fb6"></div>
+</div>
+
+<div class="quiz-box" id="quiz7">
+  <div class="q">7. Dalam studi kasus klasifikasi hewan, jika user menjawab "Ya" untuk Hair (rambut), kesimpulan apa yang ditarik?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Hewan adalah Karnivora</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Hewan adalah Ungulate</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Hewan adalah Mamalia (via R1)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Hewan adalah Cheetah</button>
+  <div class="quiz-feedback" id="fb7"></div>
+</div>
+
+<div class="quiz-box" id="quiz8">
+  <div class="q">8. Ketika sistem tidak bisa mengidentifikasi hewan karena kurang informasi, apa yang sebaiknya dilakukan sistem pakar yang baik?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Menampilkan pesan error dan berhenti</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Graceful failure &mdash; memberikan kesimpulan default yang paling aman</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Memaksa user menjawab semua pertanyaan</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Mengulang pertanyaan dari awal</button>
+  <div class="quiz-feedback" id="fb8"></div>
+</div>
+
+<div class="quiz-box" id="quiz9">
+  <div class="q">9. Jika Backward Chaining membutuhkan sub-goal E, dan ada Rule 3 (IF B THEN E), apa yang dilakukan sistem selanjutnya?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Mencari apakah B adalah fakta yang tersedia, jika tidak maka B menjadi sub-goal baru</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Langsung menyimpulkan E benar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Mengabaikan Rule 3 dan mencari aturan lain</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Mengulang dari goal awal</button>
+  <div class="quiz-feedback" id="fb9"></div>
+</div>
+
+<div class="quiz-box" id="quiz10">
+  <div class="q">10. Manakah yang BUKAN termasuk 3 Pilar Keandalan Sistem Pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Inferensi Presisi (pilih FC/BC tepat)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Kecepatan komputasi tinggi</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Integritas Knowledge Base (bebas 6 anomali)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Interaksi Transparan (Why/How)</button>
+  <div class="quiz-feedback" id="fb10"></div>
+</div>
+
+<!-- ============================================================ -->
+<div class="footer-nav">
+  <p><strong>Referensi:</strong> Giarratano, J.C. (2007). <em>Expert Systems: Principles and Programming</em>; Sutojo, T. et al. (2018). <em>Kecerdasan Buatan</em>; Negnevitsky, M. (2011). <em>Artificial Intelligence</em>.</p>
+  <p><strong>Rangkuman Sistem Pakar (3 Lesson):</strong></p>
+  <ul>
+    <li><a href="0004-sistem-pakar-fundamental.html">Lesson 4</a> &mdash; Fundamental: Definisi, arsitektur, aktor, DNA, akuisisi pengetahuan</li>
+    <li><a href="0005-representasi-pengetahuan.html">Lesson 5</a> &mdash; Representasi: IF-THEN Rules, Semantic Networks, Frames</li>
+    <li><strong>Lesson 6</strong> &mdash; Inferensi &amp; Anomali: FC, BC, CF, 6 anomali, studi kasus hewan</li>
+  </ul>
+  <p><strong>Topik selanjutnya:</strong> <a href="../4.%20Logika%20Fuzzy.pdf">Logika Fuzzy</a> atau <a href="../Expert_System_Uncertainty_Logic.pdf">Expert System Uncertainty Logic</a> &mdash; silakan pilih!</p>
+</div>
+
+<script>
+function checkQuiz(btn, correctIdx) {
+  var options = btn.parentElement.querySelectorAll('.quiz-option');
+  var feedback = btn.parentElement.querySelector('.quiz-feedback');
+  var selectedIdx = Array.prototype.indexOf.call(options, btn);
+
+  for (var i = 0; i < options.length; i++) {
+    options[i].disabled = true;
+  }
+
+  if (selectedIdx === correctIdx) {
+    btn.classList.add('correct');
+    feedback.innerHTML = '&#10003; Benar!';
+    feedback.style.color = '#16a34a';
+  } else {
+    btn.classList.add('wrong');
+    options[correctIdx].classList.add('correct');
+    feedback.innerHTML = '&#10007; Kurang tepat. Jawaban yang benar adalah opsi ' + String.fromCharCode(65 + correctIdx) + '.';
+    feedback.style.color = '#dc2626';
+  }
+  feedback.classList.add('show');
+}
+</script>
+
+</body>
+</html>

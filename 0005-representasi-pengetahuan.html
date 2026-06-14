@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5: Representasi Pengetahuan dalam Sistem Pakar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #7c3aed; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #7c3aed; }
+  h3 { font-size: 1.2rem; color: #333; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #f3e8ff;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #7c3aed;
+    background: #faf5ff;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #2563eb; background: #f0f5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Rule Card --- */
+  .rule-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.95em;
+    line-height: 1.8;
+  }
+  .rule-card .if { color: #fbbf24; }
+  .rule-card .then { color: #34d399; }
+  .rule-card .and { color: #f472b6; }
+  .rule-card .comment { color: #64748b; font-style: italic; }
+
+  /* --- Semantic Network Diagram --- */
+  .semnet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+  }
+  .semnet .node {
+    display: inline-block;
+    border: 2px solid #7c3aed;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    line-height: 96px;
+    text-align: center;
+    background: #faf5ff;
+    font-weight: 600;
+    margin: 0.3rem;
+  }
+  .semnet .node-sm {
+    width: 80px;
+    height: 80px;
+    line-height: 76px;
+    font-size: 0.85em;
+  }
+  .semnet .edge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0.2rem 0;
+  }
+  .semnet .edge .label {
+    color: #7c3aed;
+    font-size: 0.8em;
+    font-style: italic;
+  }
+  .semnet .arrow-right::after {
+    content: "  \2192";
+    color: #7c3aed;
+    font-size: 1.3em;
+  }
+
+  /* Better semantic net */
+  .graph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #faf5ff;
+    border-radius: 8px;
+  }
+  .graph-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0.3rem 0;
+  }
+  .graph-node {
+    border: 2px solid #7c3aed;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    background: white;
+    font-weight: 600;
+    font-size: 0.85em;
+    min-width: 70px;
+    text-align: center;
+  }
+  .graph-edge {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #7c3aed;
+    font-size: 0.8em;
+  }
+  .graph-edge .arrow { font-size: 1.2em; }
+  .graph-inherit { border-color: #16a34a; }
+
+  /* --- Frame Table --- */
+  .frame-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.9em;
+  }
+  .frame-table th {
+    background: #7c3aed;
+    color: white;
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+  }
+  .frame-table td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .frame-table .slot-type { color: #7c3aed; font-weight: 600; font-size: 0.85em; }
+  .frame-table tr:last-child td { border-bottom: 2px solid #7c3aed; }
+
+  /* --- Comparison Table --- */
+  table.comparison {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9em;
+  }
+  table.comparison th {
+    background: #7c3aed;
+    color: white;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  table.comparison td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  table.comparison tr:nth-child(even) td { background: #f8fafc; }
+
+  /* --- Quiz --- */
+  .quiz-box {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.8rem; }
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.6rem 0.8rem;
+    margin: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .quiz-option:hover:not(:disabled) { background: #f3e8ff; border-color: #7c3aed; }
+  .quiz-option:disabled { cursor: default; opacity: 0.8; }
+  .quiz-option.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-option.wrong { background: #fef2f2; border-color: #dc2626; }
+  .quiz-feedback { margin-top: 0.6rem; font-size: 0.9em; display: none; }
+  .quiz-feedback.show { display: block; }
+
+  .footer-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.9em; color: #666; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; padding: 1rem; }
+    h1 { font-size: 1.6rem; }
+    .graph-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Representasi Pengetahuan dalam Sistem Pakar</h1>
+<p><strong>Lesson 5</strong> &mdash; Tiga Jalur Representasi: IF-THEN Rules, Semantic Networks, Frames</p>
+
+<div class="info-box">
+  <strong>Tujuan Lesson</strong>
+  Setelah lesson ini, kamu bisa: (1) Menjelaskan 3 metode representasi pengetahuan dalam sistem pakar, (2) Menulis aturan IF-THEN dengan antecedent dan consequent, (3) Membaca diagram Semantic Networks dan memahami inheritance, (4) Menjelaskan struktur Frames dengan slot-slotnya, (5) Memilih metode representasi yang tepat berdasarkan kebutuhan.
+</div>
+
+<p>
+  Setelah pengetahuan berhasil diekstraksi dari pakar (lihat <a href="0004-sistem-pakar-fundamental.html">Lesson 4</a>), ia harus diterjemahkan ke format yang dipahami mesin. Ada <strong>tiga jalur representasi</strong> utama: aturan IF-THEN, jaringan semantik, dan frames. Masing-masing punya kekuatan dan kelemahan.
+</p>
+
+<!-- ============================================================ -->
+<h2>1. IF-THEN Rules (Aturan Kondisional)</h2>
+<p>
+  Representasi ini meniru cara berpikir manusia dalam menarik kesimpulan berdasarkan hubungan <strong>sebab-akibat (kausalitas)</strong>. Aturan terdiri dari:
+</p>
+<ul>
+  <li><strong>Antecedent (Kondisi)</strong> &mdash; bagian IF, bisa berisi satu atau lebih premis yang dihubungkan dengan AND/OR</li>
+  <li><strong>Consequent (Kesimpulan)</strong> &mdash; bagian THEN, aksi atau kesimpulan yang dihasilkan</li>
+</ul>
+
+<div class="example-box">
+  <strong>Contoh Aturan Sederhana</strong>
+  <div class="rule-card">
+    <span class="if">IF</span> [traffic light is green]<br>
+    <span class="then">THEN</span> [action is go]
+  </div>
+</div>
+
+<div class="example-box">
+  <strong>Contoh Aturan dengan AND</strong>
+  <div class="rule-card">
+    <span class="if">IF</span> [age of customer &lt; 18] <span class="and">AND</span> [cash withdrawal &gt; 1000]<br>
+    <span class="then">THEN</span> [signature of parent is required]
+  </div>
+</div>
+
+<div class="def-box">
+  <strong>Kegunaan</strong>
+  Sangat efektif dan intuitif untuk: aturan prosedural, perintah, rekomendasi taktis, strategi heuristik, dan SOP deduktif. Ini adalah representasi yang paling umum digunakan dalam sistem pakar.
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Semantic Networks (Jaringan Semantik)</h2>
+<p>
+  Representasi menggunakan struktur <strong>Graf</strong>:
+</p>
+<ul>
+  <li><strong>Node (Simpul)</strong> &mdash; merepresentasikan objek atau konsep (digambar sebagai lingkaran/kotak)</li>
+  <li><strong>Link (Tautan)</strong> &mdash; merepresentasikan hubungan antar-objek (digambar sebagai garis berarah dengan label)</li>
+</ul>
+
+<h3>Hierarki Pewarisan (Inheritance)</h3>
+<p>
+  Konsep kunci dalam semantic networks adalah <strong>inheritance</strong>: objek di level bawah secara otomatis mewarisi atribut dari parent-nya melalui relasi <strong>IS-A</strong>. Ini mencegah duplikasi data.
+</p>
+
+<div class="example-box">
+  <strong>Diagram Semantic Network: Kendaraan</strong>
+  <div class="graph">
+    <!-- Level 0 -->
+    <div class="graph-row">
+      <div class="graph-node">Vehicle</div>
+      <div class="graph-edge">
+        <span>--(HAS)--</span>
+        <span class="arrow">&rarr;</span>
+      </div>
+      <div class="graph-node">Wheels</div>
+    </div>
+    <!-- Level 1 -->
+    <div class="graph-row">
+      <div class="graph-edge">
+        <span class="arrow">&larr;</span>
+        <span>--(IS-A)--</span>
+      </div>
+      <div class="graph-node graph-inherit">CAR</div>
+      <div class="graph-edge">
+        <span>--(HAS)--</span>
+        <span class="arrow">&rarr;</span>
+      </div>
+      <div class="graph-node">Engine</div>
+    </div>
+    <div class="graph-row" style="font-size:0.75em; color:#666;">
+      <span></span>
+      <span>| (CAR mewarisi Wheels dari Vehicle)</span>
+    </div>
+    <!-- Level 2 -->
+    <div class="graph-row">
+      <div class="graph-node graph-inherit">Honda Civic</div>
+      <div class="graph-edge">
+        <span class="arrow">&larr;</span>
+        <span>--(IS-A)--</span>
+      </div>
+      <div class="graph-node graph-inherit">Nissan Sentra</div>
+    </div>
+    <div class="graph-row" style="font-size:0.75em; color:#666;">
+      <span>Keduanya mewarisi: Engine, Battery, Wheels</span>
+    </div>
+    <div class="graph-row">
+      <span style="font-size:0.8em; color:#7c3aed;">Nissan Sentra --(HAS)--&gt; Power Steering</span>
+    </div>
+  </div>
+
+  <p><strong>Analisis:</strong></p>
+  <ul>
+    <li><strong>Vehicle</strong> adalah root node dengan atribut <em>HAS Wheels</em></li>
+    <li><strong>CAR</strong> adalah <em>IS-A Vehicle</em> &rArr; otomatis mewarisi Wheels. Juga memiliki tambahan Engine dan Battery</li>
+    <li><strong>Honda Civic</strong> dan <strong>Nissan Sentra</strong> adalah <em>IS-A CAR</em> &rArr; mewarisi Engine, Battery, Wheels tanpa perlu dideklarasikan ulang</li>
+    <li><strong>Nissan Sentra</strong> secara spesifik memiliki Power Steering (atribut eksklusif)</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <strong>Keunggulan Utama:</strong> Efisien dalam memvisualisasikan hubungan pewarisan (inheritance) sehingga menghindari duplikasi data atribut. Sangat cocok untuk domain dengan hierarki konsep yang jelas (taksonomi).
+</div>
+
+<!-- ============================================================ -->
+<h2>3. Frames (Berbasis Konsep &amp; Slot)</h2>
+<p>
+  <strong>Frame</strong> adalah representasi yang mengelompokkan informasi tentang suatu konsep ke dalam struktur data terorganisir. Setiap objek punya satu <strong>Frame</strong>, dan di dalamnya ada beberapa <strong>Slot</strong> (laci-laci kecil) untuk menampung nilai atribut.
+</p>
+
+<p>Slot bisa berisi berbagai tipe data:</p>
+<ul>
+  <li>Teks atau angka (nilai statis)</li>
+  <li>Referensi ke frame lain (inheritance via IS-A)</li>
+  <li>Fungsi atau prosedur (nilai dinamis yang dijalankan saat diperlukan)</li>
+</ul>
+
+<div class="example-box">
+  <strong>Contoh Frame: Car (General)</strong>
+  <table class="frame-table">
+    <tr><th>Slot Type</th><th>Attribute</th><th>Value</th></tr>
+    <tr><td class="slot-type">Inheritance</td><td>IS-A</td><td>Vehicle</td></tr>
+    <tr><td class="slot-type">Attribute</td><td>Engine</td><td>1</td></tr>
+    <tr><td class="slot-type">Attribute</td><td>Cylinders</td><td>4, 6, atau 8</td></tr>
+    <tr><td class="slot-type">Attribute</td><td>Doors</td><td>2, 4, atau 5</td></tr>
+  </table>
+
+  <strong>Contoh Frame: Honda Civic (Specific)</strong>
+  <table class="frame-table">
+    <tr><th>Slot Type</th><th>Attribute</th><th>Value</th></tr>
+    <tr><td class="slot-type">Inheritance</td><td>IS-A</td><td>Car</td></tr>
+    <tr><td class="slot-type">Attribute</td><td>Make</td><td>Honda</td></tr>
+    <tr><td class="slot-type">Attribute</td><td>Year</td><td>1989</td></tr>
+  </table>
+</div>
+
+<div class="def-box">
+  <strong>Fleksibilitas Nilai Slot</strong>
+  Nilai slot tidak hanya berupa teks atau angka, tapi juga bisa berupa <strong>fungsi (method)</strong> atau prosedur operasional yang dijalankan secara dinamis. Misalnya, slot "Harga" bisa berisi rumus perhitungan yang dihitung saat dibutuhkan.
+</div>
+
+<!-- ============================================================ -->
+<h2>4. Matriks Perbandingan: Kapan Pilih yang Mana?</h2>
+
+<table class="comparison">
+  <tr><th>Kriteria</th><th>IF-THEN Rules</th><th>Semantic Networks</th><th>Frames</th></tr>
+  <tr>
+    <td><strong>Struktur</strong></td>
+    <td>Kondisi &rarr; Aksi</td>
+    <td>Node &amp; Link Relasional (Graf)</td>
+    <td>Objek dengan Slot Atribut</td>
+  </tr>
+  <tr>
+    <td><strong>Kekuatan Utama</strong></td>
+    <td>Intuitif, alur penalaran jelas. Ideal untuk aturan heuristik &amp; SOP deduktif</td>
+    <td>Efisien visualisasi inheritance, hindari duplikasi data</td>
+    <td>Kelompokkan data secara mendalam; dukung tipe data kompleks (fungsi, prosedur)</td>
+  </tr>
+  <tr>
+    <td><strong>Kompleksitas</strong></td>
+    <td>Rendah hingga Menengah</td>
+    <td>Menengah</td>
+    <td>Tinggi</td>
+  </tr>
+  <tr>
+    <td><strong>Cocok untuk</strong></td>
+    <td>Domain dengan aturan jelas (diagnosis, troubleshooting)</td>
+    <td>Domain dengan hierarki/kategori (taksonomi hewan, organisasi)</td>
+    <td>Domain dengan objek kompleks punya banyak atribut (manufaktur, desain)</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+  <strong>Catatan Penting:</strong> Dalam praktiknya, sistem pakar modern sering menggabungkan ketiga representasi ini. Misalnya, menggunakan Frame untuk struktur objek, Semantic Network untuk relasi inheritance, dan IF-THEN Rules untuk logika inferensi. Pilih metode yang paling sesuai dengan karakteristik domain masalahmu.
+</div>
+
+<!-- ============================================================ -->
+<h2>Quiz: Cek Pemahaman</h2>
+
+<div class="quiz-box" id="quiz1">
+  <div class="q">1. Dalam aturan <code>IF [A] AND [B] THEN [C]</code>, manakah yang disebut <em>antecedent</em>?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. [A] AND [B]</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. [C]</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. THEN</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Seluruh aturan</button>
+  <div class="quiz-feedback" id="fb1"></div>
+</div>
+
+<div class="quiz-box" id="quiz2">
+  <div class="q">2. Dalam Semantic Network, relasi apa yang memungkinkan child node mewarisi atribut dari parent node?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. HAS-A</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. PART-OF</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. IS-A</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. CAUSES</button>
+  <div class="quiz-feedback" id="fb2"></div>
+</div>
+
+<div class="quiz-box" id="quiz3">
+  <div class="q">3. Dalam representasi Frames, apa nama "laci" tempat menyimpan nilai atribut?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Node</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Link</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Rule</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Slot</button>
+  <div class="quiz-feedback" id="fb3"></div>
+</div>
+
+<div class="quiz-box" id="quiz4">
+  <div class="q">4. Manakah pernyataan yang BENAR tentang inheritance di Semantic Networks?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Honda Civic (IS-A Car) otomatis mewarisi atribut "Wheels" dari Vehicle tanpa perlu dideklarasikan ulang</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Setiap node harus mendeklarasikan ulang semua atribut parent-nya</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Inheritance hanya bekerja satu level (parent langsung saja)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. IS-A berarti child punya atribut yang dimiliki parent</button>
+  <div class="quiz-feedback" id="fb4"></div>
+</div>
+
+<div class="quiz-box" id="quiz5">
+  <div class="q">5. Metode representasi manakah yang PALING TEPAT untuk sistem yang mendiagnosis kerusakan mesin berdasarkan aturan gejalanya?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Semantic Networks &mdash; karena perlu hierarki komponen mesin</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Frames &mdash; karena mesin punya banyak atribut</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. IF-THEN Rules &mdash; karena diagnosis adalah proses kondisional (IF gejala THEN kerusakan)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Semantic Networks &mdash; karena diagnosis butuh visualisasi</button>
+  <div class="quiz-feedback" id="fb5"></div>
+</div>
+
+<div class="quiz-box" id="quiz6">
+  <div class="q">6. Dalam representasi Frames, nilai slot bisa berupa... (pilih yang PALING LENGKAP)</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Teks dan angka saja</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Teks, angka, fungsi, atau prosedur yang dijalankan secara dinamis</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Hanya referensi ke frame lain</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Boolean (true/false) saja</button>
+  <div class="quiz-feedback" id="fb6"></div>
+</div>
+
+<div class="quiz-box" id="quiz7">
+  <div class="q">7. Manakah yang merupakan KELEMAHAN dari Semantic Networks dibandingkan IF-THEN Rules?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Tidak bisa merepresentasikan inheritance</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Kurang intuitif untuk menelusuri alur penalaran langkah demi langkah</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Tidak bisa digunakan untuk sistem pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Lebih kompleks dari Frames</button>
+  <div class="quiz-feedback" id="fb7"></div>
+</div>
+
+<div class="quiz-box" id="quiz8">
+  <div class="q">8. Jika Anda ingin membangun sistem pakar untuk klasifikasi spesies hewan dengan hierarki: Mamalia &rarr; Karnivora &rarr; Harimau, representasi mana yang paling efisien untuk menghindari duplikasi data?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. IF-THEN Rules</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Semantic Networks (dengan inheritance IS-A)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Hanya Frames</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Working Storage</button>
+  <div class="quiz-feedback" id="fb8"></div>
+</div>
+
+<!-- ============================================================ -->
+<div class="footer-nav">
+  <p><strong>Referensi:</strong> Giarratano, J.C. (2007). <em>Expert Systems: Principles and Programming</em>; Sutojo, T. et al. (2018). <em>Kecerdasan Buatan</em>.</p>
+  <p><strong>Next lesson:</strong> Inferensi &amp; Anomali Logika &mdash; Forward Chaining, Backward Chaining, Certainty Factor, dan 6 anomali yang harus dihindari dalam Knowledge Base.</p>
+</div>
+
+<script>
+function checkQuiz(btn, correctIdx) {
+  var options = btn.parentElement.querySelectorAll('.quiz-option');
+  var feedback = btn.parentElement.querySelector('.quiz-feedback');
+  var selectedIdx = Array.prototype.indexOf.call(options, btn);
+
+  for (var i = 0; i < options.length; i++) {
+    options[i].disabled = true;
+  }
+
+  if (selectedIdx === correctIdx) {
+    btn.classList.add('correct');
+    feedback.innerHTML = '&#10003; Benar!';
+    feedback.style.color = '#16a34a';
+  } else {
+    btn.classList.add('wrong');
+    options[correctIdx].classList.add('correct');
+    feedback.innerHTML = '&#10007; Kurang tepat. Jawaban yang benar adalah opsi ' + String.fromCharCode(65 + correctIdx) + '.';
+    feedback.style.color = '#dc2626';
+  }
+  feedback.classList.add('show');
+}
+</script>
+
+</body>
+</html>

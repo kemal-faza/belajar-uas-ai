@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4: Fundamental Sistem Pakar</title>
+<style>
+  /* --- Tufte-inspired typography --- */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #2563eb; }
+  h3 { font-size: 1.2rem; color: #333; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #eef2ff;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Cards / Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #2563eb;
+    background: #f0f5ff;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #9333ea; background: #faf5ff; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula Box --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    margin: 1.2rem 0;
+    text-align: center;
+    font-size: 1.1em;
+    letter-spacing: 0.3px;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #2563eb;
+    color: white;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f8fafc; }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child { border-radius: 0 6px 0 0; }
+
+  /* --- Grid for architecture diagram --- */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .arch-item {
+    background: #f0f5ff;
+    border: 2px solid #2563eb;
+    border-radius: 8px;
+    padding: 1rem 0.5rem;
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+  .arch-item span { display: block; font-weight: 400; font-size: 0.85em; color: #555; margin-top: 0.2rem; }
+
+  /* --- Quiz --- */
+  .quiz-box {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.8rem; }
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.6rem 0.8rem;
+    margin: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .quiz-option:hover:not(:disabled) { background: #eef2ff; border-color: #2563eb; }
+  .quiz-option:disabled { cursor: default; opacity: 0.8; }
+  .quiz-option.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-option.wrong { background: #fef2f2; border-color: #dc2626; }
+  .quiz-feedback { margin-top: 0.6rem; font-size: 0.9em; display: none; }
+  .quiz-feedback.show { display: block; }
+
+  /* --- Footer --- */
+  .footer-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.9em; color: #666; }
+
+  /* --- Responsive --- */
+  @media (max-width: 600px) {
+    body { font-size: 16px; padding: 1rem; }
+    h1 { font-size: 1.6rem; }
+    .arch-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sistem Pakar: Anatomi Pikiran Digital</h1>
+<p><strong>Lesson 4</strong> &mdash; Pengenalan Sistem Pakar (Expert Systems)</p>
+
+<div class="info-box">
+  <strong>Tujuan Lesson</strong>
+  Setelah lesson ini, kamu bisa: (1) Menjelaskan apa itu sistem pakar dan bedanya dengan program tradisional, (2) Menggambarkan arsitektur inti dan 4 aktor yang terlibat, (3) Menyebutkan DNA sistem pakar dan kapan tepat menggunakannya, (4) Memahami proses akuisisi pengetahuan dan tantangan <em>tacit knowledge</em>.
+</div>
+
+<!-- ============================================================ -->
+<h2>1. Apa Itu Sistem Pakar?</h2>
+<p>
+  <strong>Sistem Pakar (Expert System)</strong> adalah alat pengambilan keputusan interaktif berbasis komputer (<em>computer-based decision tool</em>) yang dirancang untuk memecahkan masalah rumit yang biasanya membutuhkan keahlian manusia (<em>non-algorithmic expertise</em>). Sistem ini menggabungkan <strong>fakta</strong>, <strong>aturan heuristik</strong>, dan <strong>pengetahuan dari pakar manusia</strong> untuk menghasilkan rekomendasi.
+</p>
+
+<div class="example-box">
+  <strong>Contoh Klasik</strong>
+  <ul>
+    <li><strong>MYCIN</strong> (Stanford University) &mdash; Mendiagnosis infeksi bakteri dan meningitis, merekomendasikan dosis antibiotik. Ini adalah pionir sistem pakar medis.</li>
+    <li><strong>Rice-Crop Doctor</strong> (National Institute of Agricultural Extension Management) &mdash; Mendiagnosis hama dan penyakit tanaman padi, memberi saran penanganan untuk petani.</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Program Tradisional vs Sistem Pakar</h2>
+<p>Perbedaan fundamental terletak pada bagaimana logika dan pengetahuan diintegrasikan:</p>
+
+<table>
+  <tr><th>Aspek</th><th>Program Tradisional</th><th>Sistem Pakar</th></tr>
+  <tr>
+    <td><strong>Rumus</strong></td>
+    <td>Algoritma + Struktur Data</td>
+    <td>Mesin Inferensi + Basis Pengetahuan</td>
+  </tr>
+  <tr>
+    <td><strong>Logika</strong></td>
+    <td>Hardcoded menyatu dengan data</td>
+    <td>Dipisahkan: <em>cara berpikir</em> vs <em>apa yang diketahui</em></td>
+  </tr>
+  <tr>
+    <td><strong>Perubahan Aturan</strong></td>
+    <td>Code harus dirombak total</td>
+    <td>Cukup update Knowledge Base</td>
+  </tr>
+  <tr>
+    <td><strong>Analogi</strong></td>
+    <td>Mesin kaku dengan satu fungsi</td>
+    <td>Otak manusia: memori + logika terpisah</td>
+  </tr>
+</table>
+
+<div class="formula">
+  [Algoritma] + [Struktur Data] = Program Tradisional
+  <br>vs<br>
+  [Inference Engine] + [Knowledge Base] = Sistem Pakar
+</div>
+
+<!-- ============================================================ -->
+<h2>3. Arsitektur Inti (4 Komponen)</h2>
+<p>Sistem pakar terdiri dari empat komponen yang saling berinteraksi:</p>
+
+<div class="arch-grid">
+  <div class="arch-item">
+    User Interface
+    <span>Antarmuka dialog interaktif</span>
+  </div>
+  <div class="arch-item">
+    Inference Engine
+    <span>"Otak" sistem — mengolah data + aturan</span>
+  </div>
+  <div class="arch-item">
+    Knowledge Base
+    <span>Kepakaran terenkode (aturan IF-THEN)</span>
+  </div>
+  <div class="arch-item" style="grid-column: 1 / -1;">
+    Working Storage
+    <span>Memori jangka pendek — data spesifik sesi konsultasi</span>
+  </div>
+</div>
+
+<ol>
+  <li><strong>User Interface (UI)</strong> &mdash; Jembatan antara pengguna dan sistem. Pengguna memasukkan data/pertanyaan, sistem memberikan jawaban/rekomendasi.</li>
+  <li><strong>Inference Engine (Mesin Inferensi)</strong> &mdash; "Otak" sistem. Mengolah data dari Working Storage berdasarkan aturan di Knowledge Base. Juga menangani <em>explanation</em> (Why/How) dan <em>uncertainty handling</em>.</li>
+  <li><strong>Knowledge Base (Basis Pengetahuan)</strong> &mdash; Menyimpan kepakaran dari pakar, umumnya dalam bentuk aturan IF-THEN. Ini adalah memori jangka panjang sistem.</li>
+  <li><strong>Working Storage (Memori Kerja)</strong> &mdash; Memori jangka pendek yang menyimpan data spesifik dari sesi konsultasi yang sedang berlangsung.</li>
+</ol>
+
+<div class="def-box">
+  <strong>ALIRAN DATA</strong>
+  User memasukkan data via UI &rarr; Data disimpan di Working Storage &rarr; Inference Engine mencocokkan data dengan aturan di Knowledge Base &rarr; Hasil dikembalikan ke User via UI.
+</div>
+
+<!-- ============================================================ -->
+<h2>4. Para Aktor dalam Ekosistem Sistem Pakar</h2>
+<p>Empat peran penting yang terlibat dalam siklus hidup sistem pakar:</p>
+
+<table>
+  <tr><th>Aktor</th><th>Peran</th><th>Aktivitas Utama</th></tr>
+  <tr>
+    <td><strong>Domain Expert</strong></td>
+    <td>Sumber pengetahuan</td>
+    <td>Pakar manusia dengan intuisi dan pengalaman di bidangnya</td>
+  </tr>
+  <tr>
+    <td><strong>Knowledge Engineer</strong></td>
+    <td>Penerjemah</td>
+    <td>Mengekstrak pengetahuan dari pakar, merumuskan ke format logis untuk mesin</td>
+  </tr>
+  <tr>
+    <td><strong>System Engineer</strong></td>
+    <td>Arsitek sistem</td>
+    <td>Membangun kerangka software: inference engine, UI, infrastruktur</td>
+  </tr>
+  <tr>
+    <td><strong>User</strong></td>
+    <td>Pengguna akhir</td>
+    <td>Berkonsultasi dengan sistem untuk mendapat solusi/rekomendasi</td>
+  </tr>
+</table>
+
+<p>Hubungan User dengan sistem disebut <strong>Interaction Loop</strong>.</p>
+
+<!-- ============================================================ -->
+<h2>5. DNA Sistem Pakar (4 Karakteristik Utama)</h2>
+<ol>
+  <li><strong>Interaktif &amp; Solutif</strong> &mdash; Memberikan respons aktif terhadap input dan menghasilkan rekomendasi spesifik.</li>
+  <li><strong>Inferensi Logis</strong> &mdash; Tidak sekadar menyimpan data pasif, tetapi merangkainya untuk menarik kesimpulan baru. Analogi: menghafal kosakata tanpa tahu cara merangkai kalimat tidak berguna. Menggunakan <em>Forward Chaining</em> atau <em>Backward Chaining</em>.</li>
+  <li><strong>Domain Spesifik</strong> &mdash; Pengetahuan sangat terfokus. Sistem pakar medis tidak bisa menangani masalah keuangan. Performa berbanding lurus dengan kualitas Knowledge Base.</li>
+  <li><strong>Nilai Keyakinan (Confidence Values)</strong> &mdash; Mampu menangani data tidak pasti/tidak lengkap dengan <strong>Certainty Factor</strong> (skor keyakinan, umumnya 0.0&ndash;1.0).</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>6. Kapan Menggunakan Sistem Pakar?</h2>
+
+<table>
+  <tr><th>Kelebihan (Tepat Digunakan)</th><th>Kekurangan (Hati-hati)</th></tr>
+  <tr>
+    <td>
+      <ul>
+        <li>Masalah butuh pendekatan heuristik (intuisi pakar)</li>
+        <li><strong>Cost-effective</strong> saat pakar manusia langka atau mahal</li>
+        <li>Pengetahuan perlu didokumentasikan dan direproduksi</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li>Tidak cocok untuk masalah numerik murni (cukup rumus matematika)</li>
+        <li>Biaya awal mahal (knowledge engineering)</li>
+        <li>Tidak 100% bebas error &mdash; rentan kesalahan interpretasi</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>7. Akuisisi Pengetahuan: Tahap Paling Krusial</h2>
+<p>Proses mentransfer keahlian dari pakar ke sistem komputer. Inilah tahap paling sulit dalam pembangunan sistem pakar.</p>
+
+<h3>5 Tahap Akuisisi Pengetahuan:</h3>
+<ol>
+  <li><strong>Elicitation</strong> (Penggalian) &mdash; Menggali pengetahuan dari pakar via wawancara, kuesioner, observasi.</li>
+  <li><strong>Collection</strong> (Pengumpulan) &mdash; Mengumpulkan dokumen, buku teks, laporan studi kasus.</li>
+  <li><strong>Analysis</strong> (Analisis Pola) &mdash; Memetakan alur penalaran pakar saat mengambil keputusan.</li>
+  <li><strong>Modelling</strong> (Pemodelan Logika) &mdash; Merepresentasikan pola ke model logika (decision tree, aturan formal).</li>
+  <li><strong>Validation</strong> (Validasi) &mdash; Menguji model bersama pakar untuk memastikan tidak ada salah tafsir.</li>
+</ol>
+
+<div class="warn-box">
+  <strong>Tantangan Terbesar: TACIT KNOWLEDGE</strong>
+  Gunung es pengetahuan: <em>Eksplisit</em> (teori, SOP, rumus) hanyalah ujung gunung es yang muncul. Bagian terbesar adalah <em>Tacit Knowledge</em> &mdash; insting, intuisi, dan pengalaman bertahun-tahun yang bahkan sang pakar sendiri tidak sadar menggunakannya. Ini sangat sulit diekstraksi.
+</div>
+
+<!-- ============================================================ -->
+<h2>Quiz: Cek Pemahaman</h2>
+
+<div class="quiz-box" id="quiz1">
+  <div class="q">1. Apa perbedaan utama antara program tradisional dan sistem pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Sistem pakar lebih cepat daripada program tradisional</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Program tradisional memisahkan inference engine dari knowledge base</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Sistem pakar memisahkan cara berpikir (inference engine) dari apa yang diketahui (knowledge base)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Sistem pakar tidak menggunakan algoritma</button>
+  <div class="quiz-feedback" id="fb1"></div>
+</div>
+
+<div class="quiz-box" id="quiz2">
+  <div class="q">2. Manakah yang BUKAN termasuk komponen arsitektur inti sistem pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. User Interface</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Database Management System</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Inference Engine</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Knowledge Base</button>
+  <div class="quiz-feedback" id="fb2"></div>
+</div>
+
+<div class="quiz-box" id="quiz3">
+  <div class="q">3. Siapakah yang bertugas mengekstrak pengetahuan dari Domain Expert dan merumuskannya ke format logis untuk mesin?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. System Engineer</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Knowledge Engineer</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Domain Expert</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. User</button>
+  <div class="quiz-feedback" id="fb3"></div>
+</div>
+
+<div class="quiz-box" id="quiz4">
+  <div class="q">4. Manakah yang BUKAN termasuk DNA Sistem Pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Mampu belajar sendiri dari data baru (machine learning)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Inferensi logis (forward/backward chaining)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Domain spesifik</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Nilai keyakinan (Certainty Factor)</button>
+  <div class="quiz-feedback" id="fb4"></div>
+</div>
+
+<div class="quiz-box" id="quiz5">
+  <div class="q">5. Apa tantangan terbesar dalam akuisisi pengetahuan?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">A. Biaya komputer yang mahal</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">B. Pakar tidak mau bekerja sama</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">C. Tacit Knowledge — pengetahuan intuitif yang sulit dijelaskan pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 2)">D. Sistem pakar tidak bisa dijalankan di hardware modern</button>
+  <div class="quiz-feedback" id="fb5"></div>
+</div>
+
+<div class="quiz-box" id="quiz6">
+  <div class="q">6. MYCIN adalah contoh sistem pakar di bidang apa?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">A. Pertanian (diagnosis hama padi)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">B. Medis (diagnosis infeksi bakteri)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">C. Keuangan (prediksi saham)</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 1)">D. Teknik (diagnosis kerusakan mesin)</button>
+  <div class="quiz-feedback" id="fb6"></div>
+</div>
+
+<div class="quiz-box" id="quiz7">
+  <div class="q">7. Manakah rumus yang benar untuk merepresentasikan Sistem Pakar?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">A. Algoritma + Struktur Data = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">B. Knowledge Base + User Interface = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">C. Inference Engine + Working Storage = Sistem Pakar</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 3)">D. Inference Engine + Knowledge Base = Sistem Pakar</button>
+  <div class="quiz-feedback" id="fb7"></div>
+</div>
+
+<div class="quiz-box" id="quiz8">
+  <div class="q">8. Apa yang terjadi jika suatu masalah bisa diselesaikan dengan rumus matematika sederhana? Apakah sistem pakar tepat digunakan?</div>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">A. Tidak tepat — sistem pakar tidak cocok untuk masalah numerik murni</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">B. Tepat — sistem pakar bisa menangani semua jenis masalah</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">C. Tepat — asalkan ada pakar yang bisa diwawancarai</button>
+  <button class="quiz-option" onclick="checkQuiz(this, 0)">D. Tidak tepat — sistem pakar hanya untuk masalah medis</button>
+  <div class="quiz-feedback" id="fb8"></div>
+</div>
+
+<!-- ============================================================ -->
+<div class="footer-nav">
+  <p><strong>Referensi:</strong> Giarratano, J.C. (2007). <em>Expert Systems: Principles and Programming</em>; Sutojo, T. et al. (2018). <em>Kecerdasan Buatan</em>; Negnevitsky, M. (2011). <em>Artificial Intelligence</em>.</p>
+  <p><strong>Next lesson:</strong> Representasi Pengetahuan (IF-THEN Rules, Semantic Networks, Frames) &mdash; bagaimana pengetahuan direpresentasikan di dalam mesin.</p>
+</div>
+
+<!-- ============================================================ -->
+<script>
+function checkQuiz(btn, correctIdx) {
+  var options = btn.parentElement.querySelectorAll('.quiz-option');
+  var feedback = btn.parentElement.querySelector('.quiz-feedback');
+  var selectedIdx = Array.prototype.indexOf.call(options, btn);
+
+  // Disable all buttons
+  for (var i = 0; i < options.length; i++) {
+    options[i].disabled = true;
+  }
+
+  if (selectedIdx === correctIdx) {
+    btn.classList.add('correct');
+    feedback.innerHTML = '&#10003; Benar!';
+    feedback.style.color = '#16a34a';
+  } else {
+    btn.classList.add('wrong');
+    options[correctIdx].classList.add('correct');
+    feedback.innerHTML = '&#10007; Kurang tepat. Jawaban yang benar adalah opsi ' + String.fromCharCode(65 + correctIdx) + '.';
+    feedback.style.color = '#dc2626';
+  }
+  feedback.classList.add('show');
+}
+</script>
+
+</body>
+</html>
