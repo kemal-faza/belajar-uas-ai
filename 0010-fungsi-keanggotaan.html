@@ -372,21 +372,22 @@
   <line x1="50" y1="170" x2="50" y2="20" stroke="#1c1917" stroke-width="1.5"/>
   <text x="40" y="174" font-size="10" text-anchor="end">0</text>
   <text x="40" y="100" font-size="10" text-anchor="end">1</text>
-  <!-- Left shoulder (DINGIN) -->
-  <line x1="50" y1="95" x2="50" y2="170" stroke="#3b82f6" stroke-width="2.5"/>
+  <!-- Left shoulder (DINGIN): flat 1 from x=0 to x=a, then linear down to 0 at x=b -->
   <line x1="50" y1="95" x2="200" y2="95" stroke="#3b82f6" stroke-width="2.5"/>
   <line x1="200" y1="95" x2="320" y2="170" stroke="#3b82f6" stroke-width="2.5"/>
   <text x="80" y="86" font-size="12" fill="#3b82f6" font-weight="600">Bahu Kiri (DINGIN)</text>
-  <!-- Right shoulder (PANAS) -->
+  <!-- Right shoulder (PANAS): linear up from 0 at x=a, flat 1 from x=b onwards -->
   <line x1="430" y1="170" x2="540" y2="95" stroke="#dc2626" stroke-width="2.5"/>
   <line x1="540" y1="95" x2="670" y2="95" stroke="#dc2626" stroke-width="2.5"/>
   <text x="580" y="86" font-size="12" fill="#dc2626" font-weight="600">Bahu Kanan (PANAS)</text>
-  <text x="50" y="190" font-size="11" text-anchor="middle">a</text>
+  <!-- 'a' for Bahu Kiri is at the right edge of flat-1 (x=200) where decline starts -->
+  <text x="200" y="190" font-size="11" text-anchor="middle">a</text>
   <text x="320" y="190" font-size="11" text-anchor="middle">b</text>
+  <!-- 'a' for Bahu Kanan is at the left edge of rise (x=430), 'b' at start of flat-1 (x=540) -->
   <text x="430" y="190" font-size="11" text-anchor="middle">a</text>
   <text x="540" y="190" font-size="11" text-anchor="middle">b</text>
 </svg>
-<p class="plot-caption">Gambar 5: Bahu kiri (DINGIN, datar 1 di kiri) dan bahu kanan (PANAS, datar 1 di kanan).</p>
+<p class="plot-caption">Gambar 5: Bahu kiri (DINGIN, datar 1 di kiri) dan bahu kanan (PANAS, datar 1 di kanan). Perhatikan: <strong>a</strong> di Bahu Kiri = ujung kanan flat-1 (turun mulai), <strong>a</strong> di Bahu Kanan = ujung kiri rise (naik mulai).</p>
 </div>
 
 <div class="info-box">
