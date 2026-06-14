@@ -56,4 +56,4 @@ Referensi pustaka: Giarratano (2007), Sutojo et al. (2018), Negnevitsky (2011), 
 
 ## Cheatsheet
 
-Gabungan semua materi ada di `../reference/master-cheatsheet.html` -- format compact grid, print-friendly, mencakup KBA + Sistem Pakar + CF + Bayes.
+Gabungan semua materi ada di `master-cheatsheet.html` -- format compact grid, print-friendly, mencakup KBA + Sistem Pakar + CF + Bayes.

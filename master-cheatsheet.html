@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Cheatsheet: Reasoning KBA + Sistem Pakar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: #1c1917;
+    background: #fafaf9;
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.35rem; text-align: center; margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+  .subtitle { text-align: center; font-size: 0.75rem; color: #78716c; margin-bottom: 0.8rem; }
+
+  /* --- Section Headers --- */
+  h2 {
+    font-size: 1rem; margin: 0.8rem 0 0.3rem;
+    color: #1c1917; border-bottom: 2px solid #e7e5e4; padding-bottom: 0.1rem;
+  }
+  h2 .badge {
+    display: inline-block; font-size: 0.6rem; font-weight: 600;
+    padding: 0.05rem 0.35rem; border-radius: 3px; vertical-align: middle; margin-right: 0.3rem;
+  }
+  .badge-kba { background: #dbeafe; color: #1e40af; }
+  .badge-sp { background: #f3e8ff; color: #6b21a8; }
+
+  /* --- Grid Layouts --- */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5rem; }
+  .fullw { grid-column: 1 / -1; }
+
+  /* --- Cards --- */
+  .card {
+    background: white; border: 1px solid #e7e5e4; border-radius: 6px;
+    padding: 0.4rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .card h3 { font-size: 0.78rem; font-weight: 600; margin-bottom: 0.15rem; color: #1c1917; }
+  .card p, .card li { font-size: 0.72rem; margin-bottom: 0.1rem; }
+  .card ul, .card ol { padding-left: 1.1rem; margin: 0.05rem 0; }
+
+  .card.blue { border-left: 3px solid #3b82f6; }
+  .card.green { border-left: 3px solid #16a34a; }
+  .card.red { border-left: 3px solid #dc2626; }
+  .card.purple { border-left: 3px solid #7c3aed; }
+  .card.yellow { border-left: 3px solid #eab308; }
+  .card.orange { border-left: 3px solid #f97316; }
+
+  /* --- Inline Tags --- */
+  .tag {
+    display: inline-block; font-size: 0.6rem; font-weight: 600;
+    padding: 0.05rem 0.3rem; border-radius: 3px; margin-right: 0.15rem;
+  }
+  .tag-red { background: #fef2f2; color: #dc2626; border: 1px solid #dc2626; }
+  .tag-yellow { background: #fefce8; color: #a16207; border: 1px solid #eab308; }
+  .tag-blue { background: #eff6ff; color: #1e40af; border: 1px solid #3b82f6; }
+  .tag-purple { background: #faf5ff; color: #6b21a8; border: 1px solid #7c3aed; }
+  .tag-green { background: #f0fdf4; color: #166534; border: 1px solid #16a34a; }
+  .tag-orange { background: #fff7ed; color: #c2410c; border: 1px solid #f97316; }
+
+  /* --- Tables --- */
+  table {
+    width: 100%; border-collapse: collapse; font-size: 0.7rem; margin: 0.2rem 0;
+  }
+  th {
+    background: #1c1917; color: #fafaf9;
+    padding: 0.15rem 0.35rem; font-weight: 600; text-align: left;
+  }
+  td {
+    padding: 0.1rem 0.35rem; border-bottom: 1px solid #e7e5e4; vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f5f5f4; }
+
+  /* --- Rule / Code blocks --- */
+  .code-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; line-height: 1.4;
+    background: #1c1917; color: #fafaf9;
+    padding: 0.35rem 0.5rem; border-radius: 4px; margin: 0.15rem 0;
+    overflow-x: auto;
+  }
+  .code-block .if { color: #fbbf24; }
+  .code-block .then { color: #34d399; }
+  .code-block .and { color: #f472b6; }
+  .code-block .comment { color: #78716c; font-style: italic; }
+
+  .inline-code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    background: #f5f5f4; padding: 0.05rem 0.25rem; border-radius: 3px;
+  }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    text-align: center; padding: 0.3rem; background: #f5f5f4;
+    border-radius: 4px; margin: 0.2rem 0;
+  }
+
+  /* --- Divider --- */
+  .section-divider {
+    margin: 0.5rem 0; border: 0; border-top: 2px dashed #d6d3d1;
+  }
+
+  @media print {
+    body { padding: 0.3in; font-size: 10px; }
+    .grid-2, .grid-3, .grid-4 { gap: 0.3in; }
+  }
+  @media (max-width: 700px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    body { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Master Cheatsheet: Reasoning KBA + Sistem Pakar</h1>
+<p class="subtitle">Rangkuman UAS &mdash; Wumpus World &bull; PL &bull; FOL &bull; Expert Systems &bull; CF &bull; Bayes &bull; Inferensi &bull; Representasi Pengetahuan</p>
+
+<!-- ======================================================================= -->
+<h2><span class="badge badge-kba">KBA</span> Bagian 1: Propositional Logic &amp; Inference Rules</h2>
+
+<div class="grid-3">
+
+<div class="card blue">
+  <h3>Connective Symbols</h3>
+  <table>
+    <tr><th>Symbol</th><th>Meaning</th><th>Nama</th></tr>
+    <tr><td>&not;</td><td>not</td><td>Negation</td></tr>
+    <tr><td>&and;</td><td>and</td><td>Conjunction</td></tr>
+    <tr><td>&or;</td><td>or</td><td>Disjunction</td></tr>
+    <tr><td>&rArr;</td><td>implies</td><td>Implication</td></tr>
+    <tr><td>&hArr;</td><td>iff</td><td>Biconditional</td></tr>
+  </table>
+</div>
+
+<div class="card red">
+  <h3>5 Inference Rules (WAJIB Hafal)</h3>
+  <div class="code-block">
+    1. Modus Ponens: &alpha;&rArr;&beta;, &alpha; &vdash; &beta;<br>
+    2. And Elim: &alpha;&and;&beta; &vdash; &alpha;<br>
+    3. And Intro: &alpha;, &beta; &vdash; &alpha;&and;&beta;<br>
+    4. Unit Res: &alpha;&or;&beta;, &not;&beta; &vdash; &alpha;<br>
+    5. Resolusi: &alpha;&or;&beta;, &not;&beta;&or;&gamma; &vdash; &alpha;&or;&gamma;
+  </div>
+</div>
+
+<div class="card green">
+  <h3>Truth Table Basics</h3>
+  <table>
+    <tr><th>&alpha;</th><th>&beta;</th><th>&alpha;&and;&beta;</th><th>&alpha;&or;&beta;</th><th>&alpha;&rArr;&beta;</th></tr>
+    <tr><td>T</td><td>T</td><td>T</td><td>T</td><td>T</td></tr>
+    <tr><td>T</td><td>F</td><td>F</td><td>T</td><td><strong>F</strong></td></tr>
+    <tr><td>F</td><td>T</td><td>F</td><td>T</td><td>T</td></tr>
+    <tr><td>F</td><td>F</td><td>F</td><td>F</td><td>T</td></tr>
+  </table>
+  <p style="margin-top:0.1rem; font-size:0.7rem;"><strong>Ingat:</strong> Implikasi hanya salah kalau anteseden benar, konsekuen salah.</p>
+</div>
+</div>
+
+<div class="grid-2">
+
+<div class="card orange">
+  <h3>Horn Form (Forward/Backward Chaining)</h3>
+  <p><strong>Definite clause:</strong> disjunction dengan <em>tepat satu</em> literal positif.</p>
+  <p><strong>Horn clause:</strong> maksimal satu literal positif.</p>
+  <div class="code-block">
+    Horn: &not;A &or; &not;B &or; C &equiv; A &and; B &rArr; C<br>
+    <span class="comment">// Semua aturan Wumpus bisa ditulis Horn!</span>
+  </div>
+</div>
+
+<div class="card purple">
+  <h3>CNF Resolution</h3>
+  <p>Steps to CNF:</p>
+  <ol>
+    <li>Eliminate &hArr; (replace with &rArr; both ways)</li>
+    <li>Eliminate &rArr; (&not;&alpha; &or; &beta;)</li>
+    <li>Push &not; inward (De Morgan&apos;s)</li>
+    <li>Distribute &or; over &and;</li>
+  </ol>
+  <p><strong>Resolution rule:</strong> <span class="inline-code">&alpha;&or;&beta;, &not;&beta;&or;&gamma; &vdash; &alpha;&or;&gamma;</span></p>
+</div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-kba">KBA</span> Bagian 2: First-Order Logic (FOL)</h2>
+
+<div class="grid-3">
+
+<div class="card blue">
+  <h3>FOL Syntax</h3>
+  <table>
+    <tr><th>Element</th><th>Example</th></tr>
+    <tr><td>Constant</td><td>Wumpus, 1, 2</td></tr>
+    <tr><td>Predicate</td><td>Breeze(x,y), Pit(a,b)</td></tr>
+    <tr><td>Function</td><td>Adjacent(x,y)</td></tr>
+    <tr><td>Variable</td><td>x, y, a, b</td></tr>
+    <tr><td>Quantifier</td><td>&forall; (forall), &exist; (exists)</td></tr>
+  </table>
+</div>
+
+<div class="card red">
+  <h3>Quantifier Rules of Thumb</h3>
+  <p><strong>&forall; pakai &rArr; (implikasi):</strong></p>
+  <div class="code-block">
+    &forall;x (Manusia(x) &rArr; Bernafas(x))
+  </div>
+  <p><strong>&exist; pakai &and; (konjungsi):</strong></p>
+  <div class="code-block">
+    &exist;x (Manusia(x) &and; Pintar(x))
+  </div>
+</div>
+
+<div class="card green">
+  <h3>Unification + GMP</h3>
+  <p><strong>Unifikasi:</strong> mencari substitusi &theta; yang membuat dua ekspresi identik.</p>
+  <div class="code-block">
+    Unify(Knows(John,x), Knows(y,Bob))<br>
+    &theta; = { x/Bob, y/John }
+  </div>
+  <p><strong>Generalized Modus Ponens (GMP):</strong></p>
+  <div class="code-block">
+    &forall;x (&alpha;(x) &rArr; &beta;(x)), &alpha;(&theta;)<br>
+    &vdash; &beta;(&theta;)
+  </div>
+</div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-kba">KBA</span> Bagian 3: Wumpus World Complete</h2>
+
+<div class="grid-2">
+<div class="card blue fullw">
+  <h3>Key Deductions</h3>
+  <table>
+    <tr><th>Percept</th><th>Deduksi</th></tr>
+    <tr><td>Stench</td><td>Wumpus di salah satu tetangga</td></tr>
+    <tr><td>Breeze</td><td>Pit di salah satu tetangga</td></tr>
+    <tr><td>Glitter</td><td>Emas di kotak ini &rArr; GRAB!</td></tr>
+    <tr><td>&not;Stench</td><td>Tidak ada Wumpus di tetangga (semua aman)</td></tr>
+    <tr><td>&not;Breeze</td><td>Tidak ada Pit di tetangga (semua aman)</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="grid-4">
+
+<div class="card green">
+  <h3>PL Symbols</h3>
+  <div class="code-block">
+    W&#x1d62;,&#x2c8; = Wumpus di [i,j]<br>
+    P&#x1d62;,&#x2c8; = Pit di [i,j]<br>
+    B&#x1d62;,&#x2c8; = Breeze di [i,j]<br>
+    S&#x1d62;,&#x2c8; = Stench di [i,j]<br>
+    G&#x1d62;,&#x2c8; = Gold di [i,j]<br>
+    OK&#x1d62;,&#x2c8; = Aman
+  </div>
+</div>
+
+<div class="card orange">
+  <h3>PL Domain Knowledge</h3>
+  <div class="code-block">
+    B&#x1d62;,&#x2c8; &hArr; P tetangga [i,j]<br>
+    S&#x1d62;,&#x2c8; &hArr; W tetangga [i,j]<br>
+    G&#x1d62;,&#x2c8; &hArr; Gold di [i,j]
+  </div>
+</div>
+
+<div class="card purple">
+  <h3>FOL Domain Knowledge</h3>
+  <div class="code-block">
+    &forall;x,y Breeze(x,y) &hArr;<br>
+    &nbsp;&nbsp;&exist;a,b Adj(x,y,a,b) &and; Pit(a,b)<br>
+    &forall;x,y Stench(x,y) &hArr;<br>
+    &nbsp;&nbsp;&exist;a,b Adj(x,y,a,b) &and; Wumpus(a,b)<br>
+    &forall;x,y Safe(x,y) &hArr;<br>
+    &nbsp;&nbsp;&not;Pit(x,y) &and; &not;Wumpus(x,y)
+  </div>
+</div>
+
+<div class="card red">
+  <h3>PL vs FOL</h3>
+  <table>
+    <tr><th>Aspek</th><th>PL</th><th>FOL</th></tr>
+    <tr><td>Jumlah aturan</td><td>16</td><td>4</td></tr>
+    <tr><td>Inferensi</td><td>Resolusi</td><td>Unifikasi + GMP</td></tr>
+    <tr><td>Skalabilitas</td><td>Borok</td><td>Ringkas</td></tr>
+    <tr><td>Kompleksitas</td><td>Rendah</td><td>Semidecidable</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="card yellow">
+  <h3>7 Langkah Wumpus World (UAS)</h3>
+  <ol>
+    <li><strong>Setup Grid &amp; Symbols</strong> &mdash; Gambar grid 4x4, tentukan simbol proposisi/predikat</li>
+    <li><strong>Tulis Percept</strong> &mdash; Tiap langkah: posisi &rarr; percept &rarr; tetangga</li>
+    <li><strong>Tulis Aturan Dunia</strong> &mdash; B &hArr; Pit di tetangga, S &hArr; W di tetangga</li>
+    <li><strong>Modus Ponens</strong> &mdash; B &rArr; Pit (disjunction), &not;B &rArr; &not;P semua tetangga (konjungsi)</li>
+    <li><strong>Eliminasi Resolution</strong> &mdash; Coret kotak aman dari disjunction, sisa = lokasi mungkin</li>
+    <li><strong>Cari Bukti Tambahan</strong> &mdash; Eliminasi pilihan yang tersisa dari percept lain</li>
+    <li><strong>Tentukan Rute Aman</strong> &mdash; Jalur terpendek ke emas &rarr; kembali &rarr; Climb</li>
+  </ol>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-sp">SP</span> Bagian 4: Fundamental Sistem Pakar</h2>
+
+<div class="grid-2">
+
+<div class="card purple">
+  <h3>Rumus Dasar</h3>
+  <div class="formula">Program Tradisional: Algoritma + Struktur Data</div>
+  <div class="formula" style="background:#f3e8ff; border:1px solid #7c3aed;">Sistem Pakar: Inference Engine + Knowledge Base</div>
+</div>
+
+<div class="card blue">
+  <h3>Arsitektur Inti (4 Komponen)</h3>
+  <table>
+    <tr><th>Komponen</th><th>Fungsi</th></tr>
+    <tr><td>User Interface</td><td>Jembatan interaktif user &harr; sistem</td></tr>
+    <tr><td>Inference Engine</td><td>"Otak" &mdash; olah data + aturan, explanation, uncertainty</td></tr>
+    <tr><td>Knowledge Base</td><td>Memori jangka panjang (aturan IF-THEN)</td></tr>
+    <tr><td>Working Storage</td><td>Memori jangka pendek (data sesi konsultasi)</td></tr>
+  </table>
+</div>
+
+<div class="card green">
+  <h3>4 Aktor</h3>
+  <ol>
+    <li><strong>Domain Expert</strong> &mdash; sumber pengetahuan</li>
+    <li><strong>Knowledge Engineer</strong> &mdash; penerjemah ke format mesin</li>
+    <li><strong>System Engineer</strong> &mdash; arsitek software</li>
+    <li><strong>User</strong> &mdash; pengguna akhir (interaction loop)</li>
+  </ol>
+</div>
+
+<div class="card red">
+  <h3>DNA Sistem Pakar</h3>
+  <ol>
+    <li>Interaktif &amp; Solutif</li>
+    <li>Inferensi Logis (FC/BC)</li>
+    <li>Domain Spesifik</li>
+    <li>Certainty Factor (0.0 &ndash; 1.0)</li>
+  </ol>
+  <p style="margin-top:0.1rem;"><strong>Contoh:</strong> MYCIN (medis), Rice-Crop Doctor (pertanian).</p>
+</div>
+</div>
+
+<div class="card yellow">
+  <h3>5 Tahap Akuisisi Pengetahuan</h3>
+  <table>
+    <tr><th>Tahap</th><th>Aktivitas</th></tr>
+    <tr><td>1. Elicitation</td><td>Gali dari pakar (wawancara, observasi)</td></tr>
+    <tr><td>2. Collection</td><td>Kumpulkan dokumen, buku, laporan</td></tr>
+    <tr><td>3. Analysis</td><td>Petakan alur penalaran &amp; pola pikir pakar</td></tr>
+    <tr><td>4. Modelling</td><td>Buat model logika (decision tree, aturan formal)</td></tr>
+    <tr><td>5. Validation</td><td>Uji bersama pakar (hindari salah tafsir)</td></tr>
+  </table>
+  <p style="margin-top:0.15rem; font-size:0.7rem;"><strong>Tantangan:</strong> <em>Tacit Knowledge</em> &mdash; insting pakar yang sulit dijelaskan (bagian terbesar gunung es).</p>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-sp">SP</span> Bagian 5: Representasi Pengetahuan</h2>
+
+<div class="grid-3">
+
+<div class="card purple">
+  <h3>1. IF-THEN Rules</h3>
+  <p><strong>Struktur:</strong> Kondisi &rarr; Aksi</p>
+  <div class="code-block">
+    <span class="if">IF</span> [traffic light is green]<br>
+    <span class="then">THEN</span> [action is go]<br><br>
+    <span class="if">IF</span> [age &lt; 18] <span class="and">AND</span> [withdrawal &gt; 1000]<br>
+    <span class="then">THEN</span> [signature required]
+  </div>
+  <p><strong>Keunggulan:</strong> Intuitif, alur jelas.<br><strong>Kompleksitas:</strong> Rendah-Menengah.</p>
+</div>
+
+<div class="card green">
+  <h3>2. Semantic Networks</h3>
+  <p><strong>Struktur:</strong> Graf (Node + Link)</p>
+  <div class="code-block">
+    Vehicle <span class="then">--(HAS)--&gt;</span> Wheels<br>
+    CAR <span class="if">--(IS-A)--</span> Vehicle<br>
+    &nbsp;&nbsp;<span class="comment">// mewarisi Wheels</span><br>
+    CAR <span class="then">--(HAS)--&gt;</span> Engine<br>
+    Honda Civic <span class="if">--(IS-A)--</span> CAR<br>
+    &nbsp;&nbsp;<span class="comment">// mewarisi: Wheels, Engine, Battery</span>
+  </div>
+  <p><strong>Keunggulan:</strong> Inheritance IS-A hindari duplikasi.<br><strong>Kompleksitas:</strong> Menengah.</p>
+</div>
+
+<div class="card blue">
+  <h3>3. Frames</h3>
+  <p><strong>Struktur:</strong> Objek + Slot</p>
+  <table>
+    <tr><th>Frame: Car</th><th>Value</th></tr>
+    <tr><td>IS-A</td><td>Vehicle</td></tr>
+    <tr><td>Engine</td><td>1</td></tr>
+    <tr><td>Cylinders</td><td>4, 6, 8</td></tr>
+    <tr><td>Doors</td><td>2, 4, 5</td></tr>
+    <tr><th style="background:#3b82f6;">Honda Civic</th><th style="background:#3b82f6;"></th></tr>
+    <tr><td>IS-A</td><td>Car</td></tr>
+    <tr><td>Make</td><td>Honda</td></tr>
+    <tr><td>Year</td><td>1989</td></tr>
+  </table>
+  <p><strong>Keunggulan:</strong> Data kompleks, fungsi dalam slot.<br><strong>Kompleksitas:</strong> Tinggi.</p>
+</div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-sp">SP</span> Bagian 6: Inferensi &amp; Anomali Logika</h2>
+
+<div class="grid-2">
+
+<div class="card orange">
+  <h3>Forward Chaining (Data-Driven)</h3>
+  <p><strong>Arah:</strong> Fakta &rarr; Konklusi (maju, divergen)</p>
+  <p><strong>Cocok:</strong> Banyak data, sedikit konklusi (monitoring)</p>
+  <div class="code-block">
+    Fakta: A, B<br>
+    R1: B &rArr; E &nbsp; &rArr; &nbsp; A, B, E<br>
+    R2: A&amp;E &rArr; G &nbsp; &rArr; &nbsp; A, B, E, G<br>
+    R3: G &rArr; <span class="then">D (Goal!)</span>
+  </div>
+</div>
+
+<div class="card purple">
+  <h3>Backward Chaining (Goal-Driven)</h3>
+  <p><strong>Arah:</strong> Goal &rarr; Fakta (mundur, konvergen)</p>
+  <p><strong>Cocok:</strong> Banyak konklusi, sedikit data (diagnosis)</p>
+  <div class="code-block">
+    Goal: D &rArr; butuh G &rArr; butuh A &amp; E<br>
+    A = fakta (ADA), E = ?<br>
+    E &rArr; butuh B &rArr; B = fakta (ADA)<br>
+    <span class="then">Semua sub-goal terbukti &rArr; D BENAR!</span>
+  </div>
+</div>
+
+<div class="card green">
+  <h3>Certainty Factor (CF)</h3>
+  <p>Skala: <strong>0.0</strong> (pasti salah) &ndash; <strong>1.0</strong> (pasti benar)</p>
+  <div class="formula">CF_hasil = CF_fakta &times; CF_aturan</div>
+  <div class="code-block">
+    <span class="comment">// Fakta A (CF=0.90) &times; Rule (CF=0.75) = 0.675</span>
+  </div>
+</div>
+
+<div class="card blue">
+  <h3>Explanation Facility</h3>
+  <p><strong>Why?</strong> &mdash; "Mengapa tanya ini?"<br>Sistem baca mundur node aktif untuk jelaskan tujuan.</p>
+  <p><strong>How?</strong> &mdash; "Bagaimana sampai ke kesimpulan ini?"<br>Sistem lacak rantai inferensi yang dipakai.</p>
+  <p style="margin-top:0.2rem;"><strong>Graceful Failure:</strong> Info kurang &rArr; default conclusion teraman (tidak crash).</p>
+</div>
+</div>
+
+<div class="card red fullw">
+  <h3>6 Anomali Logika dalam Knowledge Base</h3>
+  <div class="grid-3">
+    <div>
+      <p><span class="tag tag-yellow">1. REDUNDANT</span> Duplikasi aturan</p>
+      <div class="code-block">
+        R1: IF starter+suhu <span class="then">THEN</span> mati<br>
+        R2: IF suhu+starter <span class="then">THEN</span> mati
+      </div>
+    </div>
+    <div>
+      <p><span class="tag tag-red">2. CONFLICTING</span> Konflik keputusan</p>
+      <div class="code-block">
+        R1: IF starter+suhu <span class="then">THEN</span> mati<br>
+        R2: IF starter+suhu <span class="then">THEN</span> berfungsi
+      </div>
+    </div>
+    <div>
+      <p><span class="tag tag-blue">3. SUBSUMED</span> Aturan tertelan</p>
+      <div class="code-block">
+        R1: starter+suhu+pompa <span class="then">THEN</span> mati<br>
+        R2: starter+suhu <span class="then">THEN</span> mati<br>
+        <span class="comment">// R1 tak pernah dipakai</span>
+      </div>
+    </div>
+    <div>
+      <p><span class="tag tag-red">4. CIRCULAR</span> Infinite loop</p>
+      <div class="code-block">
+        <span class="comment">starter &rarr; suhu &rarr; starter &rarr; ...</span>
+      </div>
+    </div>
+    <div>
+      <p><span class="tag tag-yellow">5. UNNECESSARY IF</span> Premis tak relevan</p>
+      <div class="code-block">
+        R1: mesin+starter+klakson <span class="then">THEN</span> setrum<br>
+        R2: mesin+starter+klakson! <span class="then">THEN</span> setrum<br>
+        <span class="comment">// "klakson" tdk relevan</span>
+      </div>
+    </div>
+    <div>
+      <p><span class="tag tag-purple">6. DEAD-END</span> Jalur buntu</p>
+      <div class="code-block">
+        IF in1+in2+in3 <span class="then">THEN</span> baterai setrum<br>
+        <span class="comment">// Lalu? Tak ada aturan lanjutan</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge badge-sp">SP</span> Bagian 7: Studi Kasus + 3 Pilar</h2>
+
+<div class="grid-2">
+
+<div class="card green">
+  <h3>Klasifikasi Hewan (Aturan Rendah)</h3>
+  <div class="code-block">
+    (Hair <span class="and">OR</span> Milk) &rArr; Mammal<br>
+    (Meat <span class="and">OR</span> Pointed Teeth) &rArr; Carnivore<br>
+    (Hooves <span class="and">AND</span> Chews Cud) &rArr; Ungulate
+  </div>
+</div>
+
+<div class="card green">
+  <h3>Klasifikasi Hewan (Aturan Tinggi)</h3>
+  <div class="code-block">
+    Mammal+Carnivore+Tawny+Spots &rArr; <span class="then">Cheetah</span><br>
+    Mammal+Carnivore+Tawny+Stripes &rArr; <span class="then">Tiger</span><br>
+    Ungulate+LongNeck+Stripes &rArr; <span class="then">Zebra</span>
+  </div>
+</div>
+
+<div class="card purple">
+  <h3>3 Pilar Keandalan Sistem Pakar</h3>
+  <ol>
+    <li><strong>Inferensi Presisi</strong> &mdash; pilih FC atau BC sesuai masalah</li>
+    <li><strong>Integritas Knowledge Base</strong> &mdash; bebas dari 6 anomali logika</li>
+    <li><strong>Interaksi Transparan</strong> &mdash; fasilitas Why/How untuk penjelasan</li>
+  </ol>
+</div>
+
+<div class="card blue">
+  <h3>Kelayakan Sistem Pakar</h3>
+  <table>
+    <tr><th>Kelebihan</th><th>Kekurangan</th></tr>
+    <tr><td>Pendekatan heuristik</td><td>Tidak cocok numerik murni</td></tr>
+    <tr><td>Cost-effective</td><td>Biaya awal mahal</td></tr>
+    <tr><td>Pengetahuan terdokumentasi</td><td>Rentan error interpretasi</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2>Quick Reference Tables</h2>
+
+<div class="grid-2">
+
+<div class="card orange">
+  <h3>Representasi Pengetahuan: Comparison</h3>
+  <table>
+    <tr><th>Kriteria</th><th>IF-THEN</th><th>Semantic Net</th><th>Frames</th></tr>
+    <tr><td>Struktur</td><td>Kondisi &rarr; Aksi</td><td>Graf (Node+Link)</td><td>Objek+Slot</td></tr>
+    <tr><td>Kekuatan</td><td>Alur jelas, intuitif</td><td>Inheritance efisien</td><td>Data kompleks</td></tr>
+    <tr><td>Kompleksitas</td><td>Rendah-Sedang</td><td>Sedang</td><td>Tinggi</td></tr>
+  </table>
+</div>
+
+<div class="card blue">
+  <h3>Forward vs Backward Chaining</h3>
+  <table>
+    <tr><th>Parameter</th><th>Forward</th><th>Backward</th></tr>
+    <tr><td>Arah</td><td>Fakta &rarr; Konklusi</td><td>Goal &rarr; Fakta</td></tr>
+    <tr><td>Sifat</td><td>Divergen</td><td>Konvergen</td></tr>
+    <tr><td>Cocok</td><td>Banyak data</td><td>Banyak konklusi</td></tr>
+  </table>
+</div>
+
+<div class="card green">
+  <h3>Perbedaan Program Tradisional vs Sistem Pakar</h3>
+  <table>
+    <tr><th>Aspek</th><th>Tradisional</th><th>Sistem Pakar</th></tr>
+    <tr><td>Rumus</td><td>Algoritma+Data</td><td>Inference Engine+KB</td></tr>
+    <tr><td>Logika</td><td>Hardcoded</td><td>Terpisah dari data</td></tr>
+    <tr><td>Update aturan</td><td>Code dirombak</td><td>Update KB saja</td></tr>
+  </table>
+</div>
+
+<div class="card purple">
+  <h3>PL vs FOL untuk Wumpus</h3>
+  <table>
+    <tr><th>Aspek</th><th>PL</th><th>FOL</th></tr>
+    <tr><td>Aturan</td><td>16 (per kotak)</td><td>4 (universal)</td></tr>
+    <tr><td>Simbol</td><td>B&#x2081;,&#x2082;</td><td>Breeze(1,2)</td></tr>
+    <tr><td>Inferensi</td><td>Resolusi</td><td>Unifikasi+GMP</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge" style="background:#fffbeb; color:#d97706; border:1px solid #d97706;">UC</span> Bagian 8: Certainty Factor Deep Dive</h2>
+
+<div class="grid-3">
+
+<div class="card orange">
+  <h3>Formula Dasar CF</h3>
+  <div class="formula">CF(H,E) = MB(H,E) &minus; MD(H,E)</div>
+  <table>
+    <tr><th>Notasi</th><th>Rentang</th><th>Makna</th></tr>
+    <tr><td>MB</td><td>0 &ndash; 1</td><td>Measure of Belief</td></tr>
+    <tr><td>MD</td><td>0 &ndash; 1</td><td>Measure of Disbelief</td></tr>
+    <tr><td>CF</td><td>-1.0 &ndash; 1.0</td><td>Keyakinan akhir</td></tr>
+  </table>
+</div>
+
+<div class="card orange">
+  <h3>CF Gabungan</h3>
+  <p><strong>Single evidence:</strong></p>
+  <div class="formula">CF(H,E) = CF(E) x CF(Rule)</div>
+  <p><strong>AND (Konjungsi):</strong></p>
+  <div class="formula">CF = min[CF(E1),...,CF(En)] x CF(Rule)</div>
+  <p><strong>OR (Disjungsi):</strong></p>
+  <div class="formula">CF = max[CF(E1),...,CF(En)] x CF(Rule)</div>
+</div>
+
+<div class="card orange">
+  <h3>Resolusi Konflik (2 Rule, 1 H)</h3>
+  <p><strong>Keduanya &ge; 0:</strong></p>
+  <div class="formula">CF = CF1 + CF2(1-CF1)</div>
+  <p><strong>Berbeda tanda:</strong></p>
+  <div class="formula">CF = (CF1+CF2) / (1-min(|CF1|,|CF2|))</div>
+  <p><strong>Keduanya &lt; 0:</strong></p>
+  <div class="formula">CF = CF1 + CF2(1+CF1)</div>
+</div>
+
+</div>
+
+<div class="grid-2">
+
+<div class="card orange">
+  <h3>MB/MD Detail</h3>
+  <div class="formula" style="font-size:0.72rem;">
+    MB(H,E) = (max[P(H|E),P(H)]-P(H)) / (1-P(H))<br>
+    MD(H,E) = (P(H)-min[P(H|E),P(H)]) / P(H)
+  </div>
+  <table>
+    <tr><th>Kondisi</th><th>MB</th><th>MD</th></tr>
+    <tr><td>P(H\|E) &gt; P(H)</td><td>Dihitung</td><td>0</td></tr>
+    <tr><td>P(H\|E) &lt; P(H)</td><td>0</td><td>Dihitung</td></tr>
+    <tr><td>P(H\|E) = P(H)</td><td>0</td><td>0</td></tr>
+  </table>
+  <p>P(H)=1 &rArr; MB=1; P(H)=0 &rArr; MD=1</p>
+</div>
+
+<div class="card orange">
+  <h3>Linguistic &rarr; Numerik</h3>
+  <table>
+    <tr><th>Linguistik</th><th>CF</th></tr>
+    <tr><td>Pasti Tidak</td><td>-1,0</td></tr>
+    <tr><td>Kemungkinan Besar Tidak</td><td>-0,6</td></tr>
+    <tr><td>Tidak Tahu</td><td>0,0</td></tr>
+    <tr><td>Kemungkinan Besar</td><td>0,6</td></tr>
+    <tr><td>Hampir Pasti</td><td>0,8</td></tr>
+    <tr><td>Pasti</td><td>1,0</td></tr>
+  </table>
+</div>
+
+</div>
+
+<div class="card yellow fullw">
+  <h3>Studi Kasus: FORECAST</h3>
+  <div class="grid-2">
+    <div>
+      <p><strong>Input:</strong> Rain=1.0, RainfallLow=0.8, Cold=0.9</p>
+      <div class="code-block">
+        R1 (hujan): 1.0 x 0.5 = 0.50<br>
+        R3 (kering): min(1.0,0.8)x0.6 = 0.48<br>
+        R4 (kering): min(1.0,0.8,0.9)x0.7 = 0.56
+      </div>
+    </div>
+    <div>
+      <p><strong>Resolusi Kering:</strong></p>
+      <div class="code-block">
+        CF_kering = 0.48 + 0.56(1-0.48) = 0.77<br>
+        <span class="then">Kering (0.77) &gt; Hujan (0.50)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<hr class="section-divider">
+
+<h2><span class="badge" style="background:#eff6ff; color:#2563eb; border:1px solid #2563eb;">UC</span> Bagian 9: Probabilitas Bayes</h2>
+
+<div class="grid-2">
+
+<div class="card blue">
+  <h3>Teorema Bayes</h3>
+  <div class="formula" style="font-size:0.72rem;">
+    p(H<sub>i</sub>|E) = p(E|H<sub>i</sub>) x p(H<sub>i</sub>) / &Sigma; p(E|H<sub>k</sub>) x p(H<sub>k</sub>)
+  </div>
+  <table>
+    <tr><th>Probabilitas</th><th>Notasi</th></tr>
+    <tr><td>Prior (awal)</td><td>p(H<sub>i</sub>)</td></tr>
+    <tr><td>Conditional</td><td>p(E | H<sub>i</sub>)</td></tr>
+    <tr><td>Posterior (akhir)</td><td>p(H<sub>i</sub> | E)</td></tr>
+  </table>
+  <p><strong>Syarat:</strong> Mutually Exclusive + Conditional Independence</p>
+</div>
+
+<div class="card blue">
+  <h3>Multi-Evidence</h3>
+  <div class="formula" style="font-size:0.68rem;">
+    p(H<sub>i</sub>|E<sub>1</sub>..E<sub>n</sub>) =<br>
+    &Pi;p(E<sub>j</sub>|H<sub>i</sub>) x p(H<sub>i</sub>) / &Sigma;&Pi;p(E<sub>j</sub>|H<sub>k</sub>) x p(H<sub>k</sub>)
+  </div>
+  <p>Conditional Independence &rArr; kalikan semua p(E<sub>j</sub>|H<sub>i</sub>)</p>
+</div>
+
+</div>
+
+<div class="card blue fullw">
+  <h3>Iterasi Bayes &mdash; Studi Kasus 3 Hipotesis</h3>
+  <table>
+    <tr><th>Iterasi</th><th>Bukti</th><th>H1</th><th>H2</th><th>H3</th><th>Keterangan</th></tr>
+    <tr><td>Prior</td><td>-</td><td>40%</td><td>35%</td><td>25%</td><td>Status awal</td></tr>
+    <tr><td>1</td><td>E3</td><td>34%</td><td>34%</td><td><strong>32%</strong></td><td>H3 naik 7%</td></tr>
+    <tr><td>2</td><td>E3+E1</td><td>19%</td><td><strong>52%</strong></td><td>29%</td><td>H2 dominan sementara</td></tr>
+    <tr><td>3</td><td>E3+E1+E2</td><td>45%</td><td><strong>0%</strong></td><td><strong>55%</strong></td><td>p(E2|H2)=0 &rArr; H2 eliminasi, H3 menang</td></tr>
+  </table>
+</div>
+
+<div class="card purple fullw">
+  <h3>CF vs Bayes: Diagnostic Matrix</h3>
+  <table>
+    <tr><th>Kriteria</th><th>Certainty Factor</th><th>Probabilitas Bayes</th></tr>
+    <tr><td>Landasan</td><td>Heuristik &amp; intuisi pakar</td><td>Statistika formal, kalkulasi ketat</td></tr>
+    <tr><td>Asumsi</td><td>Fleksibel, hipotesis ganda</td><td>Mutually Exclusive + Cond. Independence</td></tr>
+    <tr><td>Kompleksitas</td><td>Ringan, linier</td><td>Eksponensial</td></tr>
+    <tr><td>Cocok</td><td>Diagnosis medis/kerusakan</td><td>Klasifikasi data historis</td></tr>
+  </table>
+</div>
+
+<p style="text-align:center; font-size:0.65rem; color:#78716c; margin-top:1rem; border-top:1px solid #e7e5e4; padding-top:0.4rem;">
+  Sumber: Giarratano (2007), Sutojo et al. (2018), Negnevitsky (2011), Suyanto (2007), Russel &amp; Norvig (2010).
+  &bull; File ini akan terus diupdate setiap ada materi baru.
+</p>
+
+</body>
+</html>
