@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Master Cheatsheet: KBA + SP + UC + Fuzzy + Planning</title>
+<title>Master Cheatsheet: KBA + SP + UC + Fuzzy + Planning + JST</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,6 +56,7 @@
   .card.purple { border-left: 3px solid #7c3aed; }
   .card.yellow { border-left: 3px solid #eab308; }
   .card.orange { border-left: 3px solid #f97316; }
+  .card.pink { border-left: 3px solid #db2777; }
 
   /* --- Inline Tags --- */
   .tag {
@@ -68,6 +69,7 @@
   .tag-purple { background: #faf5ff; color: #6b21a8; border: 1px solid #7c3aed; }
   .tag-green { background: #f0fdf4; color: #166534; border: 1px solid #16a34a; }
   .tag-orange { background: #fff7ed; color: #c2410c; border: 1px solid #f97316; }
+  .tag-pink { background: #fce7f3; color: #9d174d; border: 1px solid #db2777; }
 
   /* --- Tables --- */
   table {
@@ -125,8 +127,8 @@
 </head>
 <body>
 
-<h1>Master Cheatsheet: Reasoning KBA + Sistem Pakar</h1>
-<p class="subtitle">Rangkuman UAS &mdash; Wumpus World &bull; PL &bull; FOL &bull; Expert Systems &bull; CF &bull; Bayes &bull; Inferensi &bull; Representasi Pengetahuan</p>
+<h1>Master Cheatsheet: Reasoning KBA + Sistem Pakar + CF + Bayes + Fuzzy + Planning + JST</h1>
+<p class="subtitle">Rangkuman UAS &mdash; Wumpus World &bull; PL &bull; FOL &bull; Expert Systems &bull; CF &bull; Bayes &bull; Inferensi &bull; Representasi Pengetahuan &bull; FIS Mamdani &bull; GSP Blocks World &bull; JST (MCP &middot; HebbNet &middot; Perceptron)</p>
 
 <!-- ======================================================================= -->
 <h2><span class="badge badge-kba">KBA</span> Bagian 1: Propositional Logic &amp; Inference Rules</h2>
@@ -1061,8 +1063,188 @@
   </table>
 </div>
 
+<hr class="section-divider">
+
+<h2><span class="badge tag-pink">JST</span> Bagian 12: Jaringan Syaraf Tiruan (JST)</h2>
+
+<div class="grid-2">
+<div class="card pink">
+  <h3>Definisi Learning: E, T, P</h3>
+  <p><strong>E</strong> = Experience (data pengalaman)</p>
+  <p><strong>T</strong> = Task (tugas / masalah)</p>
+  <p><strong>P</strong> = Performance Measure (metrik kinerja)</p>
+  <p style="font-size:0.7rem; color:#78716c; margin-top:0.3rem;"><em>Agen belajar jika exposure ke E meningkatkan P pada T.</em></p>
+</div>
+
+<div class="card pink">
+  <h3>4 Algoritma Learning Populer</h3>
+  <ul>
+    <li><span class="tag tag-pink">ANN</span> Jaringan Syaraf Tiruan</li>
+    <li><span class="tag tag-pink">DT</span> Decision Tree (Pohon Keputusan)</li>
+    <li><span class="tag tag-pink">NB</span> Naive Bayes Classifier</li>
+    <li><span class="tag tag-pink">KNN</span> K-Nearest Neighbor</li>
+  </ul>
+</div>
+</div>
+
+<div class="card pink fullw">
+  <h3>Pemetaan Biologi &rarr; JST</h3>
+  <table>
+    <tr><th>Biologi</th><th>JST</th></tr>
+    <tr><td class="predicate">Soma (badan sel)</td><td>Neuron / Node (unit pemroses)</td></tr>
+    <tr><td class="predicate">Dendrit</td><td>Input Unit (jalur masukan x<sub>i</sub>)</td></tr>
+    <tr><td class="predicate">Akson</td><td>Output Unit (jalur keluaran y)</td></tr>
+    <tr><td class="predicate">Sinapsis</td><td><strong>Weight</strong> / Bobot (w<sub>i</sub>)</td></tr>
+  </table>
+</div>
+
+<div class="grid-2">
+<div class="card pink">
+  <h3>3 Penentu Perilaku JST</h3>
+  <ol>
+    <li><strong>Arsitektur</strong> jaringan (topologi)</li>
+    <li><strong>Fungsi aktivasi</strong> neuron</li>
+    <li><strong>Metode training</strong> (pencarian bobot)</li>
+  </ol>
+</div>
+
+<div class="card pink">
+  <h3>Klasifikasi Arsitektur</h3>
+  <table>
+    <tr><th>By</th><th>Jenis</th></tr>
+    <tr><td class="predicate"># Layer</td><td>Single-layer vs Multilayer</td></tr>
+    <tr><td class="predicate">Aliran</td><td>Feedforward vs Recurrent</td></tr>
+    <tr><td class="predicate"># Node Input</td><td>= jumlah fitur data</td></tr>
+    <tr><td class="predicate"># Node Output</td><td>= jumlah kelas / jenis output</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="card pink fullw">
+  <h3>4 Fungsi Aktivasi Populer</h3>
+  <table>
+    <tr><th>Fungsi</th><th>Formula</th><th>Range Output</th></tr>
+    <tr><td class="predicate">Binary Step</td><td>y = 1 jika z&ge;0, 0 jika z&lt;0</td><td>{0, 1}</td></tr>
+    <tr><td class="predicate">Sigmoid / &sigma;</td><td>1 / (1 + e<sup>-x</sup>)</td><td>(0, 1)</td></tr>
+    <tr><td class="predicate">tanh</td><td>(e<sup>x</sup>-e<sup>-x</sup>) / (e<sup>x</sup>+e<sup>-x</sup>)</td><td>(-1, 1)</td></tr>
+    <tr><td class="predicate">ReLU</td><td>max(0, x)</td><td>[0, &infin;)</td></tr>
+  </table>
+</div>
+
+<div class="grid-2">
+<div class="card pink">
+  <h3>Sejarah JST (9 Milestone)</h3>
+  <ul style="font-size:0.7rem;">
+    <li><strong>1943</strong> McCulloch-Pitts Neuron (TLU)</li>
+    <li><strong>1949</strong> Hebb Rule (Hebbian)</li>
+    <li><strong>1958</strong> Perceptron (Rosenblatt)</li>
+    <li><strong>1969</strong> AI Winter (Minsky &amp; Papert &mdash; XOR)</li>
+    <li><strong>1982</strong> Hopfield Networks</li>
+    <li><strong>1982</strong> SOM (Kohonen)</li>
+    <li><strong>1986</strong> <span class="optimal">Backpropagation</span> &mdash; AI Rebirth</li>
+    <li><strong>1990an</strong> RBF Networks</li>
+    <li><strong>2000an</strong> Ensembles, SVM</li>
+  </ul>
+</div>
+
+<div class="card pink">
+  <h3>McCulloch-Pitts (MCP/TLU)</h3>
+  <ul>
+    <li>Input/output <strong>biner (0/1)</strong></li>
+    <li>w dan &theta; ditentukan <strong>analitis oleh manusia</strong></li>
+    <li>Formula: <code>y = sign(x<sub>1</sub>w<sub>1</sub> + x<sub>2</sub>w<sub>2</sub> - &theta;)</code></li>
+    <li>AND: w<sub>1</sub>=1, w<sub>2</sub>=1, &theta;=1,5</li>
+    <li>OR: w<sub>1</sub>=1, w<sub>2</sub>=1, &theta;=0,5</li>
+    <li><span class="suboptimal">GAGAL</span> di XOR (non-linearly separable)</li>
+  </ul>
+</div>
+</div>
+
+<div class="card pink fullw">
+  <h3>Bukti Kontradiksi XOR (Minsky &amp; Papert 1969)</h3>
+  <ol style="font-size:0.7rem;">
+    <li>Dari data (0,0)&rarr;0: &theta; &gt; 0</li>
+    <li>Dari data (0,1)&rarr;1: w<sub>2</sub> &ge; &theta;</li>
+    <li>Dari data (1,0)&rarr;1: w<sub>1</sub> &ge; &theta;</li>
+    <li>Dari data (1,1)&rarr;0: w<sub>1</sub> + w<sub>2</sub> &lt; &theta;</li>
+    <li>Dari (2)+(3): w<sub>1</sub>+w<sub>2</sub> &ge; 2&theta; &gt; &theta; (karena &theta; &gt; 0)</li>
+    <li><strong>Kontradiksi dengan (4):</strong> w<sub>1</sub>+w<sub>2</sub> tidak mungkin &lt; &theta; dan &ge; 2&theta; sekaligus.</li>
+  </ol>
+  <p style="font-size:0.7rem; color:#52525b; margin-top:0.3rem;">Solusi: <strong>Multilayer network</strong> (Backpropagation 1986) &mdash; gunakan 2 garis lurus, bukan 1.</p>
+</div>
+
+<div class="grid-2">
+<div class="card pink">
+  <h3>HebbNet (Aturan Hebb, 1949)</h3>
+  <p style="font-size:0.7rem;"><em>"Neuron yang aktif bersamaan harus memperkuat sinapsis."</em></p>
+  <div class="code-block" style="font-size:0.68rem;">
+    <span class="if">Inisialisasi</span>: w<sub>i</sub> = 0<br>
+    <span class="then">Update</span>: w<sub>i</sub>(new) = w<sub>i</sub>(old) + x<sub>i</sub>&middot;t
+  </div>
+  <ul style="font-size:0.7rem;">
+    <li>Representasi <strong>bipolar (-1/+1)</strong> lebih baik dari biner (0/1)</li>
+    <li>AND biner: <span class="suboptimal">GAGAL</span> (t=0 &rarr; &Delta;w=0)</li>
+    <li>AND bipolar: <span class="optimal">SUKSES</span> 100% (w<sub>1</sub>=2, w<sub>2</sub>=2, w<sub>0</sub>=-2)</li>
+  </ul>
+</div>
+
+<div class="card pink">
+  <h3>Perceptron (Rosenblatt, 1958)</h3>
+  <p style="font-size:0.7rem;">HebbNet + mekanisme <strong>error-based update</strong>:</p>
+  <div class="code-block" style="font-size:0.68rem;">
+    jika y = t:<br>
+    &nbsp;&nbsp;w<sub>i</sub>(new) = w<sub>i</sub>(old)<br>
+    jika y &ne; t:<br>
+    &nbsp;&nbsp;w<sub>i</sub>(new) = w<sub>i</sub>(old) + &alpha;&middot;(t-y)&middot;x<sub>i</sub>
+  </div>
+  <ul style="font-size:0.7rem;">
+    <li><strong>&alpha;</strong> = learning rate (0&lt;&alpha;&le;1)</li>
+    <li><strong>Epoch</strong> = 1 pass lengkap semua data latih</li>
+    <li><strong>Konvergensi</strong> = &Delta;w = 0 selama 1 epoch penuh</li>
+    <li><span class="suboptimal">Tidak konvergen</span> untuk non-linearly separable (XOR)</li>
+  </ul>
+</div>
+</div>
+
+<div class="card pink fullw">
+  <h3>Quick Reference: Simulasi AND Epoch 1 (Perceptron, &alpha;=0,2, init w=0)</h3>
+  <table>
+    <tr><th>Data (x<sub>1</sub>, x<sub>2</sub>, x<sub>0</sub>, t)</th><th>z</th><th>y</th><th>Status</th><th>Update</th></tr>
+    <tr>
+      <td class="predicate">(1, 1, 1, 1)</td>
+      <td>0</td>
+      <td>1</td>
+      <td class="optimal">y = t</td>
+      <td><em>no update</em></td>
+    </tr>
+    <tr>
+      <td class="predicate">(1, -1, 1, -1)</td>
+      <td>0</td>
+      <td>1</td>
+      <td class="suboptimal">y &ne; t</td>
+      <td>
+        w<sub>1</sub> = 0 + 0,2&middot;(-2)&middot;1 = -0,4<br>
+        w<sub>2</sub> = 0 + 0,2&middot;(-2)&middot;(-1) = 0,4<br>
+        w<sub>0</sub> = 0 + 0,2&middot;(-2)&middot;1 = -0,4
+      </td>
+    </tr>
+  </table>
+  <p style="font-size:0.7rem; margin-top:0.3rem;"><strong>Bobot terkini:</strong> w<sub>1</sub>=-0,4; w<sub>2</sub>=0,4; w<sub>0</sub>=-0,4. Lanjut ke D3, D4, dst sampai konvergen.</p>
+</div>
+
+<div class="card pink fullw">
+  <h3>Cheat Matrix: Pilih Algoritma JST</h3>
+  <table>
+    <tr><th>Kondisi / Kebutuhan</th><th>Algoritma</th><th>Catatan</th></tr>
+    <tr><td>Biner, linearly separable, perlu solusi analitis</td><td><strong>McCulloch-Pitts</strong></td><td>w dan &theta; ditentukan manusia, tanpa learning otomatis</td></tr>
+    <tr><td>Bipolar, linearly separable, aturan sederhana</td><td><strong>HebbNet</strong></td><td>w_i(new) = w_i(old) + x_i&middot;t; tidak perlu label "error"</td></tr>
+    <tr><td>Linearly separable, perlu konvergensi terjamin</td><td><strong>Perceptron</strong></td><td>Error-based update; konvergen hanya untuk data linearly separable</td></tr>
+    <tr><td>Non-linearly separable (XOR, dst.)</td><td><strong>Multilayer + Backprop</strong></td><td>Di luar cakupan PDF (cukup tahu GSP/Perceptron untuk UAS)</td></tr>
+  </table>
+</div>
+
 <p style="text-align:center; font-size:0.65rem; color:#78716c; margin-top:1rem; border-top:1px solid #e7e5e4; padding-top:0.4rem;">
-  Sumber: Zadeh (1965); Mamdani &amp; Assilian (1975); Giarratano (2007); Sutojo et al. (2018); Negnevitsky (2011); Suyanto (2007); Russel &amp; Norvig (2010); Sussman (1975); materi kuliah "Pengenalan Logika Fuzzy", "Planning".
+  Sumber: Zadeh (1965); Mamdani &amp; Assilian (1975); Giarratano (2007); Sutojo et al. (2018); Negnevitsky (2011); Suyanto (2007); Russel &amp; Norvig (2010); Sussman (1975); Mitchell (1997); McCulloch &amp; Pitts (1943); Hebb (1949); Rosenblatt (1958); Minsky &amp; Papert (1969); Fausett (1994); Haykin (2005); materi kuliah "Pengenalan Logika Fuzzy", "Planning", "Pengenalan Jaringan Syaraf Tiruan".
   &bull; File ini akan terus diupdate setiap ada materi baru.
 </p>
 
