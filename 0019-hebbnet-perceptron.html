@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 19: HebbNet &amp; Perceptron</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #db2777; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #db2777; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #fce7f3;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #db2777;
+    background: #fdf2f8;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #be185d; background: #fce7f3; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #500724;
+    color: #fce7f3;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85em;
+  }
+  th {
+    background: #db2777;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fce7f3; }
+  td.center { text-align: center; font-weight: 600; }
+  td.predicate { font-family: 'Source Code Pro', monospace; font-weight: 600; color: #9d174d; }
+  td.action { font-family: 'Source Code Pro', monospace; color: #16a34a; font-weight: 600; }
+  td.suboptimal { color: #dc2626; font-weight: 600; }
+  td.optimal { color: #16a34a; font-weight: 600; }
+
+  /* --- Step Header --- */
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .step-num {
+    background: #db2777;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #db2777;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #fdf2f8;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #fbcfe8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #fce7f3; border-color: #db2777; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 19: HebbNet &amp; Perceptron</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Aturan Hebb + simulasi AND biner (gagal) &amp; AND bipolar (sukses) + Perceptron Learning Rule + simulasi epoch 1</p>
+
+<!-- ====================================================================== -->
+<h2>1. Aturan Belajar &amp; Pendekatan Threshold sebagai Bobot</h2>
+
+<p>Sebelum masuk ke HebbNet dan Perceptron, pahami dua konsep fondasi:</p>
+
+<div class="def-box">
+<strong>Proses Belajar sebagai "Menggeser" Decision Boundary</strong>
+<p>Proses belajar dapat dipandang sebagai aktivitas <strong>menggeser-geser (shifting around) posisi garis lurus atau hyperplane pembatas</strong> secara iteratif hingga semua data latih terklasifikasi dengan benar.</p>
+</div>
+
+<p>Persamaan perubahan bobot secara umum:</p>
+<div class="formula">
+w<sub>ij</sub>(new) = w<sub>ij</sub>(old) + &Delta;w<sub>ij</sub>
+<br>
+<span style="font-size:0.85em; opacity:0.85;">di mana w<sub>ij</sub>(t+1) = w<sub>ij</sub>(t) + &Delta;w<sub>ij</sub>(t)</span>
+</div>
+
+<p>Threshold &theta; diperlakukan sebagai bobot biasa dengan <strong>bias trick</strong>:</p>
+<ul>
+  <li>Input ke-0: <code>x<sub>0</sub> = 1</code> (konstan)</li>
+  <li>Bobot ke-0: <code>w<sub>0</sub> = -&theta;</code></li>
+  <li>Output: <code>y = sign(&Sigma;<sub>i=0</sub><sup>n</sup> x<sub>i</sub>&middot;w<sub>i</sub>)</code></li>
+</ul>
+
+<!-- ====================================================================== -->
+<h2>2. HebbNet: Karakteristik &amp; Aturan Hebb</h2>
+
+<h3>2.1 Karakteristik Arsitektur</h3>
+
+<ul>
+  <li>Single-layer feedforward neural network.</li>
+  <li>Fungsi aktivasi <strong>signum bipolar</strong>: menghasilkan nilai <strong>-1 atau +1</strong>.</li>
+  <li>Berjalan sangat baik dengan representasi data <strong>bipolar</strong> (-1 atau +1), bukan biner (0 atau 1).</li>
+</ul>
+
+<h3>2.2 Aturan Hebb (1949)</h3>
+
+<div class="def-box">
+<strong>Hebb Rule</strong>
+<p>"Jika dua buah neuron yang saling terhubung aktif (bernilai 'on') pada waktu yang bersamaan, maka nilai bobot sinapsis di antara kedua neuron tersebut harus <strong>ditingkatkan</strong>."</p>
+<p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">&mdash; Donald Hebb, "The Organization of Behavior" (1949)</p>
+</div>
+
+<h3>2.3 Algoritma Pelatihan HebbNet</h3>
+
+<ol>
+  <li><strong>Inisialisasi</strong> seluruh bobot dan bias (<code>w<sub>0</sub>, w<sub>1</sub>, w<sub>2</sub>, ..., w<sub>n</sub></code>) dengan nilai <strong>0</strong>.</li>
+  <li>Untuk setiap pasang data latih vektor masukan (<code>x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>n</sub></code>) dengan target output <code>t</code>:
+    <div class="formula">w<sub>i</sub>(new) = w<sub>i</sub>(old) + x<sub>i</sub> &middot; t</div>
+    <p style="font-size:0.9em; margin-top:0.4rem; margin-bottom:0;">di mana input bias <code>x<sub>0</sub> = 1</code> (konstan), sehingga <code>w<sub>0</sub>(new) = w<sub>0</sub>(old) + 1 &middot; t = w<sub>0</sub>(old) + t</code>.</p>
+  </li>
+</ol>
+
+<div class="warn-box">
+<strong>Perhatikan</strong>
+<p>Tidak ada "if y==t" atau error term. HebbNet单纯 menyesuaikan bobot dengan perkalian <code>x_i * t</code>. Ini berbeda dengan Perceptron (lihat bagian 6) yang memiliki error-based update.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Simulasi 1: Gerbang AND dengan Representasi Biner (GAGAL)</h2>
+
+<p>Data latih biner untuk AND:</p>
+<table>
+  <tr><th>Data</th><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>x<sub>0</sub> (bias)</th><th>t</th></tr>
+  <tr><td>1</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">1</td></tr>
+  <tr><td>2</td><td class="predicate">1</td><td class="predicate">0</td><td class="predicate">1</td><td class="predicate">0</td></tr>
+  <tr><td>3</td><td class="predicate">0</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">0</td></tr>
+  <tr><td>4</td><td class="predicate">0</td><td class="predicate">0</td><td class="predicate">1</td><td class="predicate">0</td></tr>
+</table>
+
+<h3>Langkah Perhitungan</h3>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <strong>Inisialisasi</strong>
+</div>
+<p><code>w<sub>1</sub> = 0, w<sub>2</sub> = 0, w<sub>0</sub> = 0</code> (bias).</p>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <strong>Data 1 (1, 1, x<sub>0</sub>=1, t=1)</strong>
+</div>
+<p>Hitung perubahan bobot:</p>
+<ul>
+  <li><code>&Delta;w<sub>1</sub> = x<sub>1</sub> &middot; t = 1 &middot; 1 = 1</code></li>
+  <li><code>&Delta;w<sub>2</sub> = x<sub>2</sub> &middot; t = 1 &middot; 1 = 1</code></li>
+  <li><code>&Delta;w<sub>0</sub> = 1 &middot; 1 = 1</code></li>
+</ul>
+<p>Bobot baru: <strong>w<sub>1</sub>=1, w<sub>2</sub>=1, w<sub>0</sub>=1</strong></p>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <strong>Data 2, 3, dan 4 (semua t=0)</strong>
+</div>
+<p>Karena perkalian dengan <code>t = 0</code> menghasilkan <code>&Delta;w = 0</code>, <strong>tidak ada perubahan bobot</strong> pada ketiga data terakhir.</p>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <strong>Bobot Akhir</strong>
+</div>
+<p><code>w<sub>1</sub> = 1, w<sub>2</sub> = 1, w<sub>0</sub> = 1</code></p>
+<p>Persamaan garis pembatas: <code>x<sub>1</sub> + x<sub>2</sub> + 1 = 0</code></p>
+
+<h3>Hasil Pengujian</h3>
+<table>
+  <tr><th>Input (x<sub>1</sub>, x<sub>2</sub>)</th><th>Net Input (x<sub>1</sub> + x<sub>2</sub> + 1)</th><th>Output y</th><th>Target</th><th>Status</th></tr>
+  <tr>
+    <td class="predicate">(0, 0)</td>
+    <td>0 + 0 + 1 = 1</td>
+    <td>1</td>
+    <td>0</td>
+    <td class="suboptimal">Salah</td>
+  </tr>
+  <tr>
+    <td class="predicate">(1, 0)</td>
+    <td>1 + 0 + 1 = 2</td>
+    <td>1</td>
+    <td>0</td>
+    <td class="suboptimal">Salah</td>
+  </tr>
+  <tr>
+    <td class="predicate">(0, 1)</td>
+    <td>0 + 1 + 1 = 2</td>
+    <td>1</td>
+    <td>0</td>
+    <td class="suboptimal">Salah</td>
+  </tr>
+  <tr>
+    <td class="predicate">(1, 1)</td>
+    <td>1 + 1 + 1 = 3</td>
+    <td>1</td>
+    <td>1</td>
+    <td class="optimal">Benar</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Kesimpulan: HebbNet Gagal Total pada AND Biner</strong>
+<p>Karena bobot tidak pernah ter-update saat target bernilai 0, semua input (kecuali (0,0)) akan menghasilkan net input positif &ge; 1, sehingga diklasifikasikan ke kelas 1. HebbNet tidak bisa "menurunkan" bobot yang sudah ter-update positif dari data pertama.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Simulasi 2: Gerbang AND dengan Representasi Bipolar (SUKSES)</h2>
+
+<p>Data latih bipolar untuk AND (-1 untuk 0, +1 untuk 1):</p>
+<table>
+  <tr><th>Data</th><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>x<sub>0</sub> (bias)</th><th>t</th></tr>
+  <tr><td>1</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">1</td></tr>
+  <tr><td>2</td><td class="predicate">1</td><td class="predicate">-1</td><td class="predicate">1</td><td class="predicate">-1</td></tr>
+  <tr><td>3</td><td class="predicate">-1</td><td class="predicate">1</td><td class="predicate">1</td><td class="predicate">-1</td></tr>
+  <tr><td>4</td><td class="predicate">-1</td><td class="predicate">-1</td><td class="predicate">1</td><td class="predicate">-1</td></tr>
+</table>
+
+<h3>Langkah Pelatihan</h3>
+
+<table>
+  <tr>
+    <th>Data</th>
+    <th>&Delta;w<sub>1</sub> = x<sub>1</sub>&middot;t</th>
+    <th>&Delta;w<sub>2</sub> = x<sub>2</sub>&middot;t</th>
+    <th>&Delta;w<sub>0</sub> = t</th>
+    <th>w<sub>1</sub> (new)</th>
+    <th>w<sub>2</sub> (new)</th>
+    <th>w<sub>0</sub> (new)</th>
+  </tr>
+  <tr>
+    <td class="predicate">Inisialisasi</td>
+    <td>&mdash;</td>
+    <td>&mdash;</td>
+    <td>&mdash;</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td class="predicate">D1: (1, 1, t=1)</td>
+    <td>1&middot;1 = 1</td>
+    <td>1&middot;1 = 1</td>
+    <td>1</td>
+    <td>0+1 = 1</td>
+    <td>0+1 = 1</td>
+    <td>0+1 = 1</td>
+  </tr>
+  <tr>
+    <td class="predicate">D2: (1, -1, t=-1)</td>
+    <td>1&middot;(-1) = -1</td>
+    <td>(-1)&middot;(-1) = 1</td>
+    <td>-1</td>
+    <td>1-1 = 0</td>
+    <td>1+1 = 2</td>
+    <td>1-1 = 0</td>
+  </tr>
+  <tr>
+    <td class="predicate">D3: (-1, 1, t=-1)</td>
+    <td>(-1)&middot;(-1) = 1</td>
+    <td>1&middot;(-1) = -1</td>
+    <td>-1</td>
+    <td>0+1 = 1</td>
+    <td>2-1 = 1</td>
+    <td>0-1 = -1</td>
+  </tr>
+  <tr>
+    <td class="predicate">D4: (-1, -1, t=-1)</td>
+    <td>(-1)&middot;(-1) = 1</td>
+    <td>(-1)&middot;(-1) = 1</td>
+    <td>-1</td>
+    <td>1+1 = 2</td>
+    <td>1+1 = 2</td>
+    <td>-1-1 = -2</td>
+  </tr>
+</table>
+
+<p><strong>Bobot akhir:</strong> <code>w<sub>1</sub> = 2, w<sub>2</sub> = 2, w<sub>0</sub> = -2</code></p>
+<p>Persamaan garis pembatas akhir: <code>2&middot;x<sub>1</sub> + 2&middot;x<sub>2</sub> - 2 = 0</code> &mdash; ekuivalen dengan <code>x<sub>1</sub> + x<sub>2</sub> - 1 = 0</code>.</p>
+
+<h3>Uji Coba Keberhasilan Klasifikasi</h3>
+
+<p><code>y = sign( 2&middot;x<sub>1</sub> + 2&middot;x<sub>2</sub> - 2 )</code></p>
+
+<table>
+  <tr>
+    <th>Input (x<sub>1</sub>, x<sub>2</sub>)</th>
+    <th>Net Input</th>
+    <th>Output y</th>
+    <th>Target</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td class="predicate">(1, 1)</td>
+    <td>2 + 2 - 2 = 2</td>
+    <td>sign(2) = 1</td>
+    <td>1</td>
+    <td class="optimal">Benar</td>
+  </tr>
+  <tr>
+    <td class="predicate">(1, -1)</td>
+    <td>2 - 2 - 2 = -2</td>
+    <td>sign(-2) = -1</td>
+    <td>-1</td>
+    <td class="optimal">Benar</td>
+  </tr>
+  <tr>
+    <td class="predicate">(-1, 1)</td>
+    <td>-2 + 2 - 2 = -2</td>
+    <td>sign(-2) = -1</td>
+    <td>-1</td>
+    <td class="optimal">Benar</td>
+  </tr>
+  <tr>
+    <td class="predicate">(-1, -1)</td>
+    <td>-2 - 2 - 2 = -6</td>
+    <td>sign(-6) = -1</td>
+    <td>-1</td>
+    <td class="optimal">Benar</td>
+  </tr>
+</table>
+
+<div class="example-box">
+<strong>Sukses 100%</strong>
+<p>Dengan representasi bipolar, HebbNet berhasil mengklasifikasikan semua 4 data AND dengan benar. Kunci keberhasilannya: representasi bipolar memungkinkan "pengurangan" bobot (saat target=-1) sehingga bobot bisa bergeser ke konfigurasi yang benar.</p>
+</div>
+
+<div class="def-box">
+<strong>Insight Penting: Bipolar vs Biner</strong>
+<p>Pada data biner, <code>t=0</code> menghasilkan <code>&Delta;w=0</code> (tidak ada update). Pada data bipolar, <code>t=-1</code> menghasilkan <code>&Delta;w = -x_i</code> yang justru <strong>menurunkan</strong> bobot. Inilah mengapa HebbNet hampir selalu menggunakan representasi bipolar.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Algoritma Perceptron (1958)</h2>
+
+<p>Perceptron merupakan <strong>penyempurnaan dari HebbNet</strong> dengan menambahkan <strong>mekanisme kontrol umpan balik berbasis error</strong> untuk memperbarui bobot secara iteratif.</p>
+
+<h3>5.1 Karakteristik Utama</h3>
+<ul>
+  <li><strong>Arsitektur</strong>: Single-layer feedforward (sama seperti HebbNet).</li>
+  <li><strong>Aktivasi</strong>: Bipolar signum (output +1 atau -1).</li>
+  <li><strong>Inovasi</strong>: Update bobot hanya jika prediksi SALAH (ada error).</li>
+</ul>
+
+<h3>5.2 Perceptron Learning Rule</h3>
+
+<div class="formula">
+w<sub>i</sub>(new) = w<sub>i</sub>(old)  &nbsp; (jika y = t, prediksi benar, tidak ada update)
+</div>
+<div class="formula">
+w<sub>i</sub>(new) = w<sub>i</sub>(old) + &alpha; &middot; [ t - y ] &middot; x<sub>i</sub>  &nbsp; (jika y &ne; t, prediksi salah)
+</div>
+
+<p>Di mana:</p>
+<ul>
+  <li><strong>&alpha; (alpha)</strong> = <em>Learning Rate</em>, parameter bernilai kontinu 0-1 yang menentukan seberapa <em>smooth</em> pergeseran decision boundary.</li>
+  <li>Jika <code>y = +1, t = -1</code> (prediksi terlalu besar) &rarr; bobot <strong>diturunkan</strong>.</li>
+  <li>Jika <code>y = -1, t = +1</code> (prediksi terlalu kecil) &rarr; bobot <strong>dinaikkan</strong>.</li>
+</ul>
+
+<!-- ====================================================================== -->
+<h2>6. Simulasi Perceptron: Gerbang AND (Epoch 1)</h2>
+
+<p>Simulasi iterasi Epoch 1 untuk gerbang AND bipolar:</p>
+<p><strong>Konfigurasi awal</strong>: Bobot <code>w<sub>1</sub> = 0, w<sub>2</sub> = 0, bias w<sub>0</sub> = 0</code>. Learning rate <code>&alpha; = 0,2</code>.</p>
+
+<h3>Langkah Iterasi</h3>
+
+<table>
+  <tr>
+    <th>Data Latih</th>
+    <th>z (net input)</th>
+    <th>y = sign(z)</th>
+    <th>Status</th>
+    <th>Update Bobot</th>
+  </tr>
+  <tr>
+    <td class="predicate">D1: x<sub>1</sub>=1, x<sub>2</sub>=1, x<sub>0</sub>=1, t=1</td>
+    <td>1&middot;0 + 1&middot;0 + 1&middot;0 = 0</td>
+    <td>sign(0) = 1</td>
+    <td>y = t &check;</td>
+    <td><em>tidak ada update</em></td>
+  </tr>
+  <tr>
+    <td class="predicate">D2: x<sub>1</sub>=1, x<sub>2</sub>=-1, x<sub>0</sub>=1, t=-1</td>
+    <td>1&middot;0 + (-1)&middot;0 + 1&middot;0 = 0</td>
+    <td>sign(0) = 1</td>
+    <td>y &ne; t &times;</td>
+    <td>
+      w<sub>1</sub> = 0 + 0,2&middot;(-1 - 1)&middot;1 = -0,4<br>
+      w<sub>2</sub> = 0 + 0,2&middot;(-1 - 1)&middot;(-1) = 0,4<br>
+      w<sub>0</sub> = 0 + 0,2&middot;(-1 - 1)&middot;1 = -0,4
+    </td>
+  </tr>
+</table>
+
+<p><strong>Bobot terkini setelah D2</strong>: <code>w<sub>1</sub> = -0,4, w<sub>2</sub> = 0,4, w<sub>0</sub> = -0,4</code></p>
+
+<p>Proses akan dilanjutkan untuk data latih D3, D4, dan epoch-epoch berikutnya hingga seluruh data latih terklasifikasi benar (konvergensi).</p>
+
+<!-- ====================================================================== -->
+<h2>7. Epoch &amp; Konvergensi</h2>
+
+<div class="def-box">
+<strong>Definisi Epoch</strong>
+<p>Satu set lengkap pemrosesan <strong>seluruh baris data latih dari awal sampai akhir</strong> didefinisikan sebagai <strong>1 Epoch</strong>.</p>
+</div>
+
+<div class="def-box">
+<strong>Kondisi Berhenti (Konvergensi)</strong>
+<p>Iterasi pelatihan dihentikan jika sistem mencapai <strong>konvergensi</strong>, yaitu kondisi di mana <strong>selisih perubahan bobot baru dengan bobot lama bernilai 0 pada satu epoch penuh</strong> (artinya semua data latih sudah terklasifikasi benar, tidak ada update bobot lagi).</p>
+</div>
+
+<div class="warn-box">
+<strong>Tidak Selalu Konvergen</strong>
+<p>Algoritma Perceptron <strong>hanya konvergen untuk data yang linearly separable</strong> (seperti AND, OR). Untuk data non-linearly separable (XOR), Perceptron <strong>tidak akan pernah konvergen</strong> &mdash; bobot akan terus berubah selamanya. Ini keterbatasan fundamental yang memicu Backpropagation multilayer (1986).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>8. Quiz</h2>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">1. Aturan Hebb (Hebb Rule) menyatakan bahwa...</div>
+  <button class="opt" onclick="checkQuiz(this)">Jika dua neuron yang saling terhubung aktif pada waktu yang bersamaan, maka bobot sinapsis di antara keduanya harus ditingkatkan (diperkuat)</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot disesuaikan berdasarkan error antara prediksi dan target</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot selalu diturunkan setelah setiap iterasi training</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot tidak pernah berubah setelah inisialisasi</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">2. Mengapa HebbNet gagal saat dilatih pada gerbang AND dengan representasi biner (0/1)?</div>
+  <button class="opt" onclick="checkQuiz(this)">Algoritma Hebb memiliki bug fundamental pada representasi biner</button>
+  <button class="opt" onclick="checkQuiz(this)">Karena perkalian dengan target t=0 menghasilkan &Delta;w=0 (tidak ada update), sehingga bobot hanya ter-update sekali dari data pertama (t=1) dan tidak pernah bisa diturunkan &mdash; akibatnya semua input diklasifikasikan ke kelas 1</button>
+  <button class="opt" onclick="checkQuiz(this)">Representasi biner tidak valid untuk HebbNet</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot awal harusnya tidak nol, melainkan random</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">3. Setelah 4 iterasi data latih AND bipolar, bobot akhir HebbNet yang benar adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>1</sub>=1, w<sub>2</sub>=1, w<sub>0</sub>=1 (ekuivalen x<sub>1</sub>+x<sub>2</sub>+1=0, gagal)</button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>1</sub>=0, w<sub>2</sub>=0, w<sub>0</sub>=0 (tidak ada perubahan)</button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>1</sub>=2, w<sub>2</sub>=2, w<sub>0</sub>=-2 (ekuivalen x<sub>1</sub>+x<sub>2</sub>-1=0, sukses 100%)</button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>1</sub>=3, w<sub>2</sub>=3, w<sub>0</sub>=-3 (overshoot)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">4. Perceptron Learning Rule untuk update bobot saat y &ne; t adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>i</sub>(new) = w<sub>i</sub>(old) + x<sub>i</sub> &middot; t</button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>i</sub>(new) = w<sub>i</sub>(old) - &alpha; &middot; x<sub>i</sub></button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>i</sub>(new) = w<sub>i</sub>(old) + t</button>
+  <button class="opt" onclick="checkQuiz(this)">w<sub>i</sub>(new) = w<sub>i</sub>(old) + &alpha; &middot; [t - y] &middot; x<sub>i</sub></button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">5. Pada Perceptron, jika y = +1 dan t = -1, maka...</div>
+  <button class="opt" onclick="checkQuiz(this)">Bobot dinaikkan (karena prediksi terlalu kecil, harus didekati target)</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot diturunkan (karena prediksi terlalu besar, target lebih kecil dari prediksi)</button>
+  <button class="opt" onclick="checkQuiz(this)">Bobot tidak berubah (learning rate &alpha; = 0)</button>
+  <button class="opt" onclick="checkQuiz(this)">Error random, tidak ada pola</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">6. Definisi "Epoch" dalam pelatihan Perceptron adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Satu kali pemrosesan satu baris data latih</button>
+  <button class="opt" onclick="checkQuiz(this)">Banyaknya data latih yang digunakan</button>
+  <button class="opt" onclick="checkQuiz(this)">Satu set lengkap pemrosesan seluruh baris data latih dari awal sampai akhir (1 epoch = 1x pass through all training data)</button>
+  <button class="opt" onclick="checkQuiz(this)">Iterasi maksimal yang diizinkan sebelum training dihentikan</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Jaringan Syaraf Tiruan" hlm. 36-67 (Hebb Rule, Simulasi HebbNet AND biner/bipolar, Algoritma Perceptron, Simulasi Epoch 1); Hebb (1949) "The Organization of Behavior"; Rosenblatt (1958) "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain".
+</p>
+
+</body>
+</html>
