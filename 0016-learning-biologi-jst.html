@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 16: Learning E/T/P, Sejarah JST &amp; Analogi Biologi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #db2777; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #db2777; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #fce7f3;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #db2777;
+    background: #fdf2f8;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #be185d; background: #fce7f3; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #500724;
+    color: #fce7f3;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85em;
+  }
+  th {
+    background: #db2777;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fce7f3; }
+  td.center { text-align: center; font-weight: 600; }
+  td.predicate { font-family: 'Source Code Pro', monospace; font-weight: 600; color: #9d174d; }
+  td.action { font-family: 'Source Code Pro', monospace; color: #16a34a; font-weight: 600; }
+  td.suboptimal { color: #dc2626; font-weight: 600; }
+  td.optimal { color: #16a34a; font-weight: 600; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #db2777;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #fdf2f8;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #fbcfe8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #fce7f3; border-color: #db2777; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 16: Learning, Sejarah JST &amp; Analogi Biologi</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">Definisi formal Learning (E, T, P) + 9 milestone sejarah JST + padanan sel biologi dengan komponen JST</p>
+
+<!-- ====================================================================== -->
+<h2>1. Definisi Learning dalam AI</h2>
+
+<p>Dalam konteks kecerdasan buatan, proses pembelajaran (<em>learning</em>) didefinisikan secara formal oleh Mitchell (1997) dengan tiga komponen utama:</p>
+
+<div class="def-box">
+<strong>Definisi Formal Learning</strong>
+<p>Sebuah agen/komputer dikatakan <strong>belajar</strong> jika ia mempelajari pengalaman (<strong>Experience - E</strong>) yang berkaitan dengan suatu tugas (<strong>Task - T</strong>). Melalui pengalaman E tersebut, kemampuan agen dalam menyelesaikan tugas T &mdash; yang diukur dengan ukuran kinerja (<strong>Performance Measure - P</strong>) &mdash; akan mengalami <strong>peningkatan</strong>.</p>
+</div>
+
+<p>Tiga komponen ini harus jelas sebelum kita bisa merancang algoritma learning:</p>
+<ul>
+  <li><strong>Task (T)</strong>: masalah yang harus diselesaikan. Bentuknya klasifikasi, regresi, clustering, dll.</li>
+  <li><strong>Experience (E)</strong>: data yang tersedia untuk dipelajari. Bentuknya pasangan input-output, urutan keputusan, dll.</li>
+  <li><strong>Performance Measure (P)</strong>: metrik kuantitatif yang mengukur "sebaik apa" agen menyelesaikan T. P yang meningkat = learning berhasil.</li>
+</ul>
+
+<div class="warn-box">
+<strong>Kesalahan Umum</strong>
+<p>Mahasiswa sering keliru membedakan E, T, dan P. Ingat: <strong>T = masalahnya, E = data yang dipelajari, P = metrik keberhasilannya</strong>. Ketiganya berbeda dan tidak boleh ditukar.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Contoh Kasus: Klasifikasi Bermain Tenis</h2>
+
+<p>Kasus klasik untuk memahami E/T/P adalah memprediksi apakah seseorang akan bermain tenis berdasarkan kondisi cuaca.</p>
+
+<table>
+  <tr>
+    <th>Komponen</th>
+    <th>Isi Konkret</th>
+  </tr>
+  <tr>
+    <td class="predicate">Task (T)</td>
+    <td>Membuat program untuk memprediksi apakah seseorang akan bermain tenis atau tidak pada suatu hari</td>
+  </tr>
+  <tr>
+    <td class="predicate">Experience (E)</td>
+    <td>Data historis cuaca &mdash; terdiri atas fitur <strong>Outlook</strong> (Cuaca), <strong>Temp</strong> (Suhu), <strong>Humidity</strong> (Kelembapan), <strong>Wind</strong> (Angin), dan target <strong>Play</strong> (Main) &mdash; dari hari-hari sebelumnya</td>
+  </tr>
+  <tr>
+    <td class="predicate">Performance (P)</td>
+    <td>Akurasi &mdash; persentase prediksi "main tenis" yang dihasilkan oleh program dibandingkan dengan keputusan riil di lapangan</td>
+  </tr>
+</table>
+
+<p>Logikanya: program awalnya acak (akurasi rendah). DenganExposure ke banyak data historis, program menyesuaikan parameter internalnya sehingga akurasinya naik. Peningkatan P inilah bukti learning terjadi.</p>
+
+<div class="example-box">
+<strong>Insight Penting</strong>
+<p>Data historis tenis yang khas (Weather Play dataset dari Quinlan) memiliki 14 hari dengan 4 fitur. Setelah learning, akurasi tipikal pada data uji adalah 70-90% untuk algoritma sederhana seperti Decision Tree.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Macam-Macam Algoritma Learning Populer</h2>
+
+<p>Ada banyak algoritma learning, tapi empat yang paling sering muncul di literatur AI klasik:</p>
+
+<table>
+  <tr><th>Algoritma</th><th>Karakteristik Singkat</th></tr>
+  <tr><td class="predicate">Jaringan Syaraf Tiruan (ANN)</td><td>Terinspirasi biologi; bobot dipelajari dari data. Cocok untuk pola non-linear.</td></tr>
+  <tr><td class="predicate">Pohon Keputusan (Decision Tree)</td><td>Aturan IF-THEN dalam struktur pohon. Mudah diinterpretasi.</td></tr>
+  <tr><td class="predicate">Naive Bayes Classifier</td><td>Probabilistik; mengasumsikan fitur independen bersyarat terhadap kelas.</td></tr>
+  <tr><td class="predicate">K-Nearest Neighbor (K-NN)</td><td>Instance-based; klasifikasi berdasarkan K tetangga terdekat.</td></tr>
+</table>
+
+<div class="info-box">
+<strong>Konteks JST</strong>
+<p>Empat algoritma ini adalah yang dibahas dalam silabus. Fokus kita di PDF ini adalah <strong>JST</strong> &mdash; yang merupakan keluarga algoritma dengan arsitektur neuron dan bobot yang bisa dilatih.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Sejarah Jaringan Syaraf Tiruan</h2>
+
+<p>JST punya sejarah naik-turun yang panjang. Tabel berikut merangkum 9 milestone penting:</p>
+
+<div class="plot">
+  <svg viewBox="0 0 880 380" width="100%" style="max-width:880px;">
+    <!-- Main horizontal timeline -->
+    <line x1="40" y1="100" x2="840" y2="100" stroke="#db2777" stroke-width="3"/>
+
+    <!-- 1943 - McCulloch-Pitts -->
+    <circle cx="100" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="100" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1943</text>
+    <text x="100" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">McCulloch &amp; Pitts</text>
+    <text x="100" y="148" text-anchor="middle" font-size="9" fill="#52525b">Model neuron</text>
+    <text x="100" y="161" text-anchor="middle" font-size="9" fill="#52525b">pertama (TLU)</text>
+
+    <!-- 1949 - Hebb Rule -->
+    <circle cx="195" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="195" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1949</text>
+    <text x="195" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">Donald Hebb</text>
+    <text x="195" y="148" text-anchor="middle" font-size="9" fill="#52525b">Hebbian Rule</text>
+    <text x="195" y="161" text-anchor="middle" font-size="9" fill="#52525b">"The Organization</text>
+    <text x="195" y="174" text-anchor="middle" font-size="9" fill="#52525b">of Behavior"</text>
+
+    <!-- 1958 - Perceptron -->
+    <circle cx="290" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="290" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1958</text>
+    <text x="290" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">Rosenblatt</text>
+    <text x="290" y="148" text-anchor="middle" font-size="9" fill="#52525b">Perceptron</text>
+    <text x="290" y="161" text-anchor="middle" font-size="9" fill="#52525b">(single-layer)</text>
+
+    <!-- 1969 - AI Winter (red marker) -->
+    <circle cx="385" cy="100" r="9" fill="#dc2626" stroke="white" stroke-width="2"/>
+    <text x="385" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#dc2626">1969</text>
+    <text x="385" y="135" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="700">Minsky &amp; Papert</text>
+    <text x="385" y="148" text-anchor="middle" font-size="9" fill="#52525b">"Perceptrons"</text>
+    <text x="385" y="161" text-anchor="middle" font-size="9" fill="#52525b">=&gt; AI WINTER</text>
+    <text x="385" y="174" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="700">XOR problem</text>
+
+    <!-- 1982 - Hopfield -->
+    <circle cx="480" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="480" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1982</text>
+    <text x="480" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">Hopfield</text>
+    <text x="480" y="148" text-anchor="middle" font-size="9" fill="#52525b">Hopfield Net</text>
+    <text x="480" y="161" text-anchor="middle" font-size="9" fill="#52525b">(recurrent)</text>
+
+    <!-- 1982 - SOM -->
+    <circle cx="575" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="575" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1982</text>
+    <text x="575" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">Kohonen</text>
+    <text x="575" y="148" text-anchor="middle" font-size="9" fill="#52525b">Self-Organizing</text>
+    <text x="575" y="161" text-anchor="middle" font-size="9" fill="#52525b">Maps (SOM)</text>
+
+    <!-- 1986 - Backprop (highlighted green) -->
+    <circle cx="670" cy="100" r="9" fill="#16a34a" stroke="white" stroke-width="2"/>
+    <text x="670" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">1986</text>
+    <text x="670" y="135" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">Backpropagation</text>
+    <text x="670" y="148" text-anchor="middle" font-size="9" fill="#52525b">Rumelhart, Hinton,</text>
+    <text x="670" y="161" text-anchor="middle" font-size="9" fill="#52525b">Williams</text>
+    <text x="670" y="174" text-anchor="middle" font-size="9" fill="#16a34a" font-weight="700">=&gt; AI REBIRTH</text>
+
+    <!-- 1990s - RBF -->
+    <circle cx="745" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="745" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">1990an</text>
+    <text x="745" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">RBF Networks</text>
+    <text x="745" y="148" text-anchor="middle" font-size="9" fill="#52525b">(Radial Basis</text>
+    <text x="745" y="161" text-anchor="middle" font-size="9" fill="#52525b">Function)</text>
+
+    <!-- 2000s - Ensembles/SVM -->
+    <circle cx="825" cy="100" r="8" fill="#db2777" stroke="white" stroke-width="2"/>
+    <text x="825" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">2000an</text>
+    <text x="825" y="135" text-anchor="middle" font-size="10" fill="#1a1a1a">Ensembles</text>
+    <text x="825" y="148" text-anchor="middle" font-size="10" fill="#1a1a1a">&amp; SVM</text>
+    <text x="825" y="161" text-anchor="middle" font-size="9" fill="#52525b">(mendominasi)</text>
+
+    <!-- Era labels -->
+    <line x1="40" y1="220" x2="338" y2="220" stroke="#9d174d" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="189" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#9d174d">ERA 1: Fondasi &amp; Kejatuhan (1943-1969)</text>
+    <text x="189" y="258" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Model awal berhasil, tapi keterbatasan Perceptron single-layer</text>
+    <text x="189" y="273" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">dibuktikan Minsky &amp; Papert =&gt; hibernasi 13 tahun</text>
+
+    <line x1="338" y1="290" x2="838" y2="290" stroke="#16a34a" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="588" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#16a34a">ERA 2: Kebangkitan Kembali (1982-sekarang)</text>
+    <text x="588" y="328" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Backpropagation 1986 menjadi titik balik. JST multilayer</text>
+    <text x="588" y="343" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">mengatasi XOR dan menjadi fondasi deep learning modern.</text>
+
+    <text x="440" y="370" text-anchor="middle" font-size="10" fill="#78716c">Sumber: Fausett (1994) &amp; Haykin (2005)</text>
+  </svg>
+  <div class="plot-caption">Gambar 1. Timeline 9 milestone JST (1943-2000an). Merah = AI Winter, Hijau = AI Rebirth.</div>
+</div>
+
+<p>Tiga fase besar yang bisa disimpulkan dari timeline ini:</p>
+<ol>
+  <li><strong>1943-1958: Fondasi Awal</strong>. McCulloch-Pitts, Hebb, Rosenblatt. Optimisme tinggi.</li>
+  <li><strong>1969-1981: AI Winter</strong>. Buku "Perceptrons" (Minsky &amp; Papert) membuktikan single-layer Perceptron TIDAK bisa menyelesaikan XOR (non-linearly separable). Riset JST vakum ~13 tahun.</li>
+  <li><strong>1982-sekarang: Kebangkitan</strong>. Backpropagation (1986) + multilayer network. JST kembali populer dan jadi cikal bakal deep learning modern.</li>
+</ol>
+
+<!-- ====================================================================== -->
+<h2>5. Analogi Jaringan Syaraf Biologi vs JST</h2>
+
+<p>JST dirancang dengan meniru cara kerja jaringan saraf biologis pada otak manusia &mdash; yang tersusun atas lebih dari <strong>10 miliar sel saraf (neuron)</strong> untuk memproses stimulus menjadi respon.</p>
+
+<h3>5.1 Empat Komponen Sel Saraf Biologis</h3>
+
+<table>
+  <tr><th>Komponen Biologis</th><th>Fungsi</th></tr>
+  <tr><td class="predicate">Dendrit</td><td>Serabut pendek yang menerima sinyal masukan (impuls elektrik) dari neuron lain melalui celah sinapsis.</td></tr>
+  <tr><td class="predicate">Soma (Badan Sel)</td><td>Pusat pemroses utama yang menjumlahkan sinyal dari dendrit dan menentukan apakah sel menghasilkan output aktivasi.</td></tr>
+  <tr><td class="predicate">Akson</td><td>Saluran panjang yang meneruskan sinyal output aktivasi dari soma ke neuron lain melalui celah sinapsis.</td></tr>
+  <tr><td class="predicate">Sinapsis</td><td>Jembatan penghubung kimia/listrik antar neuron.</td></tr>
+</table>
+
+<h3>5.2 Pemetaan ke JST</h3>
+
+<p>Berikut tabel pemetaan langsung antara komponen biologis dan komponen di JST:</p>
+
+<table>
+  <tr><th>Jaringan Syaraf Biologi</th><th>Jaringan Syaraf Tiruan (JST)</th></tr>
+  <tr><td class="predicate">Badan Sel (Soma)</td><td>Neuron / Node (Unit Pemroses)</td></tr>
+  <tr><td class="predicate">Dendrit</td><td>Jalur Masukan (Input Unit / x<sub>i</sub>)</td></tr>
+  <tr><td class="predicate">Akson</td><td>Jalur Keluaran (Output Unit / y)</td></tr>
+  <tr><td class="predicate">Sinapsis</td><td>Bobot Penghubung (Weight / w<sub>i</sub>)</td></tr>
+</table>
+
+<div class="def-box">
+<strong>Inti Pemetaan</strong>
+<p>Sinyal masuk &mdash; yang secara biologis diterima dendrit &mdash; di JST direpresentasikan sebagai <strong>input x<sub>i</sub></strong>. Kekuatan sambungan sinapsis direpresentasikan sebagai <strong>bobot w<sub>i</sub></strong>. Penjumlahan + aktivasi terjadi di <strong>neuron</strong>. Output aktivasi dikirim lewat <strong>jalur output</strong> ke neuron berikutnya.</p>
+</div>
+
+<h3>5.3 Visualisasi Skema</h3>
+
+<div class="plot">
+  <svg viewBox="0 0 760 230" width="100%" style="max-width:760px;">
+    <!-- BIOLOGI side -->
+    <text x="180" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#9d174d">BIOLOGI</text>
+    <!-- Dendrit -->
+    <line x1="40" y1="100" x2="120" y2="100" stroke="#db2777" stroke-width="3"/>
+    <line x1="40" y1="80" x2="120" y2="100" stroke="#db2777" stroke-width="3"/>
+    <line x1="40" y1="120" x2="120" y2="100" stroke="#db2777" stroke-width="3"/>
+    <text x="80" y="60" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Dendrit</text>
+    <!-- Soma -->
+    <circle cx="160" cy="100" r="30" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+    <text x="160" y="105" text-anchor="middle" font-size="11" font-weight="700" fill="#9d174d">Soma</text>
+    <text x="160" y="145" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Badan Sel</text>
+    <!-- Axon -->
+    <line x1="190" y1="100" x2="290" y2="100" stroke="#db2777" stroke-width="3"/>
+    <text x="240" y="85" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Akson</text>
+    <!-- Synapse -->
+    <circle cx="305" cy="100" r="5" fill="#9d174d"/>
+    <circle cx="320" cy="100" r="5" fill="#9d174d"/>
+    <text x="312" y="125" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Sinapsis</text>
+
+    <!-- Arrow -->
+    <text x="380" y="105" text-anchor="middle" font-size="32" fill="#db2777" font-weight="700">&rarr;</text>
+
+    <!-- JST side -->
+    <text x="580" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#9d174d">JST</text>
+    <!-- Input -->
+    <text x="450" y="60" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Input x_1, x_2, x_3</text>
+    <circle cx="430" cy="100" r="12" fill="white" stroke="#db2777" stroke-width="2"/>
+    <text x="430" y="104" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">x1</text>
+    <circle cx="430" cy="130" r="12" fill="white" stroke="#db2777" stroke-width="2"/>
+    <text x="430" y="134" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">x2</text>
+    <circle cx="430" cy="160" r="12" fill="white" stroke="#db2777" stroke-width="2"/>
+    <text x="430" y="164" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">x3</text>
+    <!-- Weights -->
+    <line x1="445" y1="100" x2="510" y2="115" stroke="#9d174d" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="478" y="103" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">w1</text>
+    <line x1="445" y1="130" x2="510" y2="115" stroke="#9d174d" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="478" y="128" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">w2</text>
+    <line x1="445" y1="160" x2="510" y2="115" stroke="#9d174d" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="478" y="155" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">w3</text>
+    <!-- Neuron -->
+    <circle cx="540" cy="115" r="22" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+    <text x="540" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="#9d174d">&Sigma; f</text>
+    <text x="540" y="155" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Neuron</text>
+    <!-- Output -->
+    <line x1="562" y1="115" x2="700" y2="115" stroke="#db2777" stroke-width="3"/>
+    <text x="640" y="105" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">Output y</text>
+    <text x="640" y="135" text-anchor="middle" font-size="11" fill="#52525b" font-style="italic">(jalur output)</text>
+  </svg>
+  <div class="plot-caption">Gambar 2. Pemetaan komponen biologi (dendrit, soma, akson, sinapsis) ke komponen JST (input, neuron, output, bobot).</div>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Empat Asumsi Dasar JST</h2>
+
+<p>Meskipun JST terinspirasi dari biologi, JST bukan replika sempurna. Ada empat asumsi yang mendasari cara kerja JST:</p>
+
+<ol>
+  <li><strong>Pemrosesan terjadi pada banyak elemen sederhana</strong> bernama neuron/node.</li>
+  <li><strong>Sinyal dikirimkan antar neuron</strong> melalui link penghubung (analog dengan sinapsis).</li>
+  <li><strong>Setiap link memiliki nilai Bobot (w)</strong> yang berfungsi memperkuat atau memperlemah sinyal yang lewat.</li>
+  <li><strong>Setiap neuron mengaplikasikan Fungsi Aktivasi (f)</strong> pada total jumlahan input berbobot untuk menentukan nilai output akhir.</li>
+</ol>
+
+<div class="warn-box">
+<strong>Bukan Asumsi JST</strong>
+<p>JST TIDAK memerlukan: kesadaran, memori jangka panjang, emosi, atau pemrosesan sekuensial seperti otak biologis. JST adalah model matematis &mdash; bukan tiruan sempurna.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>7. Quiz</h2>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">1. Dalam definisi formal Learning, ketiga komponen E, T, dan P berturut-turut adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">E = program komputer, T = data historis, P = output prediksi</button>
+  <button class="opt" onclick="checkQuiz(this)">E = Experience (pengalaman/data), T = Task (tugas), P = Performance Measure (ukuran kinerja)</button>
+  <button class="opt" onclick="checkQuiz(this)">E = Error, T = Target, P = Prediction</button>
+  <button class="opt" onclick="checkQuiz(this)">E = Epoch, T = Training, P = Prediction</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">2. Pada kasus klasifikasi bermain tenis, manakah pemetaan E, T, P yang paling benar?</div>
+  <button class="opt" onclick="checkQuiz(this)">T = akurasi prediksi, E = program komputer, P = data historis cuaca</button>
+  <button class="opt" onclick="checkQuiz(this)">T = program untuk random guess, E = random data, P = random</button>
+  <button class="opt" onclick="checkQuiz(this)">T = memprediksi apakah seseorang bermain tenis, E = data historis cuaca, P = akurasi prediksi</button>
+  <button class="opt" onclick="checkQuiz(this)">T = main tenis secara fisik, E = akurasi, P = main tenis di lapangan</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">3. Empat algoritma learning yang populer (sesuai PDF) adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">SVM, K-means, Linear Regression, Logistic Regression</button>
+  <button class="opt" onclick="checkQuiz(this)">Logika Fuzzy, GSP, Certainty Factor, Bayes</button>
+  <button class="opt" onclick="checkQuiz(this)">Random Forest, Gradient Boosting, AdaBoost, XGBoost</button>
+  <button class="opt" onclick="checkQuiz(this)">Jaringan Syaraf Tiruan (ANN), Decision Tree, Naive Bayes, K-Nearest Neighbor (K-NN)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">4. Model neuron pertama (McCulloch-Pitts Neuron) dirumuskan pada tahun...</div>
+  <button class="opt" onclick="checkQuiz(this)">1949 (Hebb Rule)</button>
+  <button class="opt" onclick="checkQuiz(this)">1943 (McCulloch &amp; Pitts)</button>
+  <button class="opt" onclick="checkQuiz(this)">1958 (Rosenblatt Perceptron)</button>
+  <button class="opt" onclick="checkQuiz(this)">1969 (Minsky &amp; Papert)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">5. Algoritma Backpropagation yang menjadi titik balik kebangkitan JST dipublikasikan pada tahun...</div>
+  <button class="opt" onclick="checkQuiz(this)">1969 (Minsky &amp; Papert - buku Perceptrons)</button>
+  <button class="opt" onclick="checkQuiz(this)">1982 (Hopfield Networks)</button>
+  <button class="opt" onclick="checkQuiz(this)">1986 (Rumelhart, Hinton, Williams)</button>
+  <button class="opt" onclick="checkQuiz(this)">1958 (Rosenblatt Perceptron)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">6. Komponen sel saraf biologi yang dipetakan menjadi "Bobot (weight)" di JST adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Sinapsis &mdash; karena sinapsis adalah penghubung antar neuron yang "ketebalannya" menentukan kekuatan sinyal</button>
+  <button class="opt" onclick="checkQuiz(this)">Soma (badan sel) &mdash; karena soma pusat pemrosesan sama dengan neuron</button>
+  <button class="opt" onclick="checkQuiz(this)">Akson &mdash; karena akson jalur output sama dengan jalur output JST</button>
+  <button class="opt" onclick="checkQuiz(this)">Dendrit &mdash; karena dendrit jalur input sama dengan input JST</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Jaringan Syaraf Tiruan" hlm. 1-9 (Definisi Learning, Algoritma Learning, Sejarah, Analogi Biologi); Mitchell (1997) "Machine Learning" ch. 1; Fausett (1994) "Fundamentals of Neural Networks" ch. 1.
+</p>
+
+</body>
+</html>
