@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 17: Arsitektur JST &amp; Fungsi Aktivasi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Source+Code+Pro&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fcfcfc;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin-top: 2.2rem; margin-bottom: 0.6rem; }
+  h1 { font-size: 2.2rem; border-bottom: 2px solid #db2777; padding-bottom: 0.4rem; margin-top: 1rem; }
+  h2 { font-size: 1.5rem; color: #db2777; }
+  h3 { font-size: 1.2rem; color: #333; margin-top: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.8rem; }
+  li { margin-bottom: 0.3rem; }
+  strong { color: #111; }
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: #fce7f3;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* --- Boxes --- */
+  .info-box, .example-box, .def-box, .warn-box {
+    border-left: 4px solid #db2777;
+    background: #fdf2f8;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+  }
+  .example-box { border-left-color: #16a34a; background: #f0fdf4; }
+  .warn-box { border-left-color: #dc2626; background: #fef2f2; }
+  .def-box { border-left-color: #be185d; background: #fce7f3; }
+  .info-box strong, .example-box strong, .warn-box strong, .def-box strong { display: block; margin-bottom: 0.2rem; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* --- Formula --- */
+  .formula {
+    font-family: 'Source Code Pro', monospace;
+    background: #500724;
+    color: #fce7f3;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85em;
+  }
+  th {
+    background: #db2777;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fce7f3; }
+  td.center { text-align: center; font-weight: 600; }
+  td.predicate { font-family: 'Source Code Pro', monospace; font-weight: 600; color: #9d174d; }
+  td.action { font-family: 'Source Code Pro', monospace; color: #16a34a; font-weight: 600; }
+  td.suboptimal { color: #dc2626; font-weight: 600; }
+  td.optimal { color: #16a34a; font-weight: 600; }
+
+  /* --- SVG Plot --- */
+  .plot {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  .plot-caption { font-size: 0.85em; color: #52525b; margin-top: 0.4rem; font-style: italic; }
+
+  .plot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.2rem 0;
+  }
+
+  /* --- Comparison Grid --- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .comp-grid .col {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .comp-grid .col h4 { font-size: 0.95em; margin-bottom: 0.5rem; }
+
+  /* --- Quiz Box --- */
+  .quiz-box {
+    border: 2px solid #db2777;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    background: #fdf2f8;
+  }
+  .quiz-box .q { font-weight: 600; margin-bottom: 0.6rem; }
+  .quiz-box .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    border: 1px solid #fbcfe8;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quiz-box .opt:hover { background: #fce7f3; border-color: #db2777; }
+  .quiz-box .opt.correct { background: #dcfce7; border-color: #16a34a; }
+  .quiz-box .opt.wrong { background: #fecaca; border-color: #dc2626; }
+  .quiz-box .feedback { margin-top: 0.6rem; padding: 0.5rem; border-radius: 4px; font-size: 0.85em; display: none; }
+  .quiz-box .feedback.show { display: block; }
+  .quiz-box .feedback.correct { background: #dcfce7; border: 1px solid #16a34a; }
+  .quiz-box .feedback.wrong { background: #fecaca; border: 1px solid #dc2626; }
+
+  @media (max-width: 700px) {
+    body { font-size: 16px; padding: 1.2rem; }
+    .comp-grid, .plot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Lesson 17: Arsitektur JST &amp; Fungsi Aktivasi</h1>
+<p style="font-size:1.1rem; color:#52525b; margin-top:-0.3rem;">3 penentu perilaku JST, klasifikasi arsitektur (single/multi, feedforward/recurrent), dan 4 fungsi aktivasi</p>
+
+<!-- ====================================================================== -->
+<h2>1. Tiga Penentu Perilaku JST</h2>
+
+<p>Kemampuan dan perilaku sebuah JST sangat ditentukan oleh tiga hal utama. Pahami ketiganya sebelum masuk ke detail arsitektur:</p>
+
+<ol>
+  <li><strong>Pola Hubungan Antar Neuron (Arsitektur Jaringan)</strong> &mdash; menentukan topologi: single vs multilayer, feedforward vs recurrent.</li>
+  <li><strong>Fungsi Aktivasi Neuron</strong> &mdash; menentukan transformasi net input menjadi output (linear/non-linear, range output).</li>
+  <li><strong>Metode Pelatihan (Training/Learning)</strong> &mdash; menentukan algoritma untuk mencari bobot optimal (Hebb, Perceptron, Backprop, dll).</li>
+</ol>
+
+<div class="info-box">
+<strong>Inti Konsep</strong>
+<p>Ketiga faktor ini <strong>terkait erat</strong>: arsitektur menentukan "bentuk" jaringan, aktivasi menentukan "jenis output" yang bisa dihasilkan, dan training menentukan "kualitas" bobot akhir. Mengubah salah satu = perilaku JST berubah drastis.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>2. Struktur Lapisan (Layer) JST</h2>
+
+<table>
+  <tr><th>Layer</th><th>Fungsi</th><th>Penentuan Jumlah Node</th></tr>
+  <tr>
+    <td class="predicate">Input Layer</td>
+    <td>Menerima masukan dari luar berupa fitur-fitur data.</td>
+    <td>Sesuai dengan <strong>jumlah fitur</strong> data. Misal data dengan 2 fitur (Mass, Speed) &rarr; 2 node input.</td>
+  </tr>
+  <tr>
+    <td class="predicate">Hidden Layer</td>
+    <td>Berada di antara input dan output; melakukan transformasi non-linear.</td>
+    <td>Tidak ada rumus pasti. Ditentukan melalui <strong>eksperimen (by experiment)</strong>.</td>
+  </tr>
+  <tr>
+    <td class="predicate">Output Layer</td>
+    <td>Menghasilkan prediksi akhir kelas atau nilai.</td>
+    <td>Sesuai dengan <strong>jenis keluaran</strong> target. Binary classification &rarr; 1 node output; 10-kelas &rarr; 10 node.</td>
+  </tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>3. Klasifikasi Arsitektur JST</h2>
+
+<h3>3.1 Berdasarkan Jumlah Lapisan</h3>
+
+<div class="comp-grid">
+  <div class="col">
+    <h4 style="color:#db2777;">Single-Layer Network</h4>
+    <p>Hanya memiliki <strong>satu lapisan bobot penghubung</strong> &mdash; langsung dari input ke output. Tidak ada hidden layer. Contoh klasik: Perceptron (1958), HebbNet.</p>
+    <div class="plot" style="background:#fdf2f8; padding:0.5rem;">
+      <svg viewBox="0 0 280 130" width="100%" style="max-width:280px;">
+        <!-- Input nodes -->
+        <circle cx="50" cy="40" r="14" fill="white" stroke="#db2777" stroke-width="2"/>
+        <text x="50" y="44" text-anchor="middle" font-size="11" font-weight="700" fill="#9d174d">x1</text>
+        <circle cx="50" cy="90" r="14" fill="white" stroke="#db2777" stroke-width="2"/>
+        <text x="50" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#9d174d">x2</text>
+        <text x="50" y="125" text-anchor="middle" font-size="10" fill="#52525b" font-style="italic">Input</text>
+        <!-- Weights (single layer) -->
+        <line x1="64" y1="40" x2="216" y2="65" stroke="#9d174d" stroke-width="1.5"/>
+        <text x="140" y="48" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">w1</text>
+        <line x1="64" y1="90" x2="216" y2="65" stroke="#9d174d" stroke-width="1.5"/>
+        <text x="140" y="82" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">w2</text>
+        <!-- Output node -->
+        <circle cx="230" cy="65" r="16" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+        <text x="230" y="69" text-anchor="middle" font-size="11" font-weight="700" fill="#9d174d">y</text>
+        <text x="230" y="100" text-anchor="middle" font-size="10" fill="#52525b" font-style="italic">Output</text>
+      </svg>
+    </div>
+  </div>
+  <div class="col">
+    <h4 style="color:#db2777;">Multilayer Network</h4>
+    <p>Memiliki <strong>satu atau lebih hidden layer</strong> di antara input dan output. Mampu menyelesaikan masalah non-linear (mis. XOR). Contoh: Backpropagation network (1986+).</p>
+    <div class="plot" style="background:#fdf2f8; padding:0.5rem;">
+      <svg viewBox="0 0 280 130" width="100%" style="max-width:280px;">
+        <!-- Input -->
+        <circle cx="30" cy="40" r="11" fill="white" stroke="#db2777" stroke-width="2"/>
+        <text x="30" y="44" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">x1</text>
+        <circle cx="30" cy="90" r="11" fill="white" stroke="#db2777" stroke-width="2"/>
+        <text x="30" y="94" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">x2</text>
+        <!-- Hidden layer (2 nodes) -->
+        <circle cx="135" cy="40" r="11" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+        <text x="135" y="44" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">h1</text>
+        <circle cx="135" cy="90" r="11" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+        <text x="135" y="94" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d">h2</text>
+        <!-- Connections input -> hidden -->
+        <line x1="42" y1="40" x2="123" y2="40" stroke="#9d174d" stroke-width="1"/>
+        <line x1="42" y1="40" x2="123" y2="90" stroke="#9d174d" stroke-width="1"/>
+        <line x1="42" y1="90" x2="123" y2="40" stroke="#9d174d" stroke-width="1"/>
+        <line x1="42" y1="90" x2="123" y2="90" stroke="#9d174d" stroke-width="1"/>
+        <!-- Hidden -> output -->
+        <line x1="147" y1="40" x2="240" y2="65" stroke="#9d174d" stroke-width="1"/>
+        <line x1="147" y1="90" x2="240" y2="65" stroke="#9d174d" stroke-width="1"/>
+        <!-- Output -->
+        <circle cx="252" cy="65" r="13" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+        <text x="252" y="69" text-anchor="middle" font-size="10" font-weight="700" fill="#9d174d">y</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<h3>3.2 Berdasarkan Aliran Sinyal</h3>
+
+<table>
+  <tr><th>Jenis</th><th>Karakteristik Aliran</th><th>Contoh</th></tr>
+  <tr>
+    <td class="predicate">Feedforward</td>
+    <td>Aliran sinyal berjalan <strong>searah</strong> dari input &rarr; output, <strong>tanpa loop/umpan balik</strong>.</td>
+    <td>Perceptron, HebbNet, McCulloch-Pitts, Backpropagation</td>
+  </tr>
+  <tr>
+    <td class="predicate">Recurrent</td>
+    <td>Memiliki <strong>jalur umpan balik (feedback loops)</strong> &mdash; output dari suatu neuron bisa kembali menjadi input bagi neuron di lapisan sebelumnya atau sama.</td>
+    <td>Hopfield Network (1982), RNN modern, LSTM</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+<strong>Perhatikan untuk UAS</strong>
+<p>Yang kita bahas di PDF ini (MCP, HebbNet, Perceptron) semuanya adalah <strong>Single-Layer Feedforward</strong>. Kelemahan utama single-layer: tidak bisa menyelesaikan masalah non-linear (akan dibuktikan di Lesson 18 pada kasus XOR).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. Net Input dan Output Neuron</h2>
+
+<p>Setelah arsitektur, komponen penting berikutnya adalah cara neuron memproses input menjadi output. Ada dua langkah:</p>
+
+<p><strong>1. Net Input (z)</strong> &mdash; jumlah berbobot (sum of product):</p>
+<div class="formula">
+z = x<sub>1</sub>&middot;w<sub>1</sub> + x<sub>2</sub>&middot;w<sub>2</sub> + ... + x<sub>n</sub>&middot;w<sub>n</sub>
+<br>
+z = &Sigma;<sub>i=1</sub><sup>n</sup> x<sub>i</sub> &middot; w<sub>i</sub>
+</div>
+
+<p><strong>2. Output (y)</strong> &mdash; masukkan net input ke fungsi aktivasi <code>f</code>:</p>
+<div class="formula">
+y = f(z)
+</div>
+
+<div class="example-box">
+<strong>Contoh Numerik</strong>
+<p>Misal: x<sub>1</sub>=2, w<sub>1</sub>=0,5; x<sub>2</sub>=3, w<sub>2</sub>=0,3; x<sub>3</sub>=1, w<sub>3</sub>=0,2.</p>
+<p>Net input:</p>
+<div class="formula">z = (2)(0,5) + (3)(0,3) + (1)(0,2) = 1,0 + 0,9 + 0,2 = <strong>2,1</strong></div>
+<p>Maka output y = f(2,1). Nilai f(2,1) tergantung jenis fungsi aktivasi yang dipilih (lihat bagian 5).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>5. Empat Fungsi Aktivasi Populer</h2>
+
+<p>Fungsi aktivasi menentukan bagaimana z ditransformasi menjadi y. Empat yang paling sering dipakai:</p>
+
+<div class="plot-grid">
+  <!-- 1. Binary Step -->
+  <div class="plot">
+    <svg viewBox="0 0 360 220" width="100%" style="max-width:360px;">
+      <!-- Axes: x-axis at pixel_y=120, y=1 at pixel_y=60, y=0 at pixel_y=120 -->
+      <line x1="40" y1="120" x2="320" y2="120" stroke="#52525b" stroke-width="1"/>
+      <line x1="180" y1="20" x2="180" y2="200" stroke="#52525b" stroke-width="1"/>
+      <!-- Y ticks (0, 1) -->
+      <line x1="175" y1="60" x2="180" y2="60" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="64" text-anchor="end" font-size="10" fill="#52525b">1</text>
+      <line x1="175" y1="120" x2="180" y2="120" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="124" text-anchor="end" font-size="10" fill="#52525b">0</text>
+      <!-- X ticks -->
+      <text x="180" y="138" text-anchor="middle" font-size="10" fill="#52525b">0</text>
+      <text x="100" y="138" text-anchor="middle" font-size="10" fill="#52525b">-2</text>
+      <text x="260" y="138" text-anchor="middle" font-size="10" fill="#52525b">2</text>
+      <!-- Axis labels -->
+      <text x="340" y="124" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">x</text>
+      <text x="50" y="35" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">y</text>
+      <!-- Binary step: y=0 for x<0, y=1 for x>=0 -->
+      <polyline points="60,120 180,120 180,60 300,60" fill="none" stroke="#db2777" stroke-width="2.5"/>
+      <!-- Labels -->
+      <text x="180" y="50" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">jump di x=0</text>
+    </svg>
+    <div class="plot-caption">Gambar 1. Binary Step: y=0 jika x&lt;0, y=1 jika x&ge;0.</div>
+  </div>
+
+  <!-- 2. Sigmoid -->
+  <div class="plot">
+    <svg viewBox="0 0 360 220" width="100%" style="max-width:360px;">
+      <line x1="40" y1="120" x2="320" y2="120" stroke="#52525b" stroke-width="1"/>
+      <line x1="180" y1="20" x2="180" y2="200" stroke="#52525b" stroke-width="1"/>
+      <line x1="175" y1="60" x2="180" y2="60" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="64" text-anchor="end" font-size="10" fill="#52525b">1</text>
+      <line x1="175" y1="120" x2="180" y2="120" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="124" text-anchor="end" font-size="10" fill="#52525b">0</text>
+      <text x="180" y="138" text-anchor="middle" font-size="10" fill="#52525b">0</text>
+      <text x="100" y="138" text-anchor="middle" font-size="10" fill="#52525b">-2</text>
+      <text x="260" y="138" text-anchor="middle" font-size="10" fill="#52525b">2</text>
+      <text x="340" y="124" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">x</text>
+      <text x="50" y="35" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">y</text>
+      <!-- Sigmoid curve 1/(1+e^-x) at step 0.5 -->
+      <polyline points="60,117 80,115 100,113 120,109 140,104 160,97 180,90 200,83 220,76 240,71 260,67 280,65 300,63" fill="none" stroke="#db2777" stroke-width="2.5"/>
+      <!-- Horizontal asymptote at y=1 -->
+      <line x1="40" y1="60" x2="320" y2="60" stroke="#52525b" stroke-width="0.5" stroke-dasharray="3 2"/>
+      <!-- Mid point at (0, 0.5) = (180, 90) -->
+      <circle cx="180" cy="90" r="3" fill="#16a34a"/>
+      <text x="190" y="85" font-size="10" fill="#16a34a" font-weight="700">(0, 0.5)</text>
+    </svg>
+    <div class="plot-caption">Gambar 2. Sigmoid: y=1/(1+e^(-x)), output (0,1).</div>
+  </div>
+
+  <!-- 3. tanh -->
+  <div class="plot">
+    <svg viewBox="0 0 360 220" width="100%" style="max-width:360px;">
+      <line x1="40" y1="120" x2="320" y2="120" stroke="#52525b" stroke-width="1"/>
+      <line x1="180" y1="20" x2="180" y2="200" stroke="#52525b" stroke-width="1"/>
+      <line x1="175" y1="60" x2="180" y2="60" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="64" text-anchor="end" font-size="10" fill="#52525b">1</text>
+      <line x1="175" y1="120" x2="180" y2="120" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="124" text-anchor="end" font-size="10" fill="#52525b">0</text>
+      <line x1="175" y1="180" x2="180" y2="180" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="184" text-anchor="end" font-size="10" fill="#52525b">-1</text>
+      <text x="180" y="138" text-anchor="middle" font-size="10" fill="#52525b">0</text>
+      <text x="100" y="138" text-anchor="middle" font-size="10" fill="#52525b">-2</text>
+      <text x="260" y="138" text-anchor="middle" font-size="10" fill="#52525b">2</text>
+      <text x="340" y="124" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">x</text>
+      <text x="50" y="35" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">y</text>
+      <!-- tanh curve: y=0 at (180,120), y=1 asymp at 60, y=-1 asymp at 180 -->
+      <polyline points="60,179 80,179 100,178 120,174 140,166 160,148 180,120 200,92 220,74 240,66 260,62 280,61 300,60" fill="none" stroke="#db2777" stroke-width="2.5"/>
+      <line x1="40" y1="60" x2="320" y2="60" stroke="#52525b" stroke-width="0.5" stroke-dasharray="3 2"/>
+      <line x1="40" y1="180" x2="320" y2="180" stroke="#52525b" stroke-width="0.5" stroke-dasharray="3 2"/>
+      <circle cx="180" cy="120" r="3" fill="#16a34a"/>
+      <text x="190" y="115" font-size="10" fill="#16a34a" font-weight="700">(0, 0)</text>
+    </svg>
+    <div class="plot-caption">Gambar 3. tanh: y=(e^x - e^(-x))/(e^x + e^(-x)), output (-1,1).</div>
+  </div>
+
+  <!-- 4. ReLU -->
+  <div class="plot">
+    <svg viewBox="0 0 360 220" width="100%" style="max-width:360px;">
+      <line x1="40" y1="120" x2="320" y2="120" stroke="#52525b" stroke-width="1"/>
+      <line x1="180" y1="20" x2="180" y2="200" stroke="#52525b" stroke-width="1"/>
+      <line x1="175" y1="60" x2="180" y2="60" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="64" text-anchor="end" font-size="10" fill="#52525b">1</text>
+      <line x1="175" y1="120" x2="180" y2="120" stroke="#52525b" stroke-width="1"/>
+      <text x="170" y="124" text-anchor="end" font-size="10" fill="#52525b">0</text>
+      <text x="180" y="138" text-anchor="middle" font-size="10" fill="#52525b">0</text>
+      <text x="100" y="138" text-anchor="middle" font-size="10" fill="#52525b">-2</text>
+      <text x="260" y="138" text-anchor="middle" font-size="10" fill="#52525b">2</text>
+      <text x="340" y="124" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">x</text>
+      <text x="50" y="35" text-anchor="start" font-size="11" font-weight="700" fill="#9d174d">y</text>
+      <!-- ReLU: y=0 for x<0, y=x for x>=0. Slope 60/40=1.5 in pixel. Line goes from (0,0)=(180,120) to (1,1)=(220,60) -->
+      <polyline points="60,120 180,120 220,60" fill="none" stroke="#db2777" stroke-width="2.5"/>
+      <circle cx="180" cy="120" r="3" fill="#16a34a"/>
+      <text x="190" y="115" font-size="10" fill="#16a34a" font-weight="700">(0, 0)</text>
+      <text x="225" y="55" font-size="10" fill="#52525b" font-style="italic">y=x untuk x&ge;0</text>
+    </svg>
+    <div class="plot-caption">Gambar 4. ReLU: y=max(0, x), output [0, &infin;). Garis y=x berlanjut ke atas untuk x&gt;1 (di luar area plot).</div>
+  </div>
+</div>
+
+<table>
+  <tr><th>Fungsi</th><th>Formula</th><th>Range Output</th><th>Karakteristik</th></tr>
+  <tr>
+    <td class="predicate">Binary Step</td>
+    <td>y = 1 jika z &ge; 0; 0 jika z &lt; 0</td>
+    <td>{0, 1}</td>
+    <td>Sederhana, non-diferentiable di z=0. Cocok untuk klasifikasi biner.</td>
+  </tr>
+  <tr>
+    <td class="predicate">Sigmoid / Logistic</td>
+    <td>&sigma;(x) = 1 / (1 + e<sup>-x</sup>)</td>
+    <td>(0, 1)</td>
+    <td>Smooth (diferentiable), S-shape. Masalah: vanishing gradient untuk |x| besar.</td>
+  </tr>
+  <tr>
+    <td class="predicate">tanh</td>
+    <td>tanh(x) = (e<sup>x</sup> - e<sup>-x</sup>) / (e<sup>x</sup> + e<sup>-x</sup>)</td>
+    <td>(-1, 1)</td>
+    <td>Sama seperti sigmoid tapi zero-centered. Versi PDF: tanh(x/2) = (1-e<sup>-x</sup>)/(1+e<sup>-x</sup>).</td>
+  </tr>
+  <tr>
+    <td class="predicate">ReLU</td>
+    <td>ReLU(x) = max(0, x)</td>
+    <td>[0, &infin;)</td>
+    <td>Komputasi cepat, tidak ada vanishing gradient untuk x&gt;0. Default untuk hidden layer modern.</td>
+  </tr>
+</table>
+
+<div class="def-box">
+<strong>Catatan Formula tanh di PDF</strong>
+<p>PDF menuliskan <code>tanh(x/2) = (1 - e<sup>-x</sup>) / (1 + e<sup>-x</sup>)</code>. Bentuk ini ekuivalen dengan tanh standar. Untuk konsistensi dengan notasi umum, kita pakai <code>tanh(x) = (e<sup>x</sup> - e<sup>-x</sup>) / (e<sup>x</sup> + e<sup>-x</sup>)</code>.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>6. Contoh Aplikasi: Klasifikasi Jenis Pesawat</h2>
+
+<p>Mari lihat aplikasi konkret. Misalkan kita ingin mengklasifikasikan jenis pesawat terbang ke kelas <strong>Bomber</strong> (label +1) atau <strong>Fighter</strong> (label -1):</p>
+
+<table>
+  <tr>
+    <th>Aspek</th>
+    <th>Spesifikasi</th>
+  </tr>
+  <tr>
+    <td class="predicate">Task (T)</td>
+    <td>Klasifikasi jenis pesawat &rarr; Bomber (+1) atau Fighter (-1)</td>
+  </tr>
+  <tr>
+    <td class="predicate">Fitur Input</td>
+    <td>Mass (x<sub>1</sub>) dan Speed (x<sub>2</sub>) &mdash; maka <strong>2 node input</strong></td>
+  </tr>
+  <tr>
+    <td class="predicate">Output (y)</td>
+    <td>1 node output untuk menghasilkan prediksi kelas (+1 atau -1)</td>
+  </tr>
+  <tr>
+    <td class="predicate">Training</td>
+    <td>Cari kombinasi bobot w<sub>1</sub> dan w<sub>2</sub> yang memisahkan data Bomber dan Fighter secara akurat</td>
+  </tr>
+</table>
+
+<p>Setelah training, JST akan memiliki bobot (w<sub>1</sub>, w<sub>2</sub>) yang merepresentasikan "garis pemisah" terbaik antara kedua kelas. Inilah yang disebut <strong>decision boundary</strong> &mdash; detail formula akan dibahas di Lesson 18.</p>
+
+<!-- ====================================================================== -->
+<h2>7. Quiz</h2>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">1. Tiga hal yang menentukan kemampuan dan perilaku sebuah JST adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Arsitektur jaringan, fungsi aktivasi, dan metode training (pelatihan)</button>
+  <button class="opt" onclick="checkQuiz(this)">Layer, bobot, dan jumlah neuron</button>
+  <button class="opt" onclick="checkQuiz(this)">Input, output, dan hidden layer</button>
+  <button class="opt" onclick="checkQuiz(this)">Data training, learning rate, dan epoch</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="1">
+  <div class="q">2. Ciri utama single-layer network adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Memiliki banyak hidden layer di antara input dan output</button>
+  <button class="opt" onclick="checkQuiz(this)">Hanya memiliki satu lapisan bobot penghubung (langsung dari input ke output), tanpa hidden layer</button>
+  <button class="opt" onclick="checkQuiz(this)">Memiliki jalur umpan balik (feedback loop) antar neuron</button>
+  <button class="opt" onclick="checkQuiz(this)">Hanya bisa digunakan untuk klasifikasi 2 kelas</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="2">
+  <div class="q">3. Ciri utama arsitektur feedforward adalah...</div>
+  <button class="opt" onclick="checkQuiz(this)">Aliran sinyal bisa bolak-balik dari output ke input</button>
+  <button class="opt" onclick="checkQuiz(this)">Memiliki feedback loop di mana output menjadi input bagi neuron lain</button>
+  <button class="opt" onclick="checkQuiz(this)">Aliran sinyal berjalan searah dari input ke output, tanpa loop atau umpan balik</button>
+  <button class="opt" onclick="checkQuiz(this)">Hanya cocok untuk data sekuensial atau time series</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">4. Fungsi aktivasi Sigmoid memiliki formula dan range output...</div>
+  <button class="opt" onclick="checkQuiz(this)">&sigma;(x) = max(0, x), output [0, &infin;)</button>
+  <button class="opt" onclick="checkQuiz(this)">&sigma;(x) = 1 jika x&ge;0, 0 jika x&lt;0, output {0, 1}</button>
+  <button class="opt" onclick="checkQuiz(this)">&sigma;(x) = (e^x - e^(-x)) / (e^x + e^(-x)), output (-1, 1)</button>
+  <button class="opt" onclick="checkQuiz(this)">&sigma;(x) = 1 / (1 + e^(-x)), output (0, 1)</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="3">
+  <div class="q">5. Fungsi aktivasi ReLU didefinisikan sebagai...</div>
+  <button class="opt" onclick="checkQuiz(this)">1 / (1 + e^(-x)) &mdash; kurva S halus</button>
+  <button class="opt" onclick="checkQuiz(this)">tanh(x) &mdash; S-curve zero-centered</button>
+  <button class="opt" onclick="checkQuiz(this)">sign(x) &mdash; output biner {-1, +1}</button>
+  <button class="opt" onclick="checkQuiz(this)">max(0, x) &mdash; output 0 untuk x negatif, x untuk x positif</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz-box" data-correct="0">
+  <div class="q">6. Diberikan x_1=2, w_1=0,5; x_2=3, w_2=0,3; x_3=1, w_3=0,2. Berapakah net input z?</div>
+  <button class="opt" onclick="checkQuiz(this)">z = (2)(0,5) + (3)(0,3) + (1)(0,2) = 1,0 + 0,9 + 0,2 = <strong>2,1</strong></button>
+  <button class="opt" onclick="checkQuiz(this)">z = 0,5 + 0,3 + 0,2 = 1,0</button>
+  <button class="opt" onclick="checkQuiz(this)">z = 2 + 3 + 1 = 6</button>
+  <button class="opt" onclick="checkQuiz(this)">z = 2,5</button>
+  <div class="feedback"></div>
+</div>
+
+<script>
+function checkQuiz(btn) {
+  const box = btn.closest('.quiz-box');
+  const correctIdx = parseInt(box.dataset.correct);
+  const options = box.querySelectorAll('.opt');
+  const feedback = box.querySelector('.feedback');
+
+  options.forEach(o => { o.classList.remove('correct', 'wrong'); o.disabled = true; });
+  options[correctIdx].classList.add('correct');
+
+  if (!btn.classList.contains('correct')) {
+    btn.classList.add('wrong');
+    feedback.textContent = 'Jawaban salah. Yang benar ditandai hijau.';
+    feedback.className = 'feedback wrong show';
+  } else {
+    feedback.textContent = 'Benar! +1';
+    feedback.className = 'feedback correct show';
+  }
+}
+</script>
+
+<p style="margin-top:2rem; font-size:0.9em; color:#78716c; border-top:1px solid #e2e8f0; padding-top:0.8rem;">
+  <strong>Referensi:</strong> materi kuliah "Pengenalan Jaringan Syaraf Tiruan" hlm. 10-21 (Arsitektur, Fungsi Aktivasi, Contoh Pesawat); Fausett (1994) "Fundamentals of Neural Networks" ch. 1-3; Haykin (2005) "Neural Networks" ch. 1, 4.
+</p>
+
+</body>
+</html>
